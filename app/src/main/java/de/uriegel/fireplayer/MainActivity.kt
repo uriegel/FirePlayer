@@ -2,23 +2,29 @@ package de.uriegel.fireplayer
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_main.*
-
+import kotlinx.coroutines.launch
+import kotlinx.serialization.*
+import kotlinx.serialization.json.*
 
 class MainActivity : AppCompatActivity() {
 
+    @Serializable
+    data class Files(val files: Array<String>)
+
+    @ImplicitReflectionSerializer
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        uiContainer.systemUiVisibility = (View.SYSTEM_UI_FLAG_LOW_PROFILE
-//                or View.SYSTEM_UI_FLAG_FULLSCREEN
-//                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-//                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+        lifecycleScope.launch {
+            val result = httpGet("https://uriegel.de/videos")
+            val json = Json(JsonConfiguration.Stable)
+            val files = json.parse<Files>(result).files.map { it.substring(0, it.length - 4) }
+            val affe = files
+        }
 
         starter.setOnClickListener {
             val intent = Intent(this@MainActivity, PlayerActivity::class.java)
