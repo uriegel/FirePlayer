@@ -17,7 +17,7 @@ suspend fun httpGet(urlString: String): String {
         val connection = url.openConnection() as HttpURLConnection
         connection.setRequestProperty("Accept-Encoding", "gzip")
         connection.connect()
-        val inStream = GZIPInputStream(connection.getInputStream())
+        val inStream = GZIPInputStream(connection.inputStream)
         return@withContext readStream(inStream)
     }
 }

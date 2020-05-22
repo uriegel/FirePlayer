@@ -1,6 +1,5 @@
 package de.uriegel.fireplayer
 
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.view.KeyEvent
@@ -14,7 +13,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.activity_player.*
-import java.lang.Exception
 
 
 class PlayerActivity : AppCompatActivity() {
@@ -22,6 +20,8 @@ class PlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
+        val intent = intent
+        film = intent.getStringExtra("film")!!
     }
 
     override fun onStart() {
@@ -59,7 +59,7 @@ class PlayerActivity : AppCompatActivity() {
             //player.seekTo()
         }
         val dataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)))
-        val uriString = "https://uriegel.de/video/film.mp4"
+        val uriString = "https://uriegel.de/video/$film.mp4"
         val mediaSource = ExtractorMediaSource.Factory(dataSourceFactory)
             .createMediaSource(Uri.parse(uriString))
         playerContainer.setAspectRatio(16f/9f)
@@ -76,4 +76,5 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     var player: ExoPlayer? = null
+    lateinit var film: String
 }
