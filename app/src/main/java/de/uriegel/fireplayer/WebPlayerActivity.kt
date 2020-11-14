@@ -2,10 +2,24 @@ package de.uriegel.fireplayer
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.webkit.WebView
+import kotlinx.android.synthetic.main.activity_web_player.*
 
 class WebPlayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_web_player)
+
+        with(webView) {
+            with(settings) {
+                javaScriptEnabled = true
+                domStorageEnabled = true
+                allowFileAccessFromFileURLs = true
+                allowUniversalAccessFromFileURLs = true
+            }
+            //addJavascriptInterface(javaScriptInterface, "Native")
+        }
+        WebView.setWebContentsDebuggingEnabled(true)
+        webView.loadUrl("file:///android_asset/index.html")
     }
 }
