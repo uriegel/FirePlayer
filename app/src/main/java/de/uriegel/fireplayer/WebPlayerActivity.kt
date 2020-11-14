@@ -10,6 +10,9 @@ class WebPlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_web_player)
 
+        val intent = intent
+        film = intent.getStringExtra("film")!!
+
         with(webView) {
             with(settings) {
                 javaScriptEnabled = true
@@ -20,6 +23,8 @@ class WebPlayerActivity : AppCompatActivity() {
             //addJavascriptInterface(javaScriptInterface, "Native")
         }
         WebView.setWebContentsDebuggingEnabled(true)
-        webView.loadUrl("file:///android_asset/index.html")
+        webView.loadUrl("file:///android_asset/index.html?video=https://uriegel.de/video/$film.mp4")
     }
+
+    lateinit var film: String
 }
