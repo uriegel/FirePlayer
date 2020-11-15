@@ -1,5 +1,6 @@
 package de.uriegel.fireplayer
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebView
@@ -19,6 +20,8 @@ class WebPlayerActivity : AppCompatActivity() {
                 domStorageEnabled = true
                 allowFileAccessFromFileURLs = true
                 allowUniversalAccessFromFileURLs = true
+                mediaPlaybackRequiresUserGesture = false
+                setBackgroundColor(Color.BLACK)
             }
             //addJavascriptInterface(javaScriptInterface, "Native")
         }

@@ -1,6 +1,6 @@
 <template>
     <div class="viewer">
-        <video controls autoplay :src=url></video>
+        <video ref="video" controls autoplay :src=url></video>
     </div>
 </template>  
 
@@ -10,9 +10,10 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component({
   	components: {}
 })export default class VideoViewer extends Vue {
-    url = "https://uriegel.de/video/Get out.mp4"
+    url = ""
     mounted() {
         this.url = decodeURI(window.location.search.substring(7))
+        ;(this.$refs.video as HTMLElement).focus()
     }
 }
 </script>
