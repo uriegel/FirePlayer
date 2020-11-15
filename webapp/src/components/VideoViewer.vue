@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <video controls autoplay :src=url></video>
+    <div class="viewer">
+        <video controls autoplay :src=url @loadedmetadata="onLoadedMeta"></video>
     </div>
 </template>  
 
@@ -14,12 +14,26 @@ import { Component, Vue } from 'vue-property-decorator'
     mounted() {
         this.url = decodeURI(window.location.search.substring(7))
     }
+    onLoadedMeta(evt: Event) {
+        console.log("Geladen", event)
+        event?.target
+        console.log("Weite", (event?.target as any).videoWidth, "Höhe", (event?.target as any).videoHeight)
+    }
 }
 </script>
 
 <style scoped>
-video {
+.viewer {
+    background-color: black;
     width: 100vw;
+    height: 100vh;
+    position: relative;
 }
-
+video {
+    position: absolute;
+    outline-width: 0px;
+    background-color: black;
+    width: 100%;
+    height: 100%;
+}
 </style>
