@@ -1,6 +1,6 @@
 <template>
     <div class="viewer">
-        <video controls autoplay :src=url @loadedmetadata="onLoadedMeta"></video>
+        <video controls autoplay :src=url></video>
     </div>
 </template>  
 
@@ -13,11 +13,6 @@ import { Component, Vue } from 'vue-property-decorator'
     url = "https://uriegel.de/video/Get out.mp4"
     mounted() {
         this.url = decodeURI(window.location.search.substring(7))
-    }
-    onLoadedMeta(evt: Event) {
-        console.log("Geladen", event)
-        event?.target
-        console.log("Weite", (event?.target as any).videoWidth, "Höhe", (event?.target as any).videoHeight)
     }
 }
 </script>
