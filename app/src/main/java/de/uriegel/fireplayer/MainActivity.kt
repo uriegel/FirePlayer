@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         videos.setHasFixedSize(true)
 
         fun onItemClick(film: String) {
-            val intent = Intent(this@MainActivity, WebPlayerActivity::class.java)
+            val intent = Intent(this@MainActivity, PlayerActivity::class.java)
             intent.putExtra("film", film)
             startActivity(intent)
         }

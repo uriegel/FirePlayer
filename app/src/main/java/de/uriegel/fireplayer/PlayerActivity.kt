@@ -2,6 +2,7 @@ package de.uriegel.fireplayer
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Base64
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.exoplayer2.DefaultLoadControl
@@ -13,6 +14,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.activity_player.*
+import java.net.URLEncoder
 
 
 class PlayerActivity : AppCompatActivity() {
@@ -55,14 +57,14 @@ class PlayerActivity : AppCompatActivity() {
                 DefaultRenderersFactory(this), DefaultTrackSelector(), DefaultLoadControl()
             )
             playerView.player = player
-            player!!.playWhenReady = false
+            player!!.playWhenReady = true
             //player.seekTo()
         }
         val dataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)))
-        val uriString = "https://uriegel.de/video/$film.mp4"
+        val uriString = "https://uriegel.de/video/${Base64.encodeToString("${film}.mp4".toByteArray(), Base64.DEFAULT)}"
         val mediaSource = ExtractorMediaSource.Factory(dataSourceFactory)
             .createMediaSource(Uri.parse(uriString))
-        playerContainer.setAspectRatio(16f/9f)
+        //playerContainer.setAspectRatio(164f/3f)
         player!!.prepare(mediaSource)
     }
 
