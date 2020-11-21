@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            val result = httpGet("https://uriegel.de/videos")
+            val result = httpGet("https://uriegel.de/video/list")
             val files = Json.decodeFromString<Files>(result).files.map { it.substring(0, it.length - 4) }
             videos.adapter = VideosAdapter(files.toTypedArray(), ::onItemClick)
         }

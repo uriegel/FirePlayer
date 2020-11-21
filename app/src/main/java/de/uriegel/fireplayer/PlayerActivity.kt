@@ -5,14 +5,12 @@ import android.os.Bundle
 import android.util.Base64
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.exoplayer2.DefaultLoadControl
-import com.google.android.exoplayer2.DefaultRenderersFactory
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import com.google.android.exoplayer2.video.VideoListener
 import kotlinx.android.synthetic.main.activity_player.*
 import java.net.URLEncoder
 
@@ -56,15 +54,26 @@ class PlayerActivity : AppCompatActivity() {
             player = ExoPlayerFactory.newSimpleInstance(
                 DefaultRenderersFactory(this), DefaultTrackSelector(), DefaultLoadControl()
             )
+            player!!.addVideoListener(object: VideoListener{
+                override fun onVideoSizeChanged(
+                    width: Int,
+                    height: Int,
+                    unappliedRotationDegrees: Int,
+                    pixelWidthHeightRatio: Float
+                ) { playerContainer.setAspectRatio(pixelWidthHeightRatio * width / height) }
+                override fun onRenderedFirstFrame() {}
+            })
+
             playerView.player = player
             player!!.playWhenReady = true
             //player.seekTo()
         }
         val dataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)))
-        val uriString = "https://uriegel.de/video/${Base64.encodeToString("${film}.mp4".toByteArray(), Base64.DEFAULT)}"
+        //val uriString = "https://uriegel.de/video/${Base64.encodeToString("${film}.mkv".toByteArray(), Base64.DEFAULT)}"
+        val uriString = "https://uriegel.de/video/${URLEncoder.encode(film, "utf-8")}"
         val mediaSource = ExtractorMediaSource.Factory(dataSourceFactory)
             .createMediaSource(Uri.parse(uriString))
-        //playerContainer.setAspectRatio(164f/3f)
+
         player!!.prepare(mediaSource)
     }
 
@@ -77,6 +86,6 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    var player: ExoPlayer? = null
+    var player: SimpleExoPlayer? = null
     lateinit var film: String
 }
