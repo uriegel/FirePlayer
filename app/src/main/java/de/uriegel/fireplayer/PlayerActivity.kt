@@ -69,7 +69,7 @@ class PlayerActivity : AppCompatActivity() {
             //player.seekTo()
         }
         val dataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)))
-        val uriString = "https://uriegel.de/video/${URLEncoder.encode(film, "utf-8")}"
+        val uriString = "${MainActivity.url}/${URLEncoder.encode(film, "utf-8")}"
         val mediaSource = ExtractorMediaSource.Factory(dataSourceFactory)
             .createMediaSource(Uri.parse(uriString))
 

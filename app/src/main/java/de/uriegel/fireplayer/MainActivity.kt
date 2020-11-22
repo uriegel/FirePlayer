@@ -8,11 +8,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ActivityEx(), CoroutineScope {
+
+    override val coroutineContext = Dispatchers.Main
 
     @Serializable
     data class Files(val files: Array<String>)
@@ -21,26 +25,29 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val url = preferences.getString("url", "")
-        if (url!!.length < 6) {
-            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
-            return
-        }
-
         videos.layoutManager = GridLayoutManager(this, 6)
         videos.setHasFixedSize(true)
 
-        fun onItemClick(film: String) {
-            val intent = Intent(this@MainActivity, PlayerActivity::class.java)
-            intent.putExtra("film", film)
-            startActivity(intent)
-        }
+        launch {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+            var url = preferences.getString("url", "")
+            if (url!!.length < 6) {
+                activityRequest(Intent(this@MainActivity, SettingsActivity::class.java))
+                url = preferences.getString("url", "")
+            }
+            MainActivity.url = url!!
 
-        lifecycleScope.launch {
-            val result = httpGet("https://uriegel.de/video/list")
-            val files = Json.decodeFromString<Files>(result).files.map { it.substring(0, it.length - 4) }
-            videos.adapter = VideosAdapter(files.toTypedArray(), ::onItemClick)
+            fun onItemClick(film: String) {
+                val intent = Intent(this@MainActivity, PlayerActivity::class.java)
+                intent.putExtra("film", film)
+                startActivity(intent)
+            }
+
+            try {
+                val result = httpGet("${MainActivity.url}/list")
+                val files = Json.decodeFromString<Files>(result).files.map { it.substring(0, it.length - 4) }
+                videos.adapter = VideosAdapter(files.toTypedArray(), ::onItemClick)
+            } catch (e: Exception) { }
         }
     }
 
@@ -48,5 +55,9 @@ class MainActivity : AppCompatActivity() {
         if (keyCode == KeyEvent.KEYCODE_MENU)
             startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
         return super.onKeyDown(keyCode, event)
+    }
+
+    companion object {
+        lateinit var url: String
     }
 }
