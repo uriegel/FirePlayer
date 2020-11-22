@@ -2,6 +2,11 @@
     <string name="app_name">FirePlayer</string>
 
     <string name="title_activity_player">PlayerActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="url_header">URL</string>
+
+    <!-- Messages Preferences -->
+    <string name="url_title">Die URL des Servers (z.B. https://&lt;domäne&gt;/media)</string>
 </resources>

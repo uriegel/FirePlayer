@@ -2,6 +2,8 @@ package de.uriegel.fireplayer
 
 import android.content.Intent
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,6 +21,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val url = preferences.getString("url", "")
+        if (url!!.length < 6) {
+            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+            return
+        }
+
         videos.layoutManager = GridLayoutManager(this, 6)
         videos.setHasFixedSize(true)
 
@@ -33,5 +42,11 @@ class MainActivity : AppCompatActivity() {
             val files = Json.decodeFromString<Files>(result).files.map { it.substring(0, it.length - 4) }
             videos.adapter = VideosAdapter(files.toTypedArray(), ::onItemClick)
         }
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_MENU)
+            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+        return super.onKeyDown(keyCode, event)
     }
 }
