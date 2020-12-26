@@ -2,8 +2,9 @@ package de.uriegel.fireplayer
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Base64
 import android.view.KeyEvent
+import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -12,13 +13,44 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.google.android.exoplayer2.video.VideoListener
 import kotlinx.android.synthetic.main.activity_player.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.net.URLEncoder
+import java.util.*
+import kotlin.concurrent.schedule
 
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerActivity : AppCompatActivity(), CoroutineScope {
+
+    override val coroutineContext = Dispatchers.Main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        fun setFullscreen() {
+            window.decorView.systemUiVisibility = (
+                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_FULLSCREEN)
+        }
+        setFullscreen()
+
+        window.decorView.setOnSystemUiVisibilityChangeListener { visibility ->
+            launch {
+                // Note that system bars will only be "visible" if none of the
+                // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
+                if (visibility and View.SYSTEM_UI_FLAG_FULLSCREEN == 0) {
+                    // TODO: The system bars are visible. Make any desired
+                    // adjustments to your UI, such as showing the action bar or
+                    // other navigational controls.
+                    delay(3000)
+                    setFullscreen()
+                }
+            }
+        }
+
         setContentView(R.layout.activity_player)
         val intent = intent
         film = intent.getStringExtra("film")!!
@@ -54,13 +86,16 @@ class PlayerActivity : AppCompatActivity() {
             player = ExoPlayerFactory.newSimpleInstance(
                 DefaultRenderersFactory(this), DefaultTrackSelector(), DefaultLoadControl()
             )
-            player!!.addVideoListener(object: VideoListener{
+            player!!.addVideoListener(object : VideoListener {
                 override fun onVideoSizeChanged(
                     width: Int,
                     height: Int,
                     unappliedRotationDegrees: Int,
                     pixelWidthHeightRatio: Float
-                ) { playerContainer.setAspectRatio(pixelWidthHeightRatio * width / height) }
+                ) {
+                    playerContainer.setAspectRatio(pixelWidthHeightRatio * width / height)
+                }
+
                 override fun onRenderedFirstFrame() {}
             })
 
@@ -68,7 +103,12 @@ class PlayerActivity : AppCompatActivity() {
             player!!.playWhenReady = true
             //player.seekTo()
         }
-        val dataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)))
+        val dataSourceFactory = DefaultHttpDataSourceFactory(
+            Util.getUserAgent(
+                this,
+                getString(R.string.app_name)
+            )
+        )
         val uriString = "${MainActivity.url}/${URLEncoder.encode(film, "utf-8")}"
         val mediaSource = ExtractorMediaSource.Factory(dataSourceFactory)
             .createMediaSource(Uri.parse(uriString))
