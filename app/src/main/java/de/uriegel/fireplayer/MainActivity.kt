@@ -44,8 +44,11 @@ class MainActivity : ActivityEx(), CoroutineScope {
             }
 
             try {
-                val result = httpGet("${MainActivity.url}/list")
-                val files = Json.decodeFromString<Files>(result).files.map { it.substring(0, it.length - 4) }
+                val result = httpGet("${MainActivity.url}/video/list")
+                val files = Json.decodeFromString<Files>(result)
+                    .files
+                    .filter { it.length > 4 }
+                    .map { it.substring(0, it.length - 4) }
                 videos.adapter = VideosAdapter(files.toTypedArray(), ::onItemClick)
             } catch (e: Exception) { }
         }

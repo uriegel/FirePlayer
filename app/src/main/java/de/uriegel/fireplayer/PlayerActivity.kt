@@ -109,7 +109,7 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
                 getString(R.string.app_name)
             )
         )
-        val uriString = "${MainActivity.url}/${URLEncoder.encode(film, "utf-8")}"
+        val uriString = "${MainActivity.url}/video/${URLEncoder.encode(film, "utf-8")}"
         val mediaSource = ExtractorMediaSource.Factory(dataSourceFactory)
             .createMediaSource(Uri.parse(uriString))
 
