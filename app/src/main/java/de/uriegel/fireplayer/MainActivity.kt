@@ -3,6 +3,8 @@ package de.uriegel.fireplayer
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
@@ -21,6 +23,11 @@ class MainActivity : ActivityEx(), CoroutineScope {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        fun isTV(): Boolean { return android.os.Build.MODEL.contains("AFT") }
+        if (isTV())
+            setTheme(R.style.FirePlayerTheme)
+
         setContentView(R.layout.activity_main)
 
         videos.layoutManager = GridLayoutManager(this, 6)
@@ -54,9 +61,30 @@ class MainActivity : ActivityEx(), CoroutineScope {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_MENU)
-            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+            showSettings()
         return super.onKeyDown(keyCode, event)
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id: Int = item.itemId
+        if (id == R.id.menu_settings) {
+            showSettings()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun showSettings() { startActivity(
+        Intent(
+            this@MainActivity,
+            SettingsActivity::class.java
+        )
+    ) }
 
     companion object {
         lateinit var url: String
