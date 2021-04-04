@@ -12,4 +12,21 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Anmeldung">
+
+        <EditTextPreference
+            app:key="name"
+            android:singleLine="true"
+            app:title="@string/auth_name"
+            app:useSimpleSummaryProvider="true"/>
+        <EditTextPreference
+            android:inputType="textPassword"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            app:key="auth_pw"
+            app:title="@string/auth_pw"
+            android:summary="@string/pw_summary"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

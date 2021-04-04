@@ -40,6 +40,8 @@ class MainActivity : ActivityEx(), CoroutineScope {
                 activityRequest(Intent(this@MainActivity, SettingsActivity::class.java))
                 url = preferences.getString("url", "")
             }
+
+            basicAuthentication(preferences.getString("name", "")!!, preferences.getString("auth_pw", "")!!)
             MainActivity.url = url!!
 
             fun onItemClick(film: String) {
