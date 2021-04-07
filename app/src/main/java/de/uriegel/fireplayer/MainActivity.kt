@@ -5,8 +5,11 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
+import de.uriegel.activityextensions.ActivityRequest
+import de.uriegel.activityextensions.http.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 
-class MainActivity : ActivityEx(), CoroutineScope {
+class MainActivity : AppCompatActivity(), CoroutineScope {
 
     override val coroutineContext = Dispatchers.Main
 
@@ -37,7 +40,7 @@ class MainActivity : ActivityEx(), CoroutineScope {
             val preferences = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
             var url = preferences.getString("url", "")
             if (url!!.length < 6) {
-                activityRequest(Intent(this@MainActivity, SettingsActivity::class.java))
+                activityRequest.launch(Intent(this@MainActivity, SettingsActivity::class.java))
                 url = preferences.getString("url", "")
             }
 
@@ -51,7 +54,7 @@ class MainActivity : ActivityEx(), CoroutineScope {
             }
 
             try {
-                val result = httpGet("${MainActivity.url}/video/list")
+                val result = getString("${MainActivity.url}/video/list")
                 val files = Json.decodeFromString<Files>(result)
                     .files
                     .filter { it.length > 4 }
@@ -87,6 +90,8 @@ class MainActivity : ActivityEx(), CoroutineScope {
             SettingsActivity::class.java
         )
     ) }
+
+    private val activityRequest = ActivityRequest(this)
 
     companion object {
         lateinit var url: String

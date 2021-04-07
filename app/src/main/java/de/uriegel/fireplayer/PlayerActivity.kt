@@ -12,14 +12,12 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.google.android.exoplayer2.video.VideoListener
+import de.uriegel.activityextensions.async.delay
 import kotlinx.android.synthetic.main.activity_player.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
-import java.util.*
-import kotlin.concurrent.schedule
-
 
 class PlayerActivity : AppCompatActivity(), CoroutineScope {
 
