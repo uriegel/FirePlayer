@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">FirePlayer</string>
 
-    <string name="title_activity_player">PlayerActivity</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_player">FirePlayer</string>
+    <string name="title_activity_settings">Einstellungen</string>
 
     <!-- Preference Titles -->
     <string name="url_header">URL</string>

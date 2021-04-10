@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
@@ -37,30 +38,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         videos.setHasFixedSize(true)
 
         launch {
-            val preferences = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
-            var url = preferences.getString("url", "")
-            if (url!!.length < 6) {
-                activityRequest.launch(Intent(this@MainActivity, SettingsActivity::class.java))
-                url = preferences.getString("url", "")
-            }
-
-            basicAuthentication(preferences.getString("name", "")!!, preferences.getString("auth_pw", "")!!)
-            MainActivity.url = url!!
-
-            fun onItemClick(film: String) {
-                val intent = Intent(this@MainActivity, PlayerActivity::class.java)
-                intent.putExtra("film", film)
-                startActivity(intent)
-            }
-
-            try {
-                val result = getString("${MainActivity.url}/video/list")
-                val files = Json.decodeFromString<Files>(result)
-                    .files
-                    .filter { it.length > 4 }
-                    .map { it.substring(0, it.length - 4) }
-                videos.adapter = VideosAdapter(files.toTypedArray(), ::onItemClick)
-            } catch (e: Exception) { }
+            listItems()
         }
     }
 
@@ -84,12 +62,44 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun showSettings() { startActivity(
-        Intent(
-            this@MainActivity,
-            SettingsActivity::class.java
-        )
-    ) }
+    private fun showSettings() {
+        launch {
+            activityRequest.launch(Intent(this@MainActivity, SettingsActivity::class.java))
+            listItems()
+        }
+    }
+
+    private suspend fun listItems() {
+        try {
+            fun onItemClick(film: String) {
+                val intent = Intent(this@MainActivity, PlayerActivity::class.java)
+                intent.putExtra("film", film)
+                startActivity(intent)
+            }
+
+            videos.adapter = VideosAdapter(emptyArray(), ::onItemClick)
+
+            val preferences = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+            var url = preferences.getString("url", "")
+            if (url!!.length < 6) {
+                activityRequest.launch(Intent(this@MainActivity, SettingsActivity::class.java))
+                url = preferences.getString("url", "")
+            }
+
+            basicAuthentication(preferences.getString("name", "")!!, preferences.getString("auth_pw", "")!!)
+            MainActivity.url = url!!
+
+            val result = getString("${MainActivity.url}/video/list")
+            val files = Json.decodeFromString<Files>(result)
+                .files
+                .filter { it.length > 4 }
+                .map { it.substring(0, it.length - 4) }
+            videos.adapter = VideosAdapter(files.toTypedArray(), ::onItemClick)
+        } catch (e: Exception) {
+            val es = e
+            Toast.makeText(this@MainActivity, "Die Einstellungen für \"URL\" oder \"Anmeldung\" sind fehlerhaft", Toast.LENGTH_LONG).show()
+        }
+    }
 
     private val activityRequest = ActivityRequest(this)
 
