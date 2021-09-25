@@ -2,6 +2,7 @@ package de.uriegel.fireplayer
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -11,31 +12,33 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import de.uriegel.activityextensions.ActivityRequest
 import de.uriegel.activityextensions.http.*
-import kotlinx.android.synthetic.main.activity_main.*
+import de.uriegel.fireplayer.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 
+@ExperimentalSerializationApi
 class MainActivity : AppCompatActivity(), CoroutineScope {
 
     override val coroutineContext = Dispatchers.Main
 
     @Serializable
-    data class Files(val files: Array<String>)
+    data class Files(val files: List<String>)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         fun isTV(): Boolean { return android.os.Build.MODEL.contains("AFT") }
         if (isTV())
             setTheme(R.style.FirePlayerTheme)
 
-        setContentView(R.layout.activity_main)
-
-        videos.layoutManager = GridLayoutManager(this, 6)
-        videos.setHasFixedSize(true)
+        binding.videos.layoutManager = GridLayoutManager(this, 6)
+        binding.videos.setHasFixedSize(true)
 
         launch {
             listItems()
@@ -77,7 +80,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 startActivity(intent)
             }
 
-            videos.adapter = VideosAdapter(emptyArray(), ::onItemClick)
+            binding.videos.adapter = VideosAdapter(emptyArray(), ::onItemClick)
 
             val preferences = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
             var url = preferences.getString("url", "")
@@ -94,14 +97,15 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 .files
                 .filter { it.length > 4 }
                 .map { it.substring(0, it.length - 4) }
-            videos.adapter = VideosAdapter(files.toTypedArray(), ::onItemClick)
+            binding.videos.adapter = VideosAdapter(files.toTypedArray(), ::onItemClick)
         } catch (e: Exception) {
-            val es = e
-            Toast.makeText(this@MainActivity, "Die Einstellungen für \"URL\" oder \"Anmeldung\" sind fehlerhaft", Toast.LENGTH_LONG).show()
+            Log.w("FP", "ListItems", e)
+            Toast.makeText(this@MainActivity, getString(R.string.toast_wrong_auth), Toast.LENGTH_LONG).show()
         }
     }
 
     private val activityRequest = ActivityRequest(this)
+    private lateinit var binding: ActivityMainBinding
 
     companion object {
         lateinit var url: String
