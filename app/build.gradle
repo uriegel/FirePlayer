@@ -3,6 +3,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlinx-serialization'
 
 android {
+    signingConfigs {
+        target {
+            storeFile file('/home/uwe/Dokumente/Entwicklung/AndroidKeyStore/keystore.jks')
+            storePassword ANDROID_STORE_PASSWORD
+            keyAlias 'androidKey'
+            keyPassword ANDROID_KEY_PASSWORD
+        }
+    }
     compileSdk 30
     compileOptions {
         sourceCompatibility 1.8
@@ -20,6 +28,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.target
+        }
+        debug {
+            signingConfig signingConfigs.target
         }
     }
     buildFeatures {
