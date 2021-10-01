@@ -28,15 +28,14 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     data class Files(val files: List<String>)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        fun isTV(): Boolean { return android.os.Build.MODEL.contains("AFT") }
+        if (isTV())
+            setTheme(R.style.AppTheme_FullScreen)
+
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        fun isTV(): Boolean { return android.os.Build.MODEL.contains("AFT") }
-        if (isTV())
-            setTheme(R.style.FirePlayerTheme)
-
         binding.videos.layoutManager = GridLayoutManager(this, 6)
         binding.videos.setHasFixedSize(true)
 
