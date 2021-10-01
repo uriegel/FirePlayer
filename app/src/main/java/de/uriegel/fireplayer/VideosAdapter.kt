@@ -24,10 +24,10 @@ class VideosAdapter(private val films: Array<String>, private val clickListener:
     }
 
     class ViewHolder(view: View, val clickListener: ((film: String)->Unit)) : RecyclerView.ViewHolder(view) {
+        val videoNameView: TextView = view.findViewById(R.id.videoNameView)
+        var film = ""
         init {
             view.setOnClickListener {clickListener(film) }
         }
-        var film = ""
-        val videoNameView: TextView = view.findViewById(R.id.videoNameView)
     }
 }
