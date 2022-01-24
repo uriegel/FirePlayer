@@ -40,6 +40,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         binding.videos.setHasFixedSize(true)
 
         launch {
+            initialize()
+            checkMediaDevice()
             listItems()
         }
     }
@@ -67,7 +69,25 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     private fun showSettings() {
         launch {
             activityRequest.launch(Intent(this@MainActivity, SettingsActivity::class.java))
+            initialize()
+            checkMediaDevice()
             listItems()
+        }
+    }
+
+    private suspend fun initialize() {
+        try {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+            var url = preferences.getString("url", "")
+            if (url!!.length < 6) {
+                activityRequest.launch(Intent(this@MainActivity, SettingsActivity::class.java))
+                url = preferences.getString("url", "")
+            }
+            basicAuthentication(preferences.getString("name", "")!!, preferences.getString("auth_pw", "")!!)
+            MainActivity.url = url!!
+        } catch (e: Exception) {
+            Log.w("FP", "Initialize", e)
+            Toast.makeText(this@MainActivity, getString(R.string.toast_wrong_auth), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -80,18 +100,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             }
 
             binding.videos.adapter = VideosAdapter(emptyArray(), ::onItemClick)
-
-            val preferences = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
-            var url = preferences.getString("url", "")
-            if (url!!.length < 6) {
-                activityRequest.launch(Intent(this@MainActivity, SettingsActivity::class.java))
-                url = preferences.getString("url", "")
-            }
-
-            basicAuthentication(preferences.getString("name", "")!!, preferences.getString("auth_pw", "")!!)
-            MainActivity.url = url!!
-
-            val result = getString("${MainActivity.url}/video/list")
+            val result = getString("$url/video/list")
             val files = Json.decodeFromString<Files>(result)
                 .files
                 .filter { it.length > 4 }
