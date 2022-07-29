@@ -74,7 +74,7 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
                 unregisterDisk()
             }
         }
-    }
+    }<
 
     override fun onStop() {
         super.onStop()
