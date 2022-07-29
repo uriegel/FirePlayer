@@ -11,11 +11,16 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.util.Util
 import de.uriegel.fireplayer.databinding.ActivityPlayerBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.net.URLEncoder
 
 @ExperimentalSerializationApi
-class PlayerActivity : AppCompatActivity() {
+class PlayerActivity : AppCompatActivity(), CoroutineScope {
+
+    override val coroutineContext = Dispatchers.Main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,26 +48,42 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (Util.SDK_INT > 23)
-            initializePlayer()
+        if (Util.SDK_INT > 23) {
+            launch {
+                registerDisk()
+                initializePlayer()
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        if (Util.SDK_INT <= 23 || player == null)
-            initializePlayer()
+        if (Util.SDK_INT <= 23) {
+            launch {
+                registerDisk()
+                initializePlayer()
+            }
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        if (Util.SDK_INT <= 23)
-            releasePlayer()
+        if (Util.SDK_INT <= 23) {
+            launch {
+                releasePlayer()
+                unregisterDisk()
+            }
+        }
     }
 
     override fun onStop() {
         super.onStop()
-        if (Util.SDK_INT > 23)
-            releasePlayer()
+        if (Util.SDK_INT > 23) {
+            launch {
+                releasePlayer()
+                unregisterDisk()
+            }
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

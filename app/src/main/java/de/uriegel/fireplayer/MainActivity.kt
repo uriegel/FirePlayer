@@ -38,11 +38,22 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         setContentView(binding.root)
         binding.videos.layoutManager = GridLayoutManager(this, 6)
         binding.videos.setHasFixedSize(true)
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         launch {
             initialize()
-            checkMediaDevice()
+            registerDisk()
             listItems()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        launch {
+            unregisterDisk()
         }
     }
 
@@ -70,7 +81,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         launch {
             activityRequest.launch(Intent(this@MainActivity, SettingsActivity::class.java))
             initialize()
-            checkMediaDevice()
             listItems()
         }
     }
