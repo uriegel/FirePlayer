@@ -48,42 +48,29 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
 
     override fun onStart() {
         super.onStart()
-        if (Util.SDK_INT > 23) {
-            launch {
-                registerDisk()
-                initializePlayer()
-            }
-        }
+        if (Util.SDK_INT > 23)
+            initializePlayer()
     }
 
     override fun onResume() {
         super.onResume()
-        if (Util.SDK_INT <= 23) {
-            launch {
-                registerDisk()
-                initializePlayer()
-            }
-        }
+        if (Util.SDK_INT <= 23)
+            initializePlayer()
+        lifetimeTimer = LifetimeTimer()
+        lifetimeTimer?.start()
     }
 
     override fun onPause() {
         super.onPause()
-        if (Util.SDK_INT <= 23) {
-            launch {
-                releasePlayer()
-                unregisterDisk()
-            }
-        }
+        if (Util.SDK_INT <= 23)
+            releasePlayer()
+        lifetimeTimer?.cancel()
     }
 
     override fun onStop() {
         super.onStop()
-        if (Util.SDK_INT > 23) {
-            launch {
-                releasePlayer()
-                unregisterDisk()
-            }
-        }
+        if (Util.SDK_INT > 23)
+            releasePlayer()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -158,6 +145,7 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
         const val STATE_PLAY_WHEN_READY = "STATE_PLAY_WHEN_READY"
     }
 
+    private var lifetimeTimer: LifetimeTimer? = null
     private var player: SimpleExoPlayer? = null
     private lateinit var film: String
     private var playWhenReady = true

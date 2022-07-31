@@ -45,15 +45,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
         launch {
             initialize()
-            registerDisk()
+            accessDisk()
             listItems()
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        launch {
-            unregisterDisk()
         }
     }
 
@@ -81,6 +74,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         launch {
             activityRequest.launch(Intent(this@MainActivity, SettingsActivity::class.java))
             initialize()
+            accessDisk()
             listItems()
         }
     }
