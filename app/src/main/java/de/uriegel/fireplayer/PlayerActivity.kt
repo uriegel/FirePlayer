@@ -8,12 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.util.Util
 import de.uriegel.fireplayer.databinding.ActivityPlayerBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.net.URLEncoder
 
@@ -25,6 +25,11 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
+
+        playbackPosition =
+            PreferenceManager
+                .getDefaultSharedPreferences(this@PlayerActivity)
+                .getLong("position", 0)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -117,6 +122,13 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
             playbackPosition = this.currentPosition
             currentWindow = this.currentWindowIndex
             playWhenReady = this.playWhenReady
+
+            PreferenceManager
+                .getDefaultSharedPreferences(this@PlayerActivity)
+                .edit()
+                .putLong("position", playbackPosition)
+                .apply()
+
             release()
         }
         player = null
