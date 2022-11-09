@@ -8,14 +8,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.util.Util
 import de.uriegel.fireplayer.databinding.ActivityPlayerBinding
+import de.uriegel.fireplayer.room.FilmInfo
+import de.uriegel.fireplayer.room.FilmInfosRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import java.net.URLEncoder
+import java.util.*
 
 @ExperimentalSerializationApi
 class PlayerActivity : AppCompatActivity(), CoroutineScope {
@@ -26,29 +29,32 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
 
-        playbackPosition =
-            PreferenceManager
-                .getDefaultSharedPreferences(this@PlayerActivity)
-                .getLong("position", 0)
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
         val intent = intent
         film = intent.getStringExtra("film")!!
-        savedInstanceState?.let {
-            playbackPosition = it.getLong(STATE_PLAYBACK_POSITION, playbackPosition)
-            currentWindow = it.getInt(STATE_CURRENT_WINDOW, currentWindow)
-            playWhenReady = it.getBoolean(STATE_PLAY_WHEN_READY, playWhenReady)
-        }
 
-        viewBinding.playerView.setControllerVisibilityListener {
-            if (it == View.VISIBLE)
-                showSystemUI()
-            else
-                hideSystemUI()
-        }
+        launch {
+            FilmInfosRepository.getFilmInfoAsync(film).await().elementAtOrNull(0)?.let{
+                playbackPosition = it.position
+                player?.seekTo(playbackPosition)
+            }
 
-        hideSystemUI()
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+            savedInstanceState?.let {
+                playbackPosition = it.getLong(STATE_PLAYBACK_POSITION, playbackPosition)
+                currentWindow = it.getInt(STATE_CURRENT_WINDOW, currentWindow)
+                playWhenReady = it.getBoolean(STATE_PLAY_WHEN_READY, playWhenReady)
+            }
+
+            viewBinding.playerView.setControllerVisibilityListener {
+                if (it == View.VISIBLE)
+                    showSystemUI()
+                else
+                    hideSystemUI()
+            }
+
+            hideSystemUI()
+        }
     }
 
     override fun onStart() {
@@ -123,11 +129,11 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
             currentWindow = this.currentWindowIndex
             playWhenReady = this.playWhenReady
 
-            PreferenceManager
-                .getDefaultSharedPreferences(this@PlayerActivity)
-                .edit()
-                .putLong("position", playbackPosition)
-                .apply()
+            launch {
+                FilmInfosRepository.insertFilmInfoAsync(FilmInfo(
+                    playbackPosition, Calendar.getInstance().time, film)
+                ).await()
+            }
 
             release()
         }

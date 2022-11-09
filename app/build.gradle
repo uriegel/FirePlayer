@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlinx-serialization'
+apply plugin: 'kotlin-kapt'
 
 android {
     signingConfigs {
@@ -52,6 +53,8 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0"
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.preference:preference-ktx:1.1.1'// JVM dependency
+    implementation 'androidx.preference:preference-ktx:1.1.1' // JVM dependency
+    implementation 'androidx.room:room-runtime:2.3.0'
     implementation 'com.github.uriegel:ActivityExtensions:2.3.0'
+    kapt 'androidx.room:room-compiler:2.3.0'
 }
