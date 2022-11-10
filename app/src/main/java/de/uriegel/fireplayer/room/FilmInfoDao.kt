@@ -8,8 +8,14 @@ import androidx.room.Query
 @Dao
 interface FilmInfoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertFilmInfo(info: FilmInfo)
+    fun insert(info: FilmInfo)
 
     @Query("SELECT * FROM FilmInfos WHERE name = :name")
-    fun findFilmInfo(name: String): Array<FilmInfo>
+    fun find(name: String): Array<FilmInfo>
+
+    @Query("SELECT * FROM FilmInfos")
+    fun get(): Array<FilmInfo>
+
+    @Query("DELETE FROM FilmInfos WHERE name = :name")
+    fun delete(name: String)
 }

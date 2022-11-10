@@ -4,14 +4,22 @@ import kotlinx.coroutines.*
 
 object FilmInfosRepository {
 
-    fun insertFilmInfoAsync(info: FilmInfo): Deferred<Unit> =
+    fun insert(info: FilmInfo): Deferred<Unit> =
         coroutineScope.async(Dispatchers.IO) {
-            return@async filmInfoDao.insertFilmInfo(info)
+            return@async filmInfoDao.insert(info)
         }
-    fun getFilmInfoAsync(name: String): Deferred<Array<FilmInfo>> =
+    fun find(name: String): Deferred<Array<FilmInfo>> =
         coroutineScope.async(Dispatchers.IO) {
-            return@async filmInfoDao.findFilmInfo(name)
+            return@async filmInfoDao.find(name)
         }
+    fun get(): Deferred<Array<FilmInfo>> =
+        coroutineScope.async(Dispatchers.IO) {
+            return@async filmInfoDao.get()
+        }
+
+    fun delete(name: String) =
+        coroutineScope.launch(Dispatchers.IO) { filmInfoDao.delete(name) }
+
     private val filmInfoDao: FilmInfoDao
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 

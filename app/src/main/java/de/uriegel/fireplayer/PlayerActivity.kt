@@ -13,6 +13,7 @@ import com.google.android.exoplayer2.util.Util
 import de.uriegel.fireplayer.databinding.ActivityPlayerBinding
 import de.uriegel.fireplayer.room.FilmInfo
 import de.uriegel.fireplayer.room.FilmInfosRepository
+import de.uriegel.fireplayer.room.FilmInfosRepository.delete
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,13 +33,16 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
         val intent = intent
         film = intent.getStringExtra("film")!!
 
-        launch {
-            FilmInfosRepository.getFilmInfoAsync(film).await().elementAtOrNull(0)?.let{
-                playbackPosition = it.position
-                player?.seekTo(playbackPosition)
-            }
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        launch {
+            FilmInfosRepository
+                .find(film)
+                .await()
+                .elementAtOrNull(0)?.let {
+                    playbackPosition = it.position
+                    player?.seekTo(playbackPosition)
+                }
 
             savedInstanceState?.let {
                 playbackPosition = it.getLong(STATE_PLAYBACK_POSITION, playbackPosition)
@@ -130,9 +134,17 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
             playWhenReady = this.playWhenReady
 
             launch {
-                FilmInfosRepository.insertFilmInfoAsync(FilmInfo(
-                    playbackPosition, Calendar.getInstance().time, film)
-                ).await()
+                FilmInfosRepository.insert(FilmInfo(
+                    playbackPosition,
+                    Calendar.getInstance().time,
+                    film
+                )).await()
+                FilmInfosRepository
+                    .get()
+                    .await()
+                    .sortedWith(compareByDescending{ it.date })
+                    .drop(30).map{ it.name }
+                    .forEach(::delete)
             }
 
             release()
