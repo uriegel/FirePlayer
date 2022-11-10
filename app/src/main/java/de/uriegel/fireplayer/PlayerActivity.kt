@@ -112,7 +112,7 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
     }
 
     private fun initializePlayer() {
-        player = SimpleExoPlayer.Builder(this)
+        player = ExoPlayer.Builder(this)
             .build()
             .also {
                 viewBinding.playerView.player = it
@@ -176,7 +176,7 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
     }
 
     private var lifetimeTimer: LifetimeTimer? = null
-    private var player: SimpleExoPlayer? = null
+    private var player: ExoPlayer? = null
     private lateinit var film: String
     private var playWhenReady = true
     private var currentWindow = 0
