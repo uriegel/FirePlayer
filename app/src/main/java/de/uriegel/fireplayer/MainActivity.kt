@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
+import java.net.URLEncoder
 
 @ExperimentalSerializationApi
 class MainActivity : AppCompatActivity(), CoroutineScope {
@@ -50,6 +51,17 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putStringArray(STATE_URL_PARTS, urlParts)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        savedInstanceState.getStringArray(STATE_URL_PARTS)?.let {
+            urlParts = it.toList().toTypedArray()
+        }
+    }
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_MENU)
             showSettings()
@@ -70,6 +82,15 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onBackPressed() {
+        if (urlParts.size > 1) {
+            urlParts = urlParts.toList().dropLast(1).toTypedArray()
+            listItems()
+        }
+        else
+            onBackPressedDispatcher.onBackPressed()
+    }
+
     private fun showSettings() {
         launch {
             activityRequest.launch(Intent(this@MainActivity, SettingsActivity::class.java))
@@ -81,45 +102,58 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     private suspend fun initialize() {
         try {
-            val preferences = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
-            var url = preferences.getString("url", "")
-            if (url!!.length < 6) {
-                activityRequest.launch(Intent(this@MainActivity, SettingsActivity::class.java))
-                url = preferences.getString("url", "")
+            if (urlParts.count() == 0) {
+                val preferences = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+                var url = preferences.getString("url", "")
+                if (url!!.length < 6) {
+                    activityRequest.launch(Intent(this@MainActivity, SettingsActivity::class.java))
+                    url = preferences.getString("url", "")
+                }
+                urlParts = arrayOf("${url}/video")
+
+                basicAuthentication(preferences.getString("name", "")!!, preferences.getString("auth_pw", "")!!)
+                MainActivity.url = url!!
             }
-            basicAuthentication(preferences.getString("name", "")!!, preferences.getString("auth_pw", "")!!)
-            MainActivity.url = url!!
         } catch (e: Exception) {
             Log.w("FP", "Initialize", e)
             Toast.makeText(this@MainActivity, getString(R.string.toast_wrong_auth), Toast.LENGTH_LONG).show()
         }
     }
 
-    private suspend fun listItems() {
-        try {
-            fun onItemClick(film: String) {
-                val intent = Intent(this@MainActivity, PlayerActivity::class.java)
-                intent.putExtra("film", film)
-                startActivity(intent)
-            }
+    private fun onItemClick(path: String) {
+        if (path.endsWith(".mp4", true) or path.endsWith(".mkv", true)) {
+            val film = (urlParts + URLEncoder.encode(path, "utf-8"))
+                .joinToString(separator = "/")
+                .replace("+", "%20")
+            val intent = Intent(this@MainActivity, PlayerActivity::class.java)
+            intent.putExtra("film", film)
+            startActivity(intent)
+        } else {
+            urlParts += URLEncoder.encode(path, "utf-8")
+            listItems()
+        }
+    }
 
-            binding.videos.adapter = VideosAdapter(emptyArray(), ::onItemClick)
-            val result = getString("$url/video/list")
-            val files = Json.decodeFromString<Files>(result)
-                .files
-                .filter { it.length > 4 }
-                .map { it.substring(0, it.length - 4) }
-            binding.videos.adapter = VideosAdapter(files.toTypedArray(), ::onItemClick)
-        } catch (e: Exception) {
-            Log.w("FP", "ListItems", e)
-            Toast.makeText(this@MainActivity, getString(R.string.toast_wrong_auth), Toast.LENGTH_LONG).show()
+    private fun listItems() {
+        launch {
+            try {
+                binding.videos.adapter = VideosAdapter(emptyArray(), ::onItemClick)
+                val result = getString(urlParts.joinToString(separator = "/").replace("+", "%20"))
+                val files = Json.decodeFromString<Files>(result).files.toTypedArray()
+                binding.videos.adapter = VideosAdapter(files, ::onItemClick)
+            } catch (e: Exception) {
+                Log.w("FP", "ListItems", e)
+                Toast.makeText(this@MainActivity, getString(R.string.toast_wrong_auth), Toast.LENGTH_LONG).show()
+            }
         }
     }
 
     private val activityRequest = ActivityRequest(this)
+    private var urlParts = arrayOf<String>()
     private lateinit var binding: ActivityMainBinding
 
     companion object {
         lateinit var url: String
+        const val STATE_URL_PARTS = "STATE_URL_PARTS"
     }
 }

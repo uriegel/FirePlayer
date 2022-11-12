@@ -18,7 +18,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
-import java.net.URLEncoder
 import java.util.*
 
 @ExperimentalSerializationApi
@@ -116,9 +115,7 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
             .build()
             .also {
                 viewBinding.playerView.player = it
-                val uri = "${MainActivity.url}/video/${URLEncoder.encode(film, "utf-8")}"
-                    .replace("+", "%20")
-                val mediaItem = MediaItem.fromUri(uri)
+                val mediaItem = MediaItem.fromUri(film)
                 it.setMediaItem(mediaItem)
                 it.playWhenReady = playWhenReady
                 it.seekTo(currentWindow, playbackPosition)
