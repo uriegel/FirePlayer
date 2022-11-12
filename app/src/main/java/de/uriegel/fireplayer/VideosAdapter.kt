@@ -20,13 +20,17 @@ class VideosAdapter(private val films: Array<String>, private val clickListener:
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.film = films[position]
         holder.videoNameView.text = holder.film
+        holder.videoFolderView.visibility = View.GONE
+        holder.videoNameView
     }
 
     class ViewHolder(view: View, val clickListener: ((film: String)->Unit)) : RecyclerView.ViewHolder(view) {
         val videoNameView: Button = view.findViewById(R.id.videoNameView)
+        val videoFolderView: Button = view.findViewById(R.id.videoFolderView)
         var film = ""
         init {
             videoNameView.setOnClickListener {clickListener(film) }
+            videoFolderView.visibility = View.GONE
         }
     }
 }
