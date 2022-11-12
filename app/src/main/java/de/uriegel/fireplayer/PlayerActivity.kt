@@ -130,7 +130,7 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
     private fun releasePlayer() {
         player?.run {
             playbackPosition = this.currentPosition
-            currentWindow = this.currentWindowIndex
+            currentWindow = this.currentMediaItemIndex
             playWhenReady = this.playWhenReady
 
             launch {
