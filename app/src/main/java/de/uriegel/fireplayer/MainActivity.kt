@@ -12,6 +12,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import de.uriegel.activityextensions.ActivityRequest
 import de.uriegel.activityextensions.http.*
+import de.uriegel.fireplayer.Extensions.isFilm
 import de.uriegel.fireplayer.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -138,8 +139,15 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     private fun listItems() {
         launch {
             try {
+                val folderComparator = compareBy<String>{ it.isFilm() }
+                val fileTypeThenStringComparator = folderComparator.thenBy { it }
+
                 val result = getString(urlParts.joinToString(separator = "/").replace("+", "%20"))
-                val files = Json.decodeFromString<Files>(result).files.toTypedArray()
+                val files = Json
+                    .decodeFromString<Files>(result)
+                    .files
+                    .sortedWith(fileTypeThenStringComparator)
+                    .toTypedArray()
                 if (!(binding.videos.adapter as VideosAdapter).containsEqualFilms(files))
                     binding.videos.adapter = VideosAdapter(files, ::onItemClick)
             } catch (e: Exception) {
