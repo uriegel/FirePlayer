@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.videos.layoutManager = GridLayoutManager(this, 6)
+        binding.videos.adapter = VideosAdapter(emptyArray(), ::onItemClick)
         binding.videos.setHasFixedSize(true)
     }
 
@@ -102,7 +103,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     private suspend fun initialize() {
         try {
-            if (urlParts.count() == 0) {
+            if (urlParts.isEmpty()) {
                 val preferences = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
                 var url = preferences.getString("url", "")
                 if (url!!.length < 6) {
@@ -137,10 +138,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     private fun listItems() {
         launch {
             try {
-                binding.videos.adapter = VideosAdapter(emptyArray(), ::onItemClick)
                 val result = getString(urlParts.joinToString(separator = "/").replace("+", "%20"))
                 val files = Json.decodeFromString<Files>(result).files.toTypedArray()
-                binding.videos.adapter = VideosAdapter(files, ::onItemClick)
+                if (!(binding.videos.adapter as VideosAdapter).containsEqualFilms(files))
+                    binding.videos.adapter = VideosAdapter(files, ::onItemClick)
             } catch (e: Exception) {
                 Log.w("FP", "ListItems", e)
                 Toast.makeText(this@MainActivity, getString(R.string.toast_wrong_auth), Toast.LENGTH_LONG).show()

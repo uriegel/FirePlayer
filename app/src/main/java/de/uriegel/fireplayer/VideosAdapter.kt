@@ -24,6 +24,10 @@ class VideosAdapter(private val films: Array<String>, private val clickListener:
         holder.videoNameView
     }
 
+    fun containsEqualFilms(filmListToCompare: Array<String>): Boolean {
+        return films.contentEquals(filmListToCompare)
+    }
+
     class ViewHolder(view: View, val clickListener: ((film: String)->Unit)) : RecyclerView.ViewHolder(view) {
         val videoNameView: Button = view.findViewById(R.id.videoNameView)
         val videoFolderView: Button = view.findViewById(R.id.videoFolderView)
