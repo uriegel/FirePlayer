@@ -3,27 +3,37 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
-        android:fullBackupOnly="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_title"
         android:roundIcon="@mipmap/ic_launcher_round"
+
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/Theme.FirePlayer"
         tools:targetApi="m">
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"/>
-        <activity android:name=".PlayerActivity"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity android:name=".MainActivityTest"
-            android:exported="true">
+
+<!--        <activity-->
+<!--            android:name=".SettingsActivity"-->
+<!--            android:label="@string/title_activity_settings"/>-->
+<!--        <activity android:name=".PlayerActivity"-->
+<!--            android:theme="@style/AppTheme.FullScreen" />-->
+        <activity android:name=".ui.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.FirePlayer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+
         </activity>
     </application>
 
