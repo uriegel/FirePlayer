@@ -4,7 +4,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:name=".Application"
         android:allowBackup="true"
         android:fullBackupOnly="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,7 +18,7 @@
             android:label="@string/title_activity_settings"/>
         <activity android:name=".PlayerActivity"
             android:theme="@style/AppTheme.FullScreen" />
-        <activity android:name=".MainActivity"
+        <activity android:name=".MainActivityTest"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
