@@ -13,6 +13,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+// TODO Adapt FirePlayer dark theme
+// TODO when in fire stick change theme (test)
+// TODO Settings dialog
+
+
         setContent {
             FirePlayerTheme {
                 // A surface container using the 'background' color from the theme

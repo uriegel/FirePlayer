@@ -43,9 +43,6 @@
 //</androidx.constraintlayout.widget.ConstraintLay
 //*/
 //class MainActivityTest : AppCompatActivity() {
-//// TODO Update gradle for Compose
-//// TODO Create MainActivity ans MainScreen
-//// TODO Adapt FirePlayer dark theme
 //
 ////    override val coroutineContext = Dispatchers.Main
 ////
