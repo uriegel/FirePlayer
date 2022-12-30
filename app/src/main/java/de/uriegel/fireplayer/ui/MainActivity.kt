@@ -15,6 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.preference.PreferenceManager
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import de.uriegel.fireplayer.R
+import de.uriegel.fireplayer.requests.accessDisk
+import de.uriegel.fireplayer.requests.basicAuthentication
+import de.uriegel.fireplayer.requests.initializeHttp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,25 +63,22 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // TODO Lifecyclemanager with coroutine scope
+    // var corutimSkop = rememberCoroutineScope()
+
+    //                    Lifecycle.Event.ON_START -> {
+    //                        corutimSkop.launch {
     override fun onResume() {
         super.onResume()
 
         if (urlParts.isEmpty()) {
-            val preferences = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
-            preferences.getString("url", "")?.let {
-                if (it.length  >= 6) {
-                    urlParts = arrayOf("${it}/video")
-            }
-                //basicAuthentication(preferences.getString("name", "")!!, preferences.getString("auth_pw", "")!!)
-
-//                activityRequest.launch(Intent(this@MainActivity, SettingsActivity::class.java))
-//                url = preferences.getString("url", "")
-            }
-
-            //MainActivity.url = url!!
+            initializeHttp(this@MainActivity)
+            urlParts = arrayOf("/video")
         }
         if (urlParts.isEmpty())
             showSettings()
+
+        accessDisk()
         // TODO if no connection screen with text check connection and one button "settings"
         // TODO if connection and response error "settings"
     }
