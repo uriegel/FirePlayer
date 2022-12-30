@@ -23,7 +23,8 @@ fun basicAuthentication(name: String, pw: String) {
     Authenticator.setDefault(BasicAuthenticator())
 }
 
-fun initializeHttp(context: Context) {
+// TODO convert Result to Result<Unit>
+fun initializeHttp(context: Context): Result<Unit> {
     val preferences = PreferenceManager.getDefaultSharedPreferences(context)
     preferences.getString("url", "")?.let {
         if (it.length  >= 6)
@@ -33,9 +34,13 @@ fun initializeHttp(context: Context) {
             preferences.getString("name", "")!!,
             preferences.getString("auth_pw", "")!!)
     }
+    return Result.success(Unit)
 }
 
-suspend fun getString(urlString: String): String {
+suspend fun getString(urlString: String) =
+    runCatching { tryGetString(urlString) }
+
+private suspend fun tryGetString(urlString: String): String {
 
     return withContext(Dispatchers.IO) {
         val url = URL(url + urlString)

@@ -1,10 +1,7 @@
 package de.uriegel.fireplayer.ui
 
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,11 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.preference.PreferenceManager
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import de.uriegel.fireplayer.R
 import de.uriegel.fireplayer.requests.accessDisk
-import de.uriegel.fireplayer.requests.basicAuthentication
 import de.uriegel.fireplayer.requests.initializeHttp
 import kotlinx.coroutines.launch
 
@@ -45,17 +40,19 @@ class MainActivity : ComponentActivity() {
                     DisposableEffect(lifecycleOwner) {
                         val observer = LifecycleEventObserver { _, event ->
                             if (event == Lifecycle.Event.ON_RESUME) {
-                                if (urlParts.isEmpty()) {
-                                    initializeHttp(this@MainActivity)
-                                    urlParts = arrayOf("/video")
-                                }
-                                if (urlParts.isEmpty())
-                                    showSettings()
                                 coroutineScope.launch {
-                                    accessDisk()
+                                    if (urlParts.isEmpty()) {
+                                        initializeHttp(this@MainActivity)
+                                        // TODO if false (url not set or to small) -> return
+                                        accessDisk()
+                                        // TODO if no connection screen with text check connection and one button "settings"
+                                        // TODO if connection and response error "settings"
+                                        //urlParts = empty
+                                        urlParts = arrayOf("/video")
+                                    }
+                                    if (urlParts.isEmpty())
+                                        showSettings()
                                 }
-                                // TODO if no connection screen with text check connection and one button "settings"
-                                // TODO if connection and response error "settings"
                             }
                         }
 
