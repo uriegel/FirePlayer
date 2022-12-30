@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
+import de.uriegel.activityextensions.setPasswordBehavior
 import de.uriegel.fireplayer.R
 
 class SettingsActivity : AppCompatActivity() {
@@ -30,8 +31,7 @@ class SettingsActivity : AppCompatActivity() {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
             val pwdPref = findPreference<EditTextPreference>("auth_pw")
-            // TODO in ActivityExtension
-            //setPasswordBehavior(context, pwdPref!!, "auth_pw")
+            setPasswordBehavior(context, pwdPref!!, "auth_pw")
         }
     }
 }
