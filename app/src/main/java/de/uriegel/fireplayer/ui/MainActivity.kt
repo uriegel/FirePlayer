@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,6 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import de.uriegel.fireplayer.R
+import de.uriegel.fireplayer.exceptions.HttpProtocolException
 import de.uriegel.fireplayer.exceptions.NotInitializedException
 import de.uriegel.fireplayer.extensions.bind
 import de.uriegel.fireplayer.requests.accessDisk
@@ -36,12 +38,14 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     var displayMenu by remember { mutableStateOf(false) }
+                    var displayError by remember { mutableStateOf(false) }
 
                     val coroutineScope = rememberCoroutineScope()
                     val lifecycleOwner = LocalLifecycleOwner.current
                     DisposableEffect(lifecycleOwner) {
                         val observer = LifecycleEventObserver { _, event ->
                             if (event == Lifecycle.Event.ON_RESUME) {
+                                displayError = false
                                 coroutineScope.launch {
                                     if (urlParts.isEmpty()) {
                                         initializeHttp(this@MainActivity)
@@ -52,16 +56,14 @@ class MainActivity : ComponentActivity() {
                                                 },
                                                 {
                                                     when (it) {
+                                                        // TODO not always refreshed
                                                         is NotInitializedException -> showSettings()
+                                                        is HttpProtocolException -> displayError = true
+                                                        // TODO if no connection screen with text check connection and one button "settings"
                                                     }
                                                     urlParts = arrayOf<String>()
                                                 }
                                             )
-                                        // TODO if false (url not set or to small) -> return
-
-                                        // TODO if no connection screen with text check connection and one button "settings"
-                                        // TODO if connection and response error "settings"
-                                        //urlParts = empty
                                     }
                                 }
                             }
@@ -72,6 +74,13 @@ class MainActivity : ComponentActivity() {
                         onDispose {
                             lifecycleOwner.lifecycle.removeObserver(observer)
                         }
+                    }
+                    @Composable
+                    fun showContent(padding: PaddingValues = PaddingValues()) {
+                        if (!displayError)
+                            MainScreen(padding)
+                        else
+                            Text("Nich gut")
                     }
 
                     if (!isTv)
@@ -95,11 +104,9 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             )
-                        }, content = {
-                            MainScreen(it)
-                        })
+                        }, content = { showContent(it) })
                     else
-                        MainScreen()
+                        showContent()
                 }
             }
         }
