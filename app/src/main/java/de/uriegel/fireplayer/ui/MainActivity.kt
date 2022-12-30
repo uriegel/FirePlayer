@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.preference.PreferenceManager
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import de.uriegel.fireplayer.R
 
@@ -59,6 +60,27 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if (urlParts.isEmpty()) {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+            preferences.getString("url", "")?.let {
+                if (it.length  >= 6) {
+                    urlParts = arrayOf("${it}/video")
+            }
+                //basicAuthentication(preferences.getString("name", "")!!, preferences.getString("auth_pw", "")!!)
+
+//                activityRequest.launch(Intent(this@MainActivity, SettingsActivity::class.java))
+//                url = preferences.getString("url", "")
+            }
+
+            //MainActivity.url = url!!
+        }
+        if (urlParts.isEmpty())
+            showSettings()
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_MENU)
             showSettings()
@@ -68,5 +90,7 @@ class MainActivity : ComponentActivity() {
     private fun showSettings() {
         startActivity(Intent(this, SettingsActivity::class.java))
     }
+
+    private var urlParts = arrayOf<String>()
 }
 
