@@ -79,6 +79,8 @@ class MainActivity : ComponentActivity() {
         }
         if (urlParts.isEmpty())
             showSettings()
+        // TODO if no connection screen with text check connection and one button "settings"
+        // TODO if connection and response error "settings"
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
