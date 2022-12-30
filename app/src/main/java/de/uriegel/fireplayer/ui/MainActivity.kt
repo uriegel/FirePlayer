@@ -61,7 +61,6 @@ class MainActivity : ComponentActivity() {
                                                         is HttpProtocolException -> displayError = true
                                                         // TODO if no connection screen with text check connection and one button "settings"
                                                     }
-                                                    urlParts = arrayOf<String>()
                                                 }
                                             )
                                     }
@@ -119,6 +118,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun showSettings() {
+        urlParts = arrayOf<String>()
         startActivity(Intent(this, SettingsActivity::class.java))
     }
 
