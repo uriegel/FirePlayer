@@ -17,6 +17,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import de.uriegel.fireplayer.R
+import de.uriegel.fireplayer.exceptions.NotInitializedException
+import de.uriegel.fireplayer.extensions.bind
 import de.uriegel.fireplayer.requests.accessDisk
 import de.uriegel.fireplayer.requests.initializeHttp
 import kotlinx.coroutines.launch
@@ -43,15 +45,24 @@ class MainActivity : ComponentActivity() {
                                 coroutineScope.launch {
                                     if (urlParts.isEmpty()) {
                                         initializeHttp(this@MainActivity)
+                                            .bind { accessDisk() }
+                                            .fold(
+                                                {
+                                                    urlParts = arrayOf("/video")
+                                                },
+                                                {
+                                                    when (it) {
+                                                        is NotInitializedException -> showSettings()
+                                                    }
+                                                    urlParts = arrayOf<String>()
+                                                }
+                                            )
                                         // TODO if false (url not set or to small) -> return
-                                        accessDisk()
+
                                         // TODO if no connection screen with text check connection and one button "settings"
                                         // TODO if connection and response error "settings"
                                         //urlParts = empty
-                                        urlParts = arrayOf("/video")
                                     }
-                                    if (urlParts.isEmpty())
-                                        showSettings()
                                 }
                             }
                         }

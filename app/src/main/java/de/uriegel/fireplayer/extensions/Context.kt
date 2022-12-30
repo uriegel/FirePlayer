@@ -1,4 +1,4 @@
-package de.uriegel.fireplayer.Extensions
+package de.uriegel.fireplayer.extensions
 
 import android.content.Context
 import android.text.InputType

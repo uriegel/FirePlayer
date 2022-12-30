@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
-import de.uriegel.fireplayer.Extensions.setPasswordBehavior
+import de.uriegel.fireplayer.extensions.setPasswordBehavior
 import de.uriegel.fireplayer.R
 
 class SettingsActivity : AppCompatActivity() {
