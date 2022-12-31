@@ -10,8 +10,12 @@
     <string name="auth_pw">Passwort</string>
     <string name="pw_summary">Passwort eingeben</string>
 
-    <string name="initializing">Fire Player wird initialisiert...</string>
+    <string name="initializing">Fire Player wird initialisiert…</string>
     <string name="general_error">Fehlerhafte Konfiguration</string>
     <string name="protocol_error">Der Dienst antwortete nicht korrekt</string>
+    <string name="connect_error">Keine Verbindung zum Server</string>
+    <string name="unknown_host_error">Der Servername ist unbekannt</string>
+    <string name="ssl_error">Fehler bei der Verschlüsselung zum Server</string>
+    <string name="extended">Mehr Infos</string>
 
 </resources>

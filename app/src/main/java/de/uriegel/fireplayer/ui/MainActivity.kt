@@ -25,6 +25,9 @@ import de.uriegel.fireplayer.extensions.bind
 import de.uriegel.fireplayer.requests.accessDisk
 import de.uriegel.fireplayer.requests.initializeHttp
 import kotlinx.coroutines.launch
+import java.net.ConnectException
+import java.net.UnknownHostException
+import javax.net.ssl.SSLException
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,9 +63,24 @@ class MainActivity : ComponentActivity() {
                                                 {
                                                     when (it) {
                                                         is NotInitializedException -> showSettings()
-                                                        is HttpProtocolException -> displayMode = DisplayMode.ProtocolError
+                                                        is UnknownHostException -> {
+                                                            stateText = it.localizedMessage ?: ""
+                                                            displayMode = DisplayMode.UnknownHostError
+                                                        }
+                                                        is ConnectException -> {
+                                                            stateText = it.localizedMessage ?: ""
+                                                            displayMode = DisplayMode.ConnectError
+                                                        }
+                                                        is SSLException -> {
+                                                            stateText = it.localizedMessage ?: ""
+                                                            displayMode = DisplayMode.SslError
+                                                        }
+                                                        is HttpProtocolException -> {
+                                                            stateText = "${it.code} ${it.localizedMessage}"
+                                                            displayMode = DisplayMode.ProtocolError
+                                                        }
                                                         else -> {
-                                                            stateText = "$it"
+                                                            stateText = it.localizedMessage ?: ""
                                                             displayMode = DisplayMode.GeneralError
                                                         }
                                                     }
@@ -85,6 +103,9 @@ class MainActivity : ComponentActivity() {
                             DisplayMode.Default -> StateDialog(R.string.initializing, padding = padding)
                             DisplayMode.Ok -> MainScreen(padding)
                             DisplayMode.GeneralError -> StateDialog(R.string.general_error, stateText, padding = padding)
+                            DisplayMode.ConnectError -> StateDialog(R.string.connect_error, stateText, padding = padding)
+                            DisplayMode.UnknownHostError -> StateDialog(R.string.unknown_host_error, stateText, padding = padding)
+                            DisplayMode.SslError -> StateDialog(R.string.ssl_error, stateText, padding = padding)
                             DisplayMode.ProtocolError -> StateDialog(R.string.protocol_error, stateText, padding = padding)
                         }
                     }
@@ -137,6 +158,8 @@ enum class DisplayMode {
     Default,
     Ok,
     GeneralError,
-    ProtocolError
-    // TODO No Connection
+    UnknownHostError,
+    ConnectError,
+    SslError,
+    ProtocolError,
 }

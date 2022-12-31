@@ -1,3 +1,4 @@
+// TODO Check if needed
 //package de.uriegel.fireplayer
 //
 //class Application: android.app.Application() {
