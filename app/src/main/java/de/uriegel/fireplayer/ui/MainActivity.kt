@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
@@ -38,27 +39,29 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     var displayMenu by remember { mutableStateOf(false) }
-                    var displayError by remember { mutableStateOf(false) }
+                    var displayMode by rememberSaveable { mutableStateOf(DisplayMode.Default) }
+                    resetDisplayMode = { displayMode = DisplayMode.Default }
 
                     val coroutineScope = rememberCoroutineScope()
                     val lifecycleOwner = LocalLifecycleOwner.current
                     DisposableEffect(lifecycleOwner) {
                         val observer = LifecycleEventObserver { _, event ->
                             if (event == Lifecycle.Event.ON_RESUME) {
-                                displayError = false
                                 coroutineScope.launch {
-                                    if (urlParts.isEmpty()) {
+                                    if (displayMode != DisplayMode.Ok) {
                                         initializeHttp(this@MainActivity)
                                             .bind { accessDisk() }
                                             .fold(
                                                 {
                                                     urlParts = arrayOf("/video")
+                                                    displayMode = DisplayMode.Ok
                                                 },
                                                 {
                                                     when (it) {
                                                         // TODO not always refreshed
                                                         is NotInitializedException -> showSettings()
-                                                        is HttpProtocolException -> displayError = true
+                                                        is HttpProtocolException -> displayMode = DisplayMode.Error
+                                                        else -> displayMode = DisplayMode.Error
                                                         // TODO if no connection screen with text check connection and one button "settings"
                                                     }
                                                 }
@@ -76,10 +79,11 @@ class MainActivity : ComponentActivity() {
                     }
                     @Composable
                     fun showContent(padding: PaddingValues = PaddingValues()) {
-                        if (!displayError)
-                            MainScreen(padding)
-                        else
-                            Text("Nich gut")
+                        when (displayMode) {
+                            DisplayMode.Default -> Text("Initialisieren...")
+                            DisplayMode.Ok -> MainScreen(padding)
+                            DisplayMode.Error -> Text("Nich gut")
+                        }
                     }
 
                     if (!isTv)
@@ -118,10 +122,16 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun showSettings() {
-        urlParts = arrayOf<String>()
+        resetDisplayMode()
         startActivity(Intent(this, SettingsActivity::class.java))
     }
 
     private var urlParts = arrayOf<String>()
+    private lateinit var resetDisplayMode: ()->Unit
 }
 
+enum class DisplayMode {
+    Default,
+    Ok,
+    Error
+}
