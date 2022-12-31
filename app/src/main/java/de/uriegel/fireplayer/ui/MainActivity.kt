@@ -40,6 +40,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     var displayMenu by remember { mutableStateOf(false) }
                     var displayMode by rememberSaveable { mutableStateOf(DisplayMode.Default) }
+                    var stateText by rememberSaveable { mutableStateOf("") }
                     resetDisplayMode = { displayMode = DisplayMode.Default }
 
                     val coroutineScope = rememberCoroutineScope()
@@ -58,11 +59,12 @@ class MainActivity : ComponentActivity() {
                                                 },
                                                 {
                                                     when (it) {
-                                                        // TODO not always refreshed
                                                         is NotInitializedException -> showSettings()
-                                                        is HttpProtocolException -> displayMode = DisplayMode.Error
-                                                        else -> displayMode = DisplayMode.Error
-                                                        // TODO if no connection screen with text check connection and one button "settings"
+                                                        is HttpProtocolException -> displayMode = DisplayMode.ProtocolError
+                                                        else -> {
+                                                            stateText = "$it"
+                                                            displayMode = DisplayMode.GeneralError
+                                                        }
                                                     }
                                                 }
                                             )
@@ -80,9 +82,10 @@ class MainActivity : ComponentActivity() {
                     @Composable
                     fun showContent(padding: PaddingValues = PaddingValues()) {
                         when (displayMode) {
-                            DisplayMode.Default -> Text("Initialisieren...")
+                            DisplayMode.Default -> StateDialog(R.string.initializing, padding = padding)
                             DisplayMode.Ok -> MainScreen(padding)
-                            DisplayMode.Error -> Text("Nich gut")
+                            DisplayMode.GeneralError -> StateDialog(R.string.general_error, stateText, padding = padding)
+                            DisplayMode.ProtocolError -> StateDialog(R.string.protocol_error, stateText, padding = padding)
                         }
                     }
 
@@ -133,5 +136,7 @@ class MainActivity : ComponentActivity() {
 enum class DisplayMode {
     Default,
     Ok,
-    Error
+    GeneralError,
+    ProtocolError
+    // TODO No Connection
 }
