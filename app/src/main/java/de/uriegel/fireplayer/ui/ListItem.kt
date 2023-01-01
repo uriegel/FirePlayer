@@ -1,6 +1,9 @@
 package de.uriegel.fireplayer.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,30 +16,44 @@ import androidx.compose.ui.unit.dp
 import de.uriegel.fireplayer.R
 import de.uriegel.fireplayer.extensions.getTitle
 import de.uriegel.fireplayer.extensions.isFolder
+import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
+import de.uriegel.fireplayer.ui.theme.card
 
 @Composable
 fun FolderItem(item: String) {
-    Box(modifier = Modifier
-        .paint(
-            painterResource(id = R.drawable.folder),
-            contentScale = ContentScale.Fit
-        )
-        .padding(12.dp)
-        .aspectRatio(1f),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(item)
+    Card(
+        shape = RoundedCornerShape(10.dp),
+        elevation=5.dp
+    ){
+        Box(
+            modifier = Modifier
+                .paint(
+                    painterResource(id = R.drawable.folder),
+                    contentScale = ContentScale.Fit
+                )
+                .padding(12.dp)
+                .aspectRatio(1f),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(item)
+        }
     }
 }
 
 @Composable
 fun Item(item: String) {
-    Box(modifier = Modifier
-        .aspectRatio(1f)
-        .padding(5.dp),
-        contentAlignment = Alignment.Center
+    Card(
+        shape = RoundedCornerShape(10.dp),
+        elevation=5.dp,
+        modifier = Modifier.aspectRatio(1.0f)
     ) {
-        Text(item)
+        Box(modifier = Modifier
+            .background(card)
+            .padding(5.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(item)
+        }
     }
 }
 
@@ -48,24 +65,27 @@ fun ListItem(item: String) {
         Item(item.getTitle())
 }
 
-@Preview(showSystemUi = false)
 @Composable
-fun ItemPreview() {
-    Box(modifier = Modifier
-        .width(100.dp)
-        .height(100.dp)
-    ) {
-        ListItem("Films")
+fun TestItem(item: String) {
+    FirePlayerTheme {
+        Box(
+            modifier = Modifier
+                .width(100.dp)
+                .height(100.dp)
+        ) {
+            ListItem(item)
+        }
     }
 }
 
 @Preview(showSystemUi = false)
 @Composable
 fun FolderItemPreview() {
-    Box(modifier = Modifier
-        .width(100.dp)
-        .height(100.dp)
-    ) {
-        ListItem("Film with a very long title.mp4")
-    }
+    TestItem("Films")
+}
+
+@Preview(showSystemUi = false)
+@Composable
+fun ItemPreview() {
+    TestItem("Film with a very long title.mp4")
 }

@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import de.uriegel.fireplayer.R
+import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 
 @Composable
 fun StateDialog(stringId: Int, error: String = "", padding: PaddingValues = PaddingValues()) {
@@ -54,14 +55,21 @@ fun StateDialog(stringId: Int, error: String = "", padding: PaddingValues = Padd
     }
 }
 
-@Preview(showSystemUi = false)
+@Preview(showSystemUi = true)
 @Composable
 fun StateDialogPreview() {
-    StateDialog(R.string.initializing)
+    FirePlayerTheme {
+        StateDialog(R.string.initializing)
+    }
 }
 
-@Preview(showSystemUi = false)
+@Preview(showSystemUi = true)
 @Composable
 fun StateDialogErrorPreview() {
-    StateDialog(R.string.general_error, "Das ist ein sehr langer Fehlertext, der hoffentlich mehrfach umgebrochen wird, daher ist er so extrem lang")
+    FirePlayerTheme {
+        StateDialog(
+            R.string.general_error,
+            "Das ist ein sehr langer Fehlertext, der hoffentlich mehrfach umgebrochen wird, daher ist er so extrem lang"
+        )
+    }
 }
