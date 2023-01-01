@@ -1,8 +1,6 @@
 package de.uriegel.fireplayer.ui
 
 import android.content.res.Configuration
-import android.view.KeyEvent.KEYCODE_DPAD_DOWN
-import android.view.KeyEvent.KEYCODE_DPAD_UP
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,108 +10,48 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.input.key.*
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toSize
+import de.uriegel.fireplayer.extensions.dpadNavigation
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
-import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(padding: PaddingValues = PaddingValues()) {
     val context = LocalContext.current
-    Box(
-        Modifier
-            .fillMaxSize()
-            .onGloballyPositioned {
-                val size = it.size.toSize()
-                val test = size
-            }
-
+    Box(Modifier
+        .fillMaxSize()
+        .padding(padding)
     ) {
-        val configuration = LocalConfiguration.current
-        val text =
-            when (configuration.orientation) {
-                Configuration.ORIENTATION_LANDSCAPE -> "Landscape"
-                else -> "Portrait"
-            }
-        val scrollState = rememberLazyGridState()
-        val coroutineScope = rememberCoroutineScope()
-        val focusManager = LocalFocusManager.current
-
-        val columns = when (configuration.orientation) {
+        val columns = when (LocalConfiguration.current.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> 6
             else -> 3
         }
+        val scrollState = rememberLazyGridState()
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(columns),
             state = scrollState,
             content = {
-                items(80) { index ->
-                    Card(modifier =
-                    Modifier
+                items(80) {
+                    Card(modifier = Modifier
+                        .dpadNavigation(columns, scrollState, it)
                         .padding(5.dp)
                         .aspectRatio(1.8f)
-                        .onKeyEvent {
-                            if (it.type == KeyEventType.KeyDown) {
-                                if (it.key.nativeKeyCode == KEYCODE_DPAD_DOWN) {
-                                    val itemIndex = index - scrollState.firstVisibleItemIndex
-                                    val lastInfo = scrollState.layoutInfo.visibleItemsInfo.last()
-                                    val info = scrollState.layoutInfo.visibleItemsInfo.get(itemIndex)
-                                    if (info.row == lastInfo.row) {
-                                        coroutineScope.launch {
-                                            scrollState.scrollToItem(
-                                                index + scrollState.firstVisibleItemIndex - (info.row - 1) * 6)
-                                            focusManager.moveFocus(FocusDirection.Down)
-                                        }
-                                        true
-                                    } else
-                                        false
-                                }
-                                else if (it.key.nativeKeyCode == KEYCODE_DPAD_UP) {
-                                    val itemIndex = index - scrollState.firstVisibleItemIndex
-                                    val firstInfo = scrollState.layoutInfo.visibleItemsInfo.get(0)
-                                    val info = scrollState.layoutInfo.visibleItemsInfo.get(itemIndex)
-                                    if (info.row == firstInfo.row && index >= 6) {
-                                        coroutineScope.launch {
-                                            scrollState.scrollToItem(index - 6)
-                                            focusManager.moveFocus(FocusDirection.Up)
-                                        }
-                                        true
-                                    } else
-                                        false
-                                }
-                                else
-                                    false
-                            }
-                            else
-                                false
-                        }
                         .clickable {
                             Toast
-                                .makeText(context, "Test $index", Toast.LENGTH_SHORT)
+                                .makeText(context, "Test $it", Toast.LENGTH_SHORT)
                                 .show()
                         }
                     ) {
-                        Text("$text $index")
+                        Text("Item $it")
                     }
                 }
             })
     }
 }
-
-//fun Modifier.dpadNavigation(
-//    scrollState: LazyGridState
-//) = composed {
-//
-//}
 
 @Preview(showSystemUi = true)
 @Composable
