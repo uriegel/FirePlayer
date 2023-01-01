@@ -17,5 +17,6 @@
     <string name="unknown_host_error">Der Servername ist unbekannt</string>
     <string name="ssl_error">Fehler bei der Verschlüsselung zum Server</string>
     <string name="extended">Mehr Infos</string>
+    <string name="connection_lost">Verbindung zum Server verloren</string>
 
 </resources>

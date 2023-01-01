@@ -14,9 +14,11 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import de.uriegel.fireplayer.LifetimeTimer
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import de.uriegel.fireplayer.R
 import de.uriegel.fireplayer.exceptions.HttpProtocolException
@@ -47,47 +49,54 @@ class MainActivity : ComponentActivity() {
                     resetDisplayMode = { displayMode = DisplayMode.Default }
 
                     val coroutineScope = rememberCoroutineScope()
+                    val context = LocalContext.current
                     val lifecycleOwner = LocalLifecycleOwner.current
                     DisposableEffect(lifecycleOwner) {
+                        val timer = LifetimeTimer(context, coroutineScope)
                         val observer = LifecycleEventObserver { _, event ->
-                            if (event == Lifecycle.Event.ON_RESUME) {
-                                coroutineScope.launch {
-                                    if (displayMode != DisplayMode.Ok) {
-                                        initializeHttp(this@MainActivity)
-                                            .bind { accessDisk() }
-                                            .fold(
-                                                {
-                                                    urlParts = arrayOf("/video")
-                                                    displayMode = DisplayMode.Ok
-                                                },
-                                                {
-                                                    when (it) {
-                                                        is NotInitializedException -> showSettings()
-                                                        is UnknownHostException -> {
-                                                            stateText = it.localizedMessage ?: ""
-                                                            displayMode = DisplayMode.UnknownHostError
-                                                        }
-                                                        is ConnectException -> {
-                                                            stateText = it.localizedMessage ?: ""
-                                                            displayMode = DisplayMode.ConnectError
-                                                        }
-                                                        is SSLException -> {
-                                                            stateText = it.localizedMessage ?: ""
-                                                            displayMode = DisplayMode.SslError
-                                                        }
-                                                        is HttpProtocolException -> {
-                                                            stateText = "${it.code} ${it.localizedMessage}"
-                                                            displayMode = DisplayMode.ProtocolError
-                                                        }
-                                                        else -> {
-                                                            stateText = it.localizedMessage ?: ""
-                                                            displayMode = DisplayMode.GeneralError
+                            when (event) {
+                                Lifecycle.Event.ON_RESUME -> {
+                                    coroutineScope.launch {
+                                        if (displayMode != DisplayMode.Ok) {
+                                            initializeHttp(this@MainActivity)
+                                                .bind { accessDisk() }
+                                                .fold(
+                                                    {
+                                                        urlParts = arrayOf("/video")
+                                                        displayMode = DisplayMode.Ok
+                                                    },
+                                                    {
+                                                        when (it) {
+                                                            is NotInitializedException -> showSettings()
+                                                            is UnknownHostException -> {
+                                                                stateText = it.localizedMessage ?: ""
+                                                                displayMode = DisplayMode.UnknownHostError
+                                                            }
+                                                            is ConnectException -> {
+                                                                stateText = it.localizedMessage ?: ""
+                                                                displayMode = DisplayMode.ConnectError
+                                                            }
+                                                            is SSLException -> {
+                                                                stateText = it.localizedMessage ?: ""
+                                                                displayMode = DisplayMode.SslError
+                                                            }
+                                                            is HttpProtocolException -> {
+                                                                stateText = "${it.code} ${it.localizedMessage}"
+                                                                displayMode = DisplayMode.ProtocolError
+                                                            }
+                                                            else -> {
+                                                                stateText = it.localizedMessage ?: ""
+                                                                displayMode = DisplayMode.GeneralError
+                                                            }
                                                         }
                                                     }
-                                                }
-                                            )
+                                                )
+                                        }
                                     }
                                 }
+                                Lifecycle.Event.ON_START -> timer.start()
+                                Lifecycle.Event.ON_STOP -> timer.cancel()
+                                else -> {}
                             }
                         }
 

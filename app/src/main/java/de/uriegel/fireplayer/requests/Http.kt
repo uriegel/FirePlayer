@@ -33,21 +33,6 @@ fun initializeHttp(context: Context) =
         .getSettings()
         .initializeHttp { url = it }
 
-private fun Settings.initializeHttp(setUrl: (String)->Unit) =
-    this.url
-            .let {
-                if (it.length >= 8 && it.startsWith("http", true))
-                    it
-                else
-                    null }
-            ?.let {
-                if (this.name.isNotEmpty() && this.pw.isNotEmpty())
-                    basicAuthentication(this.name, this.pw)
-                it }
-            .toResult { NotInitializedException() }
-            .sideEffect(setUrl)
-            .map { }
-
 suspend fun getString(urlString: String) =
     runCatching { tryGetString(urlString) }
 
@@ -79,6 +64,21 @@ private fun readStream(inString: InputStream): String {
     reader.close()
     return response.toString()
 }
+
+private fun Settings.initializeHttp(setUrl: (String)->Unit) =
+    this.url
+        .let {
+            if (it.length >= 8 && it.startsWith("http", true))
+                it
+            else
+                null }
+        ?.let {
+            if (this.name.isNotEmpty() && this.pw.isNotEmpty())
+                basicAuthentication(this.name, this.pw)
+            it }
+        .toResult { NotInitializedException() }
+        .sideEffect(setUrl)
+        .map { }
 
 private fun SharedPreferences.getSettings() =
     Settings(
