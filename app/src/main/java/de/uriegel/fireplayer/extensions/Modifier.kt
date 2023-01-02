@@ -18,7 +18,7 @@ fun Modifier.dpadNavigation(columns: Int, scrollState: LazyGridState, index: Int
             if (it.key.nativeKeyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
                 val lastInfo = scrollState.layoutInfo.visibleItemsInfo.last()
                 val info = scrollState.layoutInfo.visibleItemsInfo[index - scrollState.firstVisibleItemIndex]
-                if (info.row == lastInfo.row) {
+                if (info.row == lastInfo.row - 1) {
                     coroutineScope.launch {
                         scrollState.scrollToItem(
                             index + scrollState.firstVisibleItemIndex - (info.row - 1) * columns)
