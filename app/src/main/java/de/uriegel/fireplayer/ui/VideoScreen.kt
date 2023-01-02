@@ -1,14 +1,63 @@
 package de.uriegel.fireplayer.ui
 
-import androidx.compose.material.Text
+import android.view.View
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavHostController
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import de.uriegel.fireplayer.extensions.fromBase64
+import de.uriegel.fireplayer.extensions.hideSystemUi
+import de.uriegel.fireplayer.extensions.showSystemUi
+import de.uriegel.fireplayer.requests.getBaseUrl
 
 @Composable
-fun VideoScreen(navController: NavHostController, path64: String?) {
+fun VideoScreen(path64: String?) {
     val context = LocalContext.current
     val path = path64!!.fromBase64()
-    Text(text = path)
+
+    val exoPlayer = ExoPlayer.Builder(context)
+        .build()
+        .also {
+            val mediaItem = MediaItem
+                .Builder()
+                .setUri(getBaseUrl() + path)
+                .build()
+            it.setMediaItem(mediaItem)
+            it.prepare()
+        }
+
+    val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
+
+    DisposableEffect(
+        AndroidView(factory = {
+            StyledPlayerView(context).apply {
+                player = exoPlayer
+                setControllerVisibilityListener(StyledPlayerView.ControllerVisibilityListener {
+                    if (it == View.VISIBLE)
+                        context.showSystemUi()
+                    else
+                        context.hideSystemUi()
+                })
+            }
+        })
+    ) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
+                Lifecycle.Event.ON_RESUME -> exoPlayer.play()
+                else -> {}
+            }
+        }
+        val lifecycle = lifecycleOwner.value.lifecycle
+        lifecycle.addObserver(observer)
+
+        onDispose { exoPlayer.release() }
+    }
 }

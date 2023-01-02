@@ -25,7 +25,7 @@ fun MainScreen() {
 
         composable(NavRoutes.Video.route + "/{path}") {
             val path = it.arguments?.getString("path")
-            VideoScreen(navController = navController, path)
+            VideoScreen(path)
         }
     }
 }

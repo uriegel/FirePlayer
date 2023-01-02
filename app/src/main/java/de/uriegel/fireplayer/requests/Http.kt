@@ -33,6 +33,8 @@ fun initializeHttp(context: Context) =
         .getSettings()
         .initializeHttp { url = it }
 
+fun getBaseUrl() = url
+
 suspend fun getString(urlString: String) =
     runCatching { tryGetString(urlString) }
 
