@@ -47,6 +47,7 @@ class MainActivity : ComponentActivity() {
                     var displayMode by rememberSaveable { mutableStateOf(DisplayMode.Default) }
                     var stateText by rememberSaveable { mutableStateOf("") }
                     resetDisplayMode = { displayMode = DisplayMode.Default }
+                    val itemsList: MutableState<List<String>> = remember { mutableStateOf(listOf())}
 
                     val coroutineScope = rememberCoroutineScope()
                     val context = LocalContext.current
@@ -110,7 +111,7 @@ class MainActivity : ComponentActivity() {
                     fun showContent(padding: PaddingValues = PaddingValues()) {
                         when (displayMode) {
                             DisplayMode.Default -> StateDialog(R.string.initializing, padding = padding)
-                            DisplayMode.Ok -> MainScreen(padding)
+                            DisplayMode.Ok -> ItemsScreen(itemsList, padding)
                             DisplayMode.GeneralError -> StateDialog(R.string.general_error, stateText, padding = padding)
                             DisplayMode.ConnectError -> StateDialog(R.string.connect_error, stateText, padding = padding)
                             DisplayMode.UnknownHostError -> StateDialog(R.string.unknown_host_error, stateText, padding = padding)

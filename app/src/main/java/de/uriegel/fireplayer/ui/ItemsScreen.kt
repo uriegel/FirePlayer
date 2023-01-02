@@ -4,10 +4,8 @@ import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -16,7 +14,7 @@ import de.uriegel.fireplayer.extensions.dpadNavigation
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 
 @Composable
-fun MainScreen(padding: PaddingValues = PaddingValues()) {
+fun ItemsScreen(itemsList: MutableState<List<String>>, padding: PaddingValues = PaddingValues()) {
     val context = LocalContext.current
     Box(Modifier
         .fillMaxSize()
@@ -27,19 +25,17 @@ fun MainScreen(padding: PaddingValues = PaddingValues()) {
             else -> 3
         }
         val scrollState = rememberLazyGridState()
-
         LazyVerticalGrid(
             columns = GridCells.Fixed(columns),
             state = scrollState,
             content = {
-                items(80) {
-                    val text = if (it < 10) "$it" else "$it.mp4"
-                    ListItem(text, modifier =
+                itemsIndexed(items = itemsList.value) { index, item ->
+                    ListItem(item, modifier =
                         Modifier
-                            .dpadNavigation(columns, scrollState, it)
+                            .dpadNavigation(columns, scrollState, index)
                             .clickable {
                                 Toast
-                                    .makeText(context, "Test $it", Toast.LENGTH_SHORT)
+                                    .makeText(context, "Test $index", Toast.LENGTH_SHORT)
                                     .show()
                             }
                     )
@@ -51,7 +47,11 @@ fun MainScreen(padding: PaddingValues = PaddingValues()) {
 @Preview(showSystemUi = true)
 @Composable
 fun MainScreenPreview() {
+    val itemsList: MutableState<List<String>> = remember { mutableStateOf(listOf(
+        "Horror movies", "Action movies", "New Cinema", "Blaxploitation", "Apocalypse now.mp4",
+        "Taxi Driver.mp4", "The Godfather.mp4", "One flew over the cuckoos nest.mp4"
+    ))}
     FirePlayerTheme {
-        MainScreen()
+        ItemsScreen(itemsList)
     }
 }

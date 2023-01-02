@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.uriegel.fireplayer.R
+import de.uriegel.fireplayer.extensions.getTitle
 import de.uriegel.fireplayer.extensions.isFolder
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import de.uriegel.fireplayer.ui.theme.card
@@ -45,7 +46,7 @@ fun ListItem(item: String, modifier: Modifier = Modifier) {
             modifier = boxModifier.background(card),
             contentAlignment = Alignment.Center
         ) {
-            Text(item)
+            Text(if (isFolder) item else item.getTitle())
         }
     }
 }
@@ -72,5 +73,5 @@ fun FolderItemPreview() {
 @Preview(showSystemUi = false)
 @Composable
 fun ItemPreview() {
-    TestItem("Film with a very long title.mp4")
+    TestItem("Film with long title.mp4")
 }
