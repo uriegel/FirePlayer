@@ -47,6 +47,7 @@ class MainActivity : ComponentActivity() {
                     var displayMenu by remember { mutableStateOf(false) }
                     var displayMode by rememberSaveable { mutableStateOf(DisplayMode.Default) }
                     var stateText by rememberSaveable { mutableStateOf("") }
+                    val urlParts = rememberSaveable { mutableStateOf(arrayOf<String>()) }
                     resetDisplayMode = { displayMode = DisplayMode.Default }
                     val itemsList: MutableState<List<String>> = rememberSaveable { mutableStateOf(listOf())}
 
@@ -65,7 +66,7 @@ class MainActivity : ComponentActivity() {
                                                 .bind { getFilmList(arrayOf("/video")) }
                                                 .fold(
                                                     {
-                                                        urlParts = arrayOf("/video")
+                                                        urlParts.value = arrayOf("/video")
                                                         displayMode = DisplayMode.Ok
                                                         itemsList.value = it
                                                     },
@@ -114,7 +115,7 @@ class MainActivity : ComponentActivity() {
                     fun showContent(padding: PaddingValues = PaddingValues()) {
                         when (displayMode) {
                             DisplayMode.Default -> StateDialog(R.string.initializing, padding = padding)
-                            DisplayMode.Ok -> ItemsScreen(itemsList, padding)
+                            DisplayMode.Ok -> ItemsScreen(urlParts, itemsList, padding)
                             DisplayMode.GeneralError -> StateDialog(R.string.general_error, stateText, padding = padding)
                             DisplayMode.ConnectError -> StateDialog(R.string.connect_error, stateText, padding = padding)
                             DisplayMode.UnknownHostError -> StateDialog(R.string.unknown_host_error, stateText, padding = padding)
@@ -163,7 +164,6 @@ class MainActivity : ComponentActivity() {
         startActivity(Intent(this, SettingsActivity::class.java))
     }
 
-    private var urlParts = arrayOf<String>()
     private lateinit var resetDisplayMode: ()->Unit
 }
 
