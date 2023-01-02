@@ -64,11 +64,10 @@ fun ItemsScreen(navController: NavHostController, path64: String?) {
                         Modifier
                             .dpadNavigation(columns, scrollState, index)
                             .clickable {
-                                if (item.isFilm()) {}
-                                else
-                                    navController.navigate(NavRoutes.ListItems.route + "/" + "$path/$item".toBase64()) {
-                                        popUpTo(NavRoutes.ListItems.route  + "/" + path.toBase64())
-                                    }
+                                val route = if (item.isFilm()) NavRoutes.Video.route else NavRoutes.ListItems.route
+                                navController.navigate(route  + "/" + "$path/$item".toBase64()) {
+                                    popUpTo(NavRoutes.ListItems.route  + "/" + path.toBase64())
+                                }
                             }
                     )
                 }
