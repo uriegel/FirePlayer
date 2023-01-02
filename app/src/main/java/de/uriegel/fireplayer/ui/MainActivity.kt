@@ -25,6 +25,7 @@ import de.uriegel.fireplayer.exceptions.HttpProtocolException
 import de.uriegel.fireplayer.exceptions.NotInitializedException
 import de.uriegel.fireplayer.extensions.bind
 import de.uriegel.fireplayer.requests.accessDisk
+import de.uriegel.fireplayer.requests.getFilmList
 import de.uriegel.fireplayer.requests.initializeHttp
 import kotlinx.coroutines.launch
 import java.net.ConnectException
@@ -47,7 +48,7 @@ class MainActivity : ComponentActivity() {
                     var displayMode by rememberSaveable { mutableStateOf(DisplayMode.Default) }
                     var stateText by rememberSaveable { mutableStateOf("") }
                     resetDisplayMode = { displayMode = DisplayMode.Default }
-                    val itemsList: MutableState<List<String>> = remember { mutableStateOf(listOf())}
+                    val itemsList: MutableState<List<String>> = rememberSaveable { mutableStateOf(listOf())}
 
                     val coroutineScope = rememberCoroutineScope()
                     val context = LocalContext.current
@@ -61,10 +62,12 @@ class MainActivity : ComponentActivity() {
                                         if (displayMode != DisplayMode.Ok) {
                                             initializeHttp(this@MainActivity)
                                                 .bind { accessDisk() }
+                                                .bind { getFilmList(arrayOf("/video")) }
                                                 .fold(
                                                     {
                                                         urlParts = arrayOf("/video")
                                                         displayMode = DisplayMode.Ok
+                                                        itemsList.value = it
                                                     },
                                                     {
                                                         when (it) {
