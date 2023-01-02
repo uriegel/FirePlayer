@@ -6,31 +6,55 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import de.uriegel.fireplayer.extensions.dpadNavigation
-import de.uriegel.fireplayer.extensions.isFilm
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavHostController
+import de.uriegel.fireplayer.extensions.*
 import de.uriegel.fireplayer.requests.getFilmList
-import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import kotlinx.coroutines.launch
-import java.net.URLEncoder
 
 @Composable
-fun ItemsScreen(urlParts: MutableState<Array<String>>, itemsList: MutableState<List<String>>,
-                padding: PaddingValues = PaddingValues()) {
+fun ItemsScreen(navController: NavHostController, path64: String?) {
     val context = LocalContext.current
-    Box(Modifier
-        .fillMaxSize()
-        .padding(padding)
-    ) {
+    val path = path64!!.fromBase64()
+    Box(Modifier.fillMaxSize()) {
         val columns = when (LocalConfiguration.current.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> 6
             else -> 3
         }
+        val itemsList: MutableState<List<String>> = rememberSaveable { mutableStateOf(listOf())}
         val scrollState = rememberLazyGridState()
         val coroutineScope = rememberCoroutineScope()
+
+        val lifecycleOwner = LocalLifecycleOwner.current
+        DisposableEffect(lifecycleOwner) {
+            val observer = LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_START -> {
+                        coroutineScope.launch {
+                            getFilmList(path).fold({
+                                itemsList.value = it
+                            }, {
+                                Toast
+                                    .makeText(context, it.localizedMessage, Toast.LENGTH_LONG)
+                                    .show()
+                            }
+                        )}
+                    } else -> {}
+                }
+            }
+            lifecycleOwner.lifecycle.addObserver(observer)
+
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+            }
+        }
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(columns),
             state = scrollState,
@@ -41,18 +65,10 @@ fun ItemsScreen(urlParts: MutableState<Array<String>>, itemsList: MutableState<L
                             .dpadNavigation(columns, scrollState, index)
                             .clickable {
                                 if (item.isFilm()) {}
-                                else {
-                                    urlParts.value += URLEncoder.encode(item, "utf-8")
-                                    coroutineScope.launch {
-                                        getFilmList(urlParts.value).fold({
-                                            itemsList.value = it
-                                        }, {
-                                            Toast
-                                                .makeText(context, it.localizedMessage, Toast.LENGTH_LONG)
-                                                .show()
-                                        })
+                                else
+                                    navController.navigate(NavRoutes.ListItems.route + "/" + "$path/$item".toBase64()) {
+                                        popUpTo(NavRoutes.ListItems.route  + "/" + path.toBase64())
                                     }
-                                }
                             }
                     )
                 }
@@ -60,15 +76,3 @@ fun ItemsScreen(urlParts: MutableState<Array<String>>, itemsList: MutableState<L
     }
 }
 
-@Preview(showSystemUi = true)
-@Composable
-fun MainScreenPreview() {
-    val itemsList: MutableState<List<String>> = remember { mutableStateOf(listOf(
-        "Horror movies", "Action movies", "New Cinema", "Blaxploitation", "Apocalypse now.mp4",
-        "Taxi Driver.mp4", "The Godfather.mp4", "One flew over the cuckoos nest.mp4"
-    ))}
-    val urlParts: MutableState<Array<String>> = remember { mutableStateOf(arrayOf()) }
-    FirePlayerTheme {
-        ItemsScreen(urlParts, itemsList)
-    }
-}

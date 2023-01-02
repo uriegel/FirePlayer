@@ -25,7 +25,6 @@ import de.uriegel.fireplayer.exceptions.HttpProtocolException
 import de.uriegel.fireplayer.exceptions.NotInitializedException
 import de.uriegel.fireplayer.extensions.bind
 import de.uriegel.fireplayer.requests.accessDisk
-import de.uriegel.fireplayer.requests.getFilmList
 import de.uriegel.fireplayer.requests.initializeHttp
 import kotlinx.coroutines.launch
 import java.net.ConnectException
@@ -47,9 +46,7 @@ class MainActivity : ComponentActivity() {
                     var displayMenu by remember { mutableStateOf(false) }
                     var displayMode by rememberSaveable { mutableStateOf(DisplayMode.Default) }
                     var stateText by rememberSaveable { mutableStateOf("") }
-                    val urlParts = rememberSaveable { mutableStateOf(arrayOf<String>()) }
                     resetDisplayMode = { displayMode = DisplayMode.Default }
-                    val itemsList: MutableState<List<String>> = rememberSaveable { mutableStateOf(listOf())}
 
                     val coroutineScope = rememberCoroutineScope()
                     val context = LocalContext.current
@@ -63,12 +60,9 @@ class MainActivity : ComponentActivity() {
                                         if (displayMode != DisplayMode.Ok) {
                                             initializeHttp(this@MainActivity)
                                                 .bind { accessDisk() }
-                                                .bind { getFilmList(arrayOf("/video")) }
                                                 .fold(
                                                     {
-                                                        urlParts.value = arrayOf("/video")
                                                         displayMode = DisplayMode.Ok
-                                                        itemsList.value = it
                                                     },
                                                     {
                                                         when (it) {
@@ -115,7 +109,7 @@ class MainActivity : ComponentActivity() {
                     fun showContent(padding: PaddingValues = PaddingValues()) {
                         when (displayMode) {
                             DisplayMode.Default -> StateDialog(R.string.initializing, padding = padding)
-                            DisplayMode.Ok -> ItemsScreen(urlParts, itemsList, padding)
+                            DisplayMode.Ok -> MainScreen()
                             DisplayMode.GeneralError -> StateDialog(R.string.general_error, stateText, padding = padding)
                             DisplayMode.ConnectError -> StateDialog(R.string.connect_error, stateText, padding = padding)
                             DisplayMode.UnknownHostError -> StateDialog(R.string.unknown_host_error, stateText, padding = padding)

@@ -7,7 +7,7 @@ import kotlinx.serialization.json.*
 @Serializable
 data class Files(val files: List<String>)
 
-suspend fun getFilmList(urlParts: Array<String>): Result<List<String>> {
+suspend fun getFilmList(url: String): Result<List<String>> {
     val folderComparator = compareBy<String>{ it.isFilm() }
     val fileTypeThenStringComparator = folderComparator.thenBy { it }
 
@@ -19,8 +19,7 @@ suspend fun getFilmList(urlParts: Array<String>): Result<List<String>> {
             .toList()
 
     return getString(
-        urlParts
-            .joinToString(separator = "/")
+        url
             .replace("+", "%20"))
         .map { getFilmList(it) }
 }
