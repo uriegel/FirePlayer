@@ -1,13 +1,14 @@
 package de.uriegel.fireplayer.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import de.uriegel.fireplayer.extensions.toBase64
 
 @Composable
-fun MainScreen() {
+fun MainScreen(fullscreenMode: MutableState<Boolean>) {
     val navController = rememberNavController()
 
     NavHost(
@@ -25,7 +26,7 @@ fun MainScreen() {
 
         composable(NavRoutes.Video.route + "/{path}") {
             val path = it.arguments?.getString("path")
-            VideoScreen(path)
+            VideoScreen(fullscreenMode, path)
         }
     }
 }

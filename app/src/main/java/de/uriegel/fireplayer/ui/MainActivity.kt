@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
@@ -45,6 +48,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     var displayMenu by remember { mutableStateOf(false) }
                     var displayMode by rememberSaveable { mutableStateOf(DisplayMode.Default) }
+                    val fullscreenMode = rememberSaveable { mutableStateOf(false) }
                     var stateText by rememberSaveable { mutableStateOf("") }
                     resetDisplayMode = { displayMode = DisplayMode.Default }
 
@@ -106,10 +110,10 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     @Composable
-                    fun showContent(padding: PaddingValues = PaddingValues()) {
+                    fun showContent(fullscreenMode: MutableState<Boolean>, padding: PaddingValues = PaddingValues()) {
                         when (displayMode) {
                             DisplayMode.Default -> StateDialog(R.string.initializing, padding = padding)
-                            DisplayMode.Ok -> MainScreen()
+                            DisplayMode.Ok -> MainScreen(fullscreenMode)
                             DisplayMode.GeneralError -> StateDialog(R.string.general_error, stateText, padding = padding)
                             DisplayMode.ConnectError -> StateDialog(R.string.connect_error, stateText, padding = padding)
                             DisplayMode.UnknownHostError -> StateDialog(R.string.unknown_host_error, stateText, padding = padding)
@@ -118,30 +122,44 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    if (!isTv)
-                        Scaffold(topBar = {
-                            TopAppBar(
-                                title = { Text(getString(R.string.app_title) )},
-                                actions = {
-                                    IconButton(onClick = { displayMenu = !displayMenu }) {
-                                        Icon(Icons.Default.MoreVert, getString(R.string.menu_settings))
-                                    }
-                                    DropdownMenu(
-                                        expanded = displayMenu,
-                                        onDismissRequest = { displayMenu = false }
-                                    ) {
-                                        DropdownMenuItem(onClick = {
-                                            showSettings()
-                                            displayMenu = false
-                                        }) {
-                                            Text(text = getString(R.string.menu_settings))
+                    @Composable
+                    fun createTopBar() =
+                        AnimatedVisibility(
+                            visible = !fullscreenMode.value,
+                            enter = slideInVertically(initialOffsetY = { -it }),
+                            exit = slideOutVertically(targetOffsetY = { -it }),
+                            content = {
+                                TopAppBar(
+                                    title = { Text(getString(R.string.app_title)) },
+                                    actions = {
+                                        IconButton(onClick = { displayMenu = !displayMenu }) {
+                                            Icon(
+                                                Icons.Default.MoreVert,
+                                                getString(R.string.menu_settings)
+                                            )
+                                        }
+                                        DropdownMenu(
+                                            expanded = displayMenu,
+                                            onDismissRequest = { displayMenu = false }
+                                        ) {
+                                            DropdownMenuItem(onClick = {
+                                                showSettings()
+                                                displayMenu = false
+                                            }) {
+                                                Text(text = getString(R.string.menu_settings))
+                                            }
                                         }
                                     }
-                                }
-                            )
-                        }, content = { showContent(it) })
+                                )
+                            }
+                        )
+
+                    if (!isTv)
+                        Scaffold(
+                            topBar = { createTopBar() },
+                            content = { showContent(fullscreenMode, it) })
                     else
-                        showContent()
+                        showContent(fullscreenMode)
                 }
             }
         }

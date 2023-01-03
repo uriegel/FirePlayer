@@ -3,6 +3,7 @@ package de.uriegel.fireplayer.ui
 import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -18,7 +19,7 @@ import de.uriegel.fireplayer.extensions.showSystemUi
 import de.uriegel.fireplayer.requests.getBaseUrl
 
 @Composable
-fun VideoScreen(path64: String?) {
+fun VideoScreen(fullscreenMode: MutableState<Boolean>, path64: String?) {
     val context = LocalContext.current
     val path = path64!!.fromBase64()
 
@@ -50,8 +51,14 @@ fun VideoScreen(path64: String?) {
     ) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_PAUSE -> exoPlayer.pause()
-                Lifecycle.Event.ON_RESUME -> exoPlayer.play()
+                Lifecycle.Event.ON_RESUME -> {
+                    fullscreenMode.value = true
+                    exoPlayer.play()
+                }
+                Lifecycle.Event.ON_PAUSE -> {
+                    fullscreenMode.value = false
+                    exoPlayer.pause()
+                }
                 else -> {}
             }
         }
