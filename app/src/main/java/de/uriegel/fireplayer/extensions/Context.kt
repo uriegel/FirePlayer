@@ -41,6 +41,18 @@ fun Context.findActivity(): Activity? =
         else              -> null
 }
 
+fun Context.addWindowFlags(flags: Int) {
+    val activity = this.findActivity() ?: return
+    val window = activity.window ?: return
+    window.addFlags(flags)
+}
+
+fun Context.clearWindowFlags(flags: Int) {
+    val activity = this.findActivity() ?: return
+    val window = activity.window ?: return
+    window.clearFlags(flags)
+}
+
 fun Context.hideSystemUi() {
     val activity = this.findActivity() ?: return
     val window = activity.window ?: return
