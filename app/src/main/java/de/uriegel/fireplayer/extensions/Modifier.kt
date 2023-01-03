@@ -1,14 +1,37 @@
 package de.uriegel.fireplayer.extensions
 
+import android.content.Context
 import android.view.KeyEvent
 import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import de.uriegel.fireplayer.ComponentExActivity
 import kotlinx.coroutines.launch
+
+fun Modifier.onKeyDown(context: Context, onKeyDown: (keyCode: Int, event: KeyEvent?)->Boolean) = composed {
+    val recentKeyEvent: MutableState<((Int, KeyEvent?)->Boolean)?> = remember { mutableStateOf(null) }
+    val activity: MutableState<ComponentExActivity?> = remember { mutableStateOf(null) }
+    val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
+    DisposableEffect(lifecycleOwner) {
+        context
+            .findActivityEx()
+            ?.also {
+                activity.value = it
+                recentKeyEvent.value = it.keyEvent
+                it.keyEvent = onKeyDown
+            }
+        onDispose {
+            if (recentKeyEvent.value != null && activity.value != null)
+                activity.value!!.keyEvent = recentKeyEvent.value!!
+        }
+    }
+    this
+}
 
 fun Modifier.dpadNavigation(columns: Int, scrollState: LazyGridState, index: Int) = composed {
     val coroutineScope = rememberCoroutineScope()

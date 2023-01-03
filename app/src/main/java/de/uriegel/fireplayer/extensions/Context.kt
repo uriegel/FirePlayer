@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
+import de.uriegel.fireplayer.ComponentExActivity
 
 fun Context.setPasswordBehavior(preference: EditTextPreference, key: String) {
 
@@ -40,6 +41,13 @@ fun Context.findActivity(): Activity? =
         is ContextWrapper -> baseContext.findActivity()
         else              -> null
 }
+
+fun Context.findActivityEx(): ComponentExActivity? =
+    when (this) {
+        is ComponentExActivity  -> this
+        is ContextWrapper       -> baseContext.findActivityEx()
+        else                    -> null
+    }
 
 fun Context.addWindowFlags(flags: Int) {
     val activity = this.findActivity() ?: return

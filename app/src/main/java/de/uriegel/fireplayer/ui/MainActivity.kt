@@ -3,7 +3,6 @@ package de.uriegel.fireplayer.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -21,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import de.uriegel.fireplayer.ComponentExActivity
 import de.uriegel.fireplayer.LifetimeTimer
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import de.uriegel.fireplayer.R
@@ -34,7 +34,7 @@ import java.net.ConnectException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLException
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentExActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val isTv =  android.os.Build.MODEL.contains("AFT")
@@ -165,6 +165,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // TODO Modifier onKeyEvent
+    // TODO showSettings without startActivity
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_MENU)
             showSettings()

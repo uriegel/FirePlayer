@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
@@ -21,21 +20,26 @@ import de.uriegel.fireplayer.requests.getBaseUrl
 
 // TODO rotate keep video state
 // TODO Room
-// TODO KeyDown controls visibility
 
 @Composable
 fun VideoScreen(fullscreenMode: MutableState<Boolean>, path64: String?) {
+    val context = LocalContext.current
+    val playerView: MutableState<StyledPlayerView?> = remember  { mutableStateOf(null) }
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
+            .onKeyDown(context) { _, _ ->
+                playerView.value?.showController()
+                false
+            }
     ) {
-        VideoPlayer(fullscreenMode, path64)
+        VideoPlayer(fullscreenMode, path64, playerView)
     }
 }
 
 @Composable
-fun VideoPlayer(fullscreenMode: MutableState<Boolean>, path64: String?) {
+fun VideoPlayer(fullscreenMode: MutableState<Boolean>, path64: String?, playerView: MutableState<StyledPlayerView?>) {
     val context = LocalContext.current
     val path = path64!!.fromBase64()
 
@@ -57,6 +61,7 @@ fun VideoPlayer(fullscreenMode: MutableState<Boolean>, path64: String?) {
 
             StyledPlayerView(context).apply {
                 player = exoPlayer.value
+                playerView.value = this
                 this.setOnKeyListener { _, _, _ ->
                    showController()
                    false
