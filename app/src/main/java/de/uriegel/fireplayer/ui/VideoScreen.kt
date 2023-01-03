@@ -1,5 +1,6 @@
 package de.uriegel.fireplayer.ui
 
+import android.app.Application
 import android.view.View
 import android.view.WindowManager
 import androidx.compose.foundation.layout.Box
@@ -12,37 +13,48 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import de.uriegel.fireplayer.extensions.*
 import de.uriegel.fireplayer.requests.getBaseUrl
-
-// TODO rotate keep video state
-// TODO Room
+import de.uriegel.fireplayer.room.FilmInfo
+import de.uriegel.fireplayer.viewmodel.VideoViewModel
+import de.uriegel.fireplayer.viewmodel.VideoViewModelFactory
+import kotlinx.coroutines.launch
+import java.util.Calendar
 
 @Composable
 fun VideoScreen(fullscreenMode: MutableState<Boolean>, path64: String?) {
     val context = LocalContext.current
     val playerView: MutableState<StyledPlayerView?> = remember  { mutableStateOf(null) }
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .onKeyDown(context) { _, _ ->
-                playerView.value?.showController()
-                false
-            }
-    ) {
-        VideoPlayer(fullscreenMode, path64, playerView)
+    val owner = LocalViewModelStoreOwner.current
+    owner?.let {
+        val viewModel: VideoViewModel = viewModel(it, "VideoViewModel", VideoViewModelFactory(
+            LocalContext.current.applicationContext as Application
+        ))
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .onKeyDown(context) { _, _ ->
+                    playerView.value?.showController()
+                    false
+                }
+        ) {
+            VideoPlayer(viewModel, fullscreenMode, path64, playerView)
+        }
     }
 }
 
 @Composable
-fun VideoPlayer(fullscreenMode: MutableState<Boolean>, path64: String?, playerView: MutableState<StyledPlayerView?>) {
+fun VideoPlayer(viewModel: VideoViewModel, fullscreenMode: MutableState<Boolean>, path64: String?, playerView: MutableState<StyledPlayerView?>) {
     val context = LocalContext.current
     val path = path64!!.fromBase64()
 
+    val coroutineScope = rememberCoroutineScope()
     val exoPlayer: MutableState<ExoPlayer?> = remember  { mutableStateOf(null) }
     val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
 
@@ -65,6 +77,15 @@ fun VideoPlayer(fullscreenMode: MutableState<Boolean>, path64: String?, playerVi
                 this.setOnKeyListener { _, _, _ ->
                    showController()
                    false
+                }
+
+                coroutineScope.launch {
+                    viewModel
+                        .findAsync(path)
+                        .await()
+                        .elementAtOrNull(0)?.let {
+                            player?.seekTo(it.position)
+                        }
                 }
 
                 setControllerVisibilityListener(StyledPlayerView.ControllerVisibilityListener {
@@ -95,6 +116,13 @@ fun VideoPlayer(fullscreenMode: MutableState<Boolean>, path64: String?, playerVi
         lifecycle.addObserver(observer)
 
         onDispose {
+            exoPlayer.value?.run {
+                viewModel.insert(FilmInfo(
+                    this.currentPosition,
+                    Calendar.getInstance().time,
+                    path
+                ))
+            }
             exoPlayer.value?.release()
             exoPlayer.value = null
         }

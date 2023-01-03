@@ -11,8 +11,4 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
-    <color name="colorVideoBackground">#000</color>
-    <color name="cardview_normal">#0000</color>
-    <color name="cardview_focused">#400</color>
-    <color name="cardview_selected">#700</color>
 </resources>

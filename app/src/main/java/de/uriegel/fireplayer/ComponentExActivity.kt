@@ -10,5 +10,5 @@ open class ComponentExActivity : ComponentActivity() {
         else
             true
 
-    var keyEvent = { keyCode: Int, event: KeyEvent? -> false }
+    var keyEvent = { _: Int, _: KeyEvent? -> false }
 }
