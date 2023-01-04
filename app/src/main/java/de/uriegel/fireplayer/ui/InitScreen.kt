@@ -6,10 +6,7 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import de.uriegel.fireplayer.R
@@ -30,46 +27,30 @@ import javax.net.ssl.SSLException
 fun InitScreen(navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
 
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> {
-                    coroutineScope.launch {
-                        initializeHttp(context)
-                            .bind { accessDisk() }
-                            .fold({ navController.navigate(NavRoutes.Dialog.route + "/${R.string.app_title}"){
-                                popUpTo(NavRoutes.Init.route)
-                            } }, {
-                                // TODO StateDialog: navigate to closeDialog
-
-                                when (it) {
-                                    is NotInitializedException ->
-                                        navController.navigate(NavRoutes.ShowSettings.route)
-                                    is UnknownHostException ->
-                                        showError(navController, R.string.unknown_host_error, it.localizedMessage)
-                                    is ConnectException ->
-                                        showError(navController, R.string.connect_error, it.localizedMessage)
-                                    is SSLException ->
-                                        showError(navController, R.string.ssl_error, it.localizedMessage)
-                                    is HttpProtocolException ->
-                                        showError(navController, R.string.protocol_error, it.localizedMessage)
-                                    is CancellationException -> {}
-                                    else ->
-                                        showError(navController, R.string.general_error, it.localizedMessage)
-                                }
-                            })
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            initializeHttp(context)
+                .bind { accessDisk() }
+                .fold({ navController.navigate(NavRoutes.Dialog.route + "/${R.string.app_title}"){
+                    popUpTo(NavRoutes.Init.route)
+                } }, {
+                    when (it) {
+                        is NotInitializedException ->
+                            navController.navigate(NavRoutes.ShowSettings.route)
+                        is UnknownHostException ->
+                            showError(navController, R.string.unknown_host_error, it.localizedMessage)
+                        is ConnectException ->
+                            showError(navController, R.string.connect_error, it.localizedMessage)
+                        is SSLException ->
+                            showError(navController, R.string.ssl_error, it.localizedMessage)
+                        is HttpProtocolException ->
+                            showError(navController, R.string.protocol_error, it.localizedMessage)
+                        is CancellationException -> {}
+                        else ->
+                            showError(navController, R.string.general_error, it.localizedMessage)
                     }
-                }
-                else -> {}
-            }
-        }
-
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
+                })
         }
     }
 
