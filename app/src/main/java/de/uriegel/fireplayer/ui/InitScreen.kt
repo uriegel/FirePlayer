@@ -33,7 +33,7 @@ fun InitScreen(navController: NavHostController) {
             initializeHttp(context)
                 .bind { accessDisk() }
                 .fold({ navController.navigate(NavRoutes.Dialog.route + "/${R.string.app_title}"){
-                    popUpTo(NavRoutes.Init.route)
+                    popUpTo(0)
                 } }, {
                     when (it) {
                         is NotInitializedException ->
@@ -80,7 +80,9 @@ fun InitScreen(navController: NavHostController) {
 fun showError(navController: NavHostController, stringId: Int, message: String?) =
     navController.navigate(
         NavRoutes.Dialog2.route
-                + "/${stringId}/${message?.toBase64()}")
+                + "/${stringId}/${message?.toBase64()}") {
+        popUpTo(0)
+    }
 
 
 @Preview(showSystemUi = true)

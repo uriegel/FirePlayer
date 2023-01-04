@@ -22,14 +22,6 @@ import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 fun StateDialog(navController: NavHostController, stringId: Int, error64: String = "") {
     val fullscreenMode = rememberSaveable { mutableStateOf(isTv()) }
 
-    if (navController.backQueue.size > 2)
-        navController
-            .backQueue
-            .take(navController.backQueue.size - 1)
-            .forEach {
-                navController.backQueue.removeFirst()
-            }
-
     Scaffold(
         topBar = { createTopBar(navController, fullscreenMode) },
         content = { it ->
