@@ -20,8 +20,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import de.uriegel.fireplayer.ComponentExActivity
-import de.uriegel.fireplayer.LifetimeTimer
+import de.uriegel.fireplayer.android.ComponentExActivity
+import de.uriegel.fireplayer.android.LifetimeTimer
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import de.uriegel.fireplayer.R
 import de.uriegel.fireplayer.exceptions.HttpProtocolException

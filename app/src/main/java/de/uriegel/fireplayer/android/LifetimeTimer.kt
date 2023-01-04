@@ -1,8 +1,9 @@
-package de.uriegel.fireplayer
+package de.uriegel.fireplayer.android
 
 import android.content.Context
 import android.os.CountDownTimer
 import android.widget.Toast
+import de.uriegel.fireplayer.R
 import de.uriegel.fireplayer.requests.diskNeeded
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

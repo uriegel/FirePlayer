@@ -1,4 +1,4 @@
-package de.uriegel.fireplayer
+package de.uriegel.fireplayer.android
 
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity

@@ -10,7 +10,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import de.uriegel.fireplayer.ComponentExActivity
+import de.uriegel.fireplayer.android.ComponentExActivity
 import kotlinx.coroutines.launch
 
 fun Modifier.onKeyDown(context: Context, onKeyDown: (keyCode: Int, event: KeyEvent?)->Boolean) = composed {
