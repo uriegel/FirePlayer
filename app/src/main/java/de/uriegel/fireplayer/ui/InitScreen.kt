@@ -27,7 +27,7 @@ import java.net.UnknownHostException
 import javax.net.ssl.SSLException
 
 @Composable
-fun MainScreen(navController: NavHostController) {
+fun InitScreen(navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -40,7 +40,7 @@ fun MainScreen(navController: NavHostController) {
                         initializeHttp(context)
                             .bind { accessDisk() }
                             .fold({ navController.navigate(NavRoutes.Dialog.route + "/${R.string.app_title}"){
-                                popUpTo(NavRoutes.MainScreen.route)
+                                popUpTo(NavRoutes.Init.route)
                             } }, {
                                 // TODO StateDialog: navigate to closeDialog
 
@@ -111,7 +111,7 @@ fun MainScreenPreview() {
             color = MaterialTheme.colors.background
         ) {
             val navController = rememberNavController()
-            MainScreen(navController)
+            InitScreen(navController)
         }
     }
 }

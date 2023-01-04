@@ -1,6 +1,5 @@
 package de.uriegel.fireplayer.ui
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
@@ -12,7 +11,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import de.uriegel.fireplayer.R
@@ -24,11 +22,6 @@ import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 fun StateDialog(navController: NavHostController, stringId: Int, error64: String = "") {
     val fullscreenMode = rememberSaveable { mutableStateOf(isTv()) }
 
-
-    navController.backQueue.forEach {
-        Log.i("Firetag", "ST 1 Entry ${it.destination.route}")
-    }
-
     if (navController.backQueue.size > 2)
         navController
             .backQueue
@@ -36,10 +29,6 @@ fun StateDialog(navController: NavHostController, stringId: Int, error64: String
             .forEach {
                 navController.backQueue.removeFirst()
             }
-
-    navController.backQueue.forEach {
-        Log.i("Firetag", "ST 2 Entry ${it.destination.route}")
-    }
 
     Scaffold(
         topBar = { createTopBar(navController, fullscreenMode) },

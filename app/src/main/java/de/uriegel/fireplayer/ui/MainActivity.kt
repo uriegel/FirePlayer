@@ -39,10 +39,10 @@ class MainActivity : ComponentExActivity() {
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = NavRoutes.MainScreen.route,
+                        startDestination = NavRoutes.Init.route,
                     ) {
-                        composable(NavRoutes.MainScreen.route) {
-                            MainScreen(navController)
+                        composable(NavRoutes.Init.route) {
+                            InitScreen(navController)
                         }
                         composable(NavRoutes.ShowSettings.route) {
                             ShowSettings(navController)
@@ -78,21 +78,6 @@ class MainActivity : ComponentExActivity() {
 //                        val TODO timer = LifetimeTimer(context, coroutineScope)
 //                        val observer = LifecycleEventObserver { _, event ->
 //                            when (event) {
-//                                Lifecycle.Event.ON_RESUME -> {
-//                                    coroutineScope.launch {
-//                                        if (displayMode != DisplayMode.Ok) {
-//                                            initializeHttp(this@MainActivity)
-//                                                .bind { accessDisk() }
-//                                                .fold(
-//                                                    {
-//                                                        displayMode = DisplayMode.Ok
-//                                                    },
-//                                                    {
-//                                                    }
-//                                                )
-//                                        }
-//                                    }
-//                                }
 //                                Lifecycle.Event.ON_START -> timer.start()
 //                                Lifecycle.Event.ON_STOP -> timer.cancel()
 //                                else -> {}
@@ -103,18 +88,6 @@ class MainActivity : ComponentExActivity() {
 //
 //                        onDispose {
 //                            lifecycleOwner.lifecycle.removeObserver(observer)
-//                        }
-//                    }
-//                    @Composable
-//                    fun showContent(fullscreenMode: MutableState<Boolean>, padding: PaddingValues = PaddingValues()) {
-//                        when (displayMode) {
-//                            DisplayMode.Default -> StateDialog(R.string.initializing, padding = padding)
-//                            DisplayMode.Ok -> MainScreen(fullscreenMode)
-//                            DisplayMode.GeneralError -> StateDialog(R.string.general_error, stateText, padding = padding)
-//                            DisplayMode.ConnectError -> StateDialog(R.string.connect_error, stateText, padding = padding)
-//                            DisplayMode.UnknownHostError -> StateDialog(R.string.unknown_host_error, stateText, padding = padding)
-//                            DisplayMode.SslError -> StateDialog(R.string.ssl_error, stateText, padding = padding)
-//                            DisplayMode.ProtocolError -> StateDialog(R.string.protocol_error, stateText, padding = padding)
 //                        }
 //                    }
                 }

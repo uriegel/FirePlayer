@@ -12,7 +12,7 @@ fun ShowSettings(navController: NavHostController) {
     val context = LocalContext.current
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        navController.navigate(NavRoutes.MainScreen.route) { popUpTo(0) }
+        navController.navigate(NavRoutes.Init.route) { popUpTo(0) }
     }
 
     LaunchedEffect(Unit) {
