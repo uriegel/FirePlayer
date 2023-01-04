@@ -32,9 +32,8 @@ fun InitScreen(navController: NavHostController) {
         coroutineScope.launch {
             initializeHttp(context)
                 .bind { accessDisk() }
-                .fold({ navController.navigate(NavRoutes.Dialog.route + "/${R.string.app_title}"){
-                    popUpTo(0)
-                } }, {
+                .fold({ navController.navigate(NavRoutes.ItemsRoot.route) { popUpTo(0) }
+                      }, {
                     when (it) {
                         is NotInitializedException ->
                             navController.navigate(NavRoutes.ShowSettings.route)
@@ -55,26 +54,6 @@ fun InitScreen(navController: NavHostController) {
     }
 
     StateDialog(navController, stringId = R.string.initializing)
-
-//
-//    NavHost(
-//        navController = navController,
-//        startDestination = NavRoutes.Home.route,
-//    ) {
-//        composable(NavRoutes.Home.route) {
-//            ItemsScreen(navController = navController, "/video".toBase64())
-//        }
-//
-//        composable(NavRoutes.ListItems.route + "/{path}") {
-//            val path = it.arguments?.getString("path")
-//            ItemsScreen(navController = navController, path)
-//        }
-//
-//        composable(NavRoutes.Video.route + "/{path}") {
-//            val path = it.arguments?.getString("path")
-//            VideoScreen(fullscreenMode, path)
-//        }
-//    }
 }
 
 fun showError(navController: NavHostController, stringId: Int, message: String?) =
@@ -83,7 +62,6 @@ fun showError(navController: NavHostController, stringId: Int, message: String?)
                 + "/${stringId}/${message?.toBase64()}") {
         popUpTo(0)
     }
-
 
 @Preview(showSystemUi = true)
 @Composable

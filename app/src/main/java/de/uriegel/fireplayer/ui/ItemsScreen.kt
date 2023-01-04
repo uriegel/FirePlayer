@@ -10,9 +10,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavHostController
 import de.uriegel.fireplayer.extensions.*
 import de.uriegel.fireplayer.requests.getFilmList
@@ -31,28 +28,16 @@ fun ItemsScreen(navController: NavHostController, path64: String?) {
         val scrollState = rememberLazyGridState()
         val coroutineScope = rememberCoroutineScope()
 
-        val lifecycleOwner = LocalLifecycleOwner.current
-        DisposableEffect(lifecycleOwner) {
-            val observer = LifecycleEventObserver { _, event ->
-                when (event) {
-                    Lifecycle.Event.ON_START -> {
-                        coroutineScope.launch {
-                            getFilmList(path).fold({
-                                itemsList.value = it
-                            }, {
-                                Toast
-                                    .makeText(context, it.localizedMessage, Toast.LENGTH_LONG)
-                                    .show()
-                            }
-                        )}
-                    } else -> {}
+        LaunchedEffect(Unit) {
+            coroutineScope.launch {
+                getFilmList(path).fold({
+                    itemsList.value = it
+                }, {
+                    Toast
+                        .makeText(context, it.localizedMessage, Toast.LENGTH_LONG)
+                        .show()
                 }
-            }
-            lifecycleOwner.lifecycle.addObserver(observer)
-
-            onDispose {
-                lifecycleOwner.lifecycle.removeObserver(observer)
-            }
+            )}
         }
 
         LazyVerticalGrid(

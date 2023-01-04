@@ -27,9 +27,9 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 
 @Composable
-fun VideoScreen(fullscreenMode: MutableState<Boolean>, path64: String?) {
+fun VideoScreen(path64: String?) {
     val context = LocalContext.current
-    val playerView: MutableState<StyledPlayerView?> = remember  { mutableStateOf(null) }
+    val playerView: MutableState<StyledPlayerView?> = remember { mutableStateOf(null) }
     val owner = LocalViewModelStoreOwner.current
     owner?.let {
         val viewModel: VideoViewModel = viewModel(it, "VideoViewModel", VideoViewModelFactory(
@@ -44,13 +44,13 @@ fun VideoScreen(fullscreenMode: MutableState<Boolean>, path64: String?) {
                     false
                 }
         ) {
-            VideoPlayer(viewModel, fullscreenMode, path64, playerView)
+            VideoPlayer(viewModel, path64, playerView)
         }
     }
 }
 
 @Composable
-fun VideoPlayer(viewModel: VideoViewModel, fullscreenMode: MutableState<Boolean>, path64: String?, playerView: MutableState<StyledPlayerView?>) {
+fun VideoPlayer(viewModel: VideoViewModel, path64: String?, playerView: MutableState<StyledPlayerView?>) {
     val context = LocalContext.current
     val path = path64!!.fromBase64()
 
@@ -100,12 +100,10 @@ fun VideoPlayer(viewModel: VideoViewModel, fullscreenMode: MutableState<Boolean>
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
-                    fullscreenMode.value = true
                     context.addWindowFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     exoPlayer.value?.play()
                 }
                 Lifecycle.Event.ON_PAUSE -> {
-                    fullscreenMode.value = false
                     context.clearWindowFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     exoPlayer.value?.pause()
                 }

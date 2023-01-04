@@ -5,7 +5,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,10 +19,8 @@ import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 
 @Composable
 fun StateDialog(navController: NavHostController, stringId: Int, error64: String = "") {
-    val fullscreenMode = rememberSaveable { mutableStateOf(isTv()) }
-
     Scaffold(
-        topBar = { createTopBar(navController, fullscreenMode) },
+        topBar = { if (isTv()) CreateTopBar(navController) },
         content = { it ->
             var extendedVisible by remember { mutableStateOf(false) }
             val error = error64.fromBase64()
