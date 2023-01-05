@@ -20,7 +20,7 @@ import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 @Composable
 fun StateDialog(navController: NavHostController, stringId: Int, error64: String = "") {
     Scaffold(
-        topBar = { if (isTv()) CreateTopBar(navController) },
+        topBar = { if (!isTv()) CreateTopBar(navController) },
         content = { it ->
             var extendedVisible by remember { mutableStateOf(false) }
             val error = error64.fromBase64()

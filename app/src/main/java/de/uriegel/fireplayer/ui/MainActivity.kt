@@ -88,6 +88,9 @@ class MainActivity : ComponentExActivity() {
                                 it.arguments?.getInt("stringId")!!,
                                 it.arguments?.getString("info")!!)
                         }
+                        composable(NavRoutes.Folders.route) {
+                            FolderSelectorScreen(navController)
+                        }
                         composable(NavRoutes.ItemsRoot.route) {
                             ItemsScreen(
                                 navController, "/video".toBase64())

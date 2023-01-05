@@ -18,5 +18,8 @@
     <string name="ssl_error">Fehler bei der Verschlüsselung zum Server</string>
     <string name="extended">Mehr Infos</string>
     <string name="connection_lost">Verbindung zum Server verloren</string>
+    <string name="videos">Filme</string>
+    <string name="music">Musik</string>
+    <string name="pics">Bilder</string>
 
 </resources>

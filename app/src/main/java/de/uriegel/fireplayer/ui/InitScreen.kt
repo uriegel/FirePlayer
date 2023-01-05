@@ -32,7 +32,7 @@ fun InitScreen(navController: NavHostController) {
         coroutineScope.launch {
             initializeHttp(context)
                 .bind { accessDisk() }
-                .fold({ navController.navigate(NavRoutes.ItemsRoot.route) { popUpTo(0) }
+                .fold({ navController.navigate(NavRoutes.Folders.route) { popUpTo(0) }
                       }, {
                     when (it) {
                         is NotInitializedException ->
