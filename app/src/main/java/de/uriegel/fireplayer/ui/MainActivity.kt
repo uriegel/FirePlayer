@@ -91,9 +91,13 @@ class MainActivity : ComponentExActivity() {
                         composable(NavRoutes.Folders.route) {
                             FolderSelectorScreen(navController)
                         }
-                        composable(NavRoutes.ItemsRoot.route) {
+                        composable(NavRoutes.VideoRoot.route) {
                             ItemsScreen(
                                 navController, "/video".toBase64())
+                        }
+                        composable(NavRoutes.MusicRoot.route) {
+                            ItemsScreen(
+                                navController, "/music".toBase64())
                         }
                         composable(NavRoutes.Items.route + "/{path}") {
                             ItemsScreen(

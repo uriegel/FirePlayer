@@ -35,11 +35,11 @@ fun FolderSelectorScreen(navController: NavHostController) {
                     .fillMaxHeight()
             ) {
                 val folder1 = R.string.videos
-                val route1 = NavRoutes.ItemsRoot.route
+                val route1 = NavRoutes.VideoRoot.route
                 val folder2 = R.string.pics
-                val route2 = NavRoutes.ItemsRoot.route
+                val route2 = NavRoutes.VideoRoot.route
                 val folder3 = R.string.music
-                val route3 = NavRoutes.ItemsRoot.route
+                val route3 = NavRoutes.MusicRoot.route
                 val (card1, card2, card3) = createRefs()
                 if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     Folder(navController, folder1, route1,
