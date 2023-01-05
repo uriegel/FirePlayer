@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import de.uriegel.fireplayer.exceptions.HttpProtocolException
 import de.uriegel.fireplayer.extensions.*
 import de.uriegel.fireplayer.requests.getFilmList
 import kotlinx.coroutines.launch
@@ -33,9 +34,12 @@ fun ItemsScreen(navController: NavHostController, path64: String?) {
                 getFilmList(path).fold({
                     itemsList.value = it
                 }, {
-                    Toast
-                        .makeText(context, it.localizedMessage, Toast.LENGTH_LONG)
-                        .show()
+                    if (it is HttpProtocolException)
+                        navController.navigate(NavRoutes.Init.route)
+                    else
+                        Toast
+                            .makeText(context, it.localizedMessage, Toast.LENGTH_LONG)
+                            .show()
                 }
             )}
         }
