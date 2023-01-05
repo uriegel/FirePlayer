@@ -34,7 +34,7 @@ class MainActivity : ComponentExActivity() {
                 val coroutineScope = rememberCoroutineScope()
                 val lifecycleOwner = LocalLifecycleOwner.current
                 DisposableEffect(lifecycleOwner) {
-                    val timer = LifetimeTimer(context, coroutineScope)
+                    val timer = LifetimeTimer(coroutineScope)
                     val observer = LifecycleEventObserver { _, event ->
                         when (event) {
                             Lifecycle.Event.ON_START -> timer.start()
