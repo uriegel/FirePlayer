@@ -14,10 +14,11 @@ import androidx.navigation.NavHostController
 import de.uriegel.fireplayer.exceptions.HttpProtocolException
 import de.uriegel.fireplayer.extensions.*
 import de.uriegel.fireplayer.requests.getFilmList
+import de.uriegel.fireplayer.viewmodel.MusicViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun ItemsScreen(navController: NavHostController, path64: String?) {
+fun ItemsScreen(navController: NavHostController, viewModel: MusicViewModel?, path64: String?) {
     val context = LocalContext.current
     val path = path64!!.fromBase64()
     Box(Modifier.fillMaxSize()) {
@@ -53,7 +54,14 @@ fun ItemsScreen(navController: NavHostController, path64: String?) {
                         Modifier
                             .dpadNavigation(columns, scrollState, index)
                             .clickable {
-                                val route = if (item.isFilm()) NavRoutes.Video.route else NavRoutes.Items.route
+                                val route = if (item.isFilm())
+                                    NavRoutes.Video.route
+                                else if (item.isMusic()) {
+                                    viewModel?.items = itemsList.value
+                                    NavRoutes.Music.route
+                                }
+                                else
+                                    NavRoutes.Items.route
                                 navController.navigate(route  + "/" + "$path/$item".toBase64()) {
                                     popUpTo(NavRoutes.Items.route  + "/" + path.toBase64())
                                 }

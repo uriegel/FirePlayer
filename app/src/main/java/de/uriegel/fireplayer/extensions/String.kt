@@ -2,13 +2,13 @@ package de.uriegel.fireplayer.extensions
 
 import android.util.Base64
 
-fun String.isFilm(): Boolean {
-    return this.endsWith(".mp4", true) or this.endsWith(".mkv", true)
-}
+fun String.isFilm() =
+    this.endsWith(".mp4", true) or this.endsWith(".mkv", true)
 
-fun String.isFolder(): Boolean {
-    return !this.contains(".")
-}
+fun String.isMusic() =
+    this.endsWith(".mp3", true) or this.endsWith(".ogg", true)
+
+fun String.isFolder() = !isFilm() && !isMusic()
 
 fun String.getTitle() = this.substringBeforeLast('.')
 

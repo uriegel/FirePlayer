@@ -10,4 +10,5 @@ sealed class NavRoutes(val route: String) {
     object MusicRoot: NavRoutes("musicroot")
     object Items: NavRoutes("items")
     object Video: NavRoutes("video")
+    object Music: NavRoutes("music")
 }
