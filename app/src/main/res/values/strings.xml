@@ -9,6 +9,10 @@
     <string name="auth_name" >Name</string>
     <string name="auth_pw">Passwort</string>
     <string name="pw_summary">Passwort eingeben</string>
+    <string name="sony_title">Sony Bravia</string>
+    <string name="sony_description">Die URL des Sony Bravia-Fernsehers, falls vorhanden</string>
+    <string name="sony_psk">Authentication PSK</string>
+    <string name="screen_off">Bildschirm ausschalten</string>
 
     <string name="initializing">Fire Player wird initialisiert…</string>
     <string name="general_error">Fehlerhafte Konfiguration</string>

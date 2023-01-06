@@ -103,6 +103,10 @@ class MainActivity : ComponentExActivity() {
                             ItemsScreen(
                                 navController, musicModel, "/music".toBase64())
                         }
+                        composable(NavRoutes.PictureRoot.route) {
+                            ItemsScreen(
+                                navController, musicModel, "/pics".toBase64())
+                        }
                         composable(NavRoutes.Items.route + "/{path}") {
                             ItemsScreen(
                                 navController,

@@ -8,6 +8,9 @@ fun String.isFilm() =
 fun String.isMusic() =
     this.endsWith(".mp3", true) or this.endsWith(".ogg", true)
 
+fun String.isPicture() =
+    this.endsWith(".jpg", true) or this.endsWith(".png", true)
+
 fun String.getTitle() = this.substringBeforeLast('.')
 
 fun String.getFilePath() =

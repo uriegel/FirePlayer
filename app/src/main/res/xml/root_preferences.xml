@@ -30,4 +30,20 @@
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/sony_title">
+
+        <EditTextPreference
+            android:key="sony_url"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/sony_description"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            android:key="sony_psk"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/sony_psk"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

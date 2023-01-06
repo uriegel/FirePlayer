@@ -2,34 +2,64 @@ package de.uriegel.fireplayer.ui
 
 import android.view.View
 import android.view.WindowManager
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import de.uriegel.fireplayer.extensions.*
 import de.uriegel.fireplayer.requests.getBaseUrl
-import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import de.uriegel.fireplayer.viewmodel.MusicViewModel
 
 @Composable
 fun MusicScreen(viewModel: MusicViewModel, path64: String?) {
     val path = path64?.fromBase64() ?: ""
     val filePath = path.getFilePath()
-    MusicPlayer(viewModel
-        .items
-        .filter { it.name.isMusic() }
-        .map { filePath + it.name })
+    ConstraintLayout(modifier =
+    Modifier
+        .fillMaxWidth()
+        .fillMaxHeight()
+    ) {
+        val (player, screenOff) = createRefs()
+        Box(modifier = Modifier
+            .constrainAs(screenOff)
+            {
+                start.linkTo(parent.start)
+                end.linkTo(player.start)
+                centerVerticallyTo(parent)
+            }
+            .padding(20.dp)
+        ){
+            Button(onClick={}) { Text("") }
+        }
+        Box(modifier = Modifier
+            .constrainAs(player){
+                start.linkTo(screenOff.end)
+                end.linkTo(parent.end)
+                centerVerticallyTo(parent)
+            }
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color.Blue)
+        ) {
+            MusicPlayer(viewModel
+                .items
+                .filter { it.name.isMusic() }
+                .map { filePath + it.name })
+        }
+    }
 }
 
 @Composable
@@ -86,19 +116,6 @@ fun MusicPlayer(playList: List<String>) {
         onDispose {
             exoPlayer.value?.release()
             exoPlayer.value = null
-        }
-    }
-}
-
-@Preview(showSystemUi = true)
-@Composable
-fun MusicScreenPreview() {
-    FirePlayerTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colors.background
-        ) {
-            MusicScreen(viewModel(), "Musik.mp3".toBase64())
         }
     }
 }
