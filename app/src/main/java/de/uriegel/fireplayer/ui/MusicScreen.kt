@@ -2,62 +2,67 @@ package de.uriegel.fireplayer.ui
 
 import android.view.View
 import android.view.WindowManager
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import de.uriegel.fireplayer.extensions.*
 import de.uriegel.fireplayer.requests.getBaseUrl
+import de.uriegel.fireplayer.requests.post
 import de.uriegel.fireplayer.viewmodel.MusicViewModel
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Composable
 fun MusicScreen(viewModel: MusicViewModel, path64: String?) {
     val path = path64?.fromBase64() ?: ""
     val filePath = path.getFilePath()
-    ConstraintLayout(modifier =
+
+    val preferences = PreferenceManager.getDefaultSharedPreferences(LocalContext.current)
+    val sonyUrl = preferences.getString("sony_url", null)
+    val sonyPsk = preferences.getString("sony_psk", null)
+    val scope = rememberCoroutineScope()
+
+    Box(modifier =
     Modifier
         .fillMaxWidth()
         .fillMaxHeight()
     ) {
-        val (player, screenOff) = createRefs()
-        Box(modifier = Modifier
-            .constrainAs(screenOff)
-            {
-                start.linkTo(parent.start)
-                end.linkTo(player.start)
-                centerVerticallyTo(parent)
-            }
-            .padding(20.dp)
-        ){
-            Button(onClick={}) { Text("") }
-        }
-        Box(modifier = Modifier
-            .constrainAs(player){
-                start.linkTo(screenOff.end)
-                end.linkTo(parent.end)
-                centerVerticallyTo(parent)
-            }
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(Color.Blue)
-        ) {
+        Box(modifier = Modifier.align(Alignment.Center)) {
             MusicPlayer(viewModel
                 .items
                 .filter { it.name.isMusic() }
                 .map { filePath + it.name })
+        }
+        if ((sonyUrl?.length ?: 1) >= 6)
+            Button(
+                onClick={
+                    scope.launch {
+                        val data = SonyData("setPowerSavingMode", "1.0",
+                            111, listOf(SonyDataParam("pictureOff")))
+                        val content = Json.encodeToString(data)
+                        post("$sonyUrl/system", content, sonyPsk)
+                    }
+                },
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(20.dp)
+        ) {
+            Text("")
         }
     }
 }
@@ -120,3 +125,8 @@ fun MusicPlayer(playList: List<String>) {
     }
 }
 
+@Serializable
+data class SonyDataParam(val mode: String)
+
+@Serializable
+data class SonyData(val method: String, val version: String, val id: Int, val params: List<SonyDataParam>)

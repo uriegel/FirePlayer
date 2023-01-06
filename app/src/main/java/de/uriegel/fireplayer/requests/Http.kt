@@ -9,9 +9,7 @@ import de.uriegel.fireplayer.extensions.sideEffect
 import de.uriegel.fireplayer.extensions.toResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
+import java.io.*
 import java.net.Authenticator
 import java.net.HttpURLConnection
 import java.net.PasswordAuthentication
@@ -37,6 +35,30 @@ fun getBaseUrl() = url
 
 suspend fun getString(urlString: String) =
     runCatching { tryGetString(urlString) }
+
+suspend fun post(urlString: String, data: String, psk: String?): String {
+    return withContext(Dispatchers.IO) {
+        val url = URL(urlString)
+        val connection = url.openConnection() as HttpURLConnection
+        connection.requestMethod = "POST"
+        if (psk != null)
+            connection.setRequestProperty("X-Auth-PSK", psk)
+        connection.setRequestProperty("Accept-Encoding", "gzip")
+        connection.doInput = true
+        val writer = BufferedWriter(OutputStreamWriter(connection.outputStream))
+        writer.write(data)
+        writer.close()
+        val result = connection.responseCode
+        if (result != 200)
+            throw java.lang.Exception("$result ${connection.responseMessage}")
+        val inStream =
+            if (connection.contentEncoding == "gzip")
+                GZIPInputStream(connection.inputStream)
+            else
+                connection.inputStream
+        return@withContext readStream(inStream)
+    }
+}
 
 private suspend fun tryGetString(urlString: String): String {
 
