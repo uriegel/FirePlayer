@@ -8,8 +8,6 @@ fun String.isFilm() =
 fun String.isMusic() =
     this.endsWith(".mp3", true) or this.endsWith(".ogg", true)
 
-fun String.isFolder() = !isFilm() && !isMusic()
-
 fun String.getTitle() = this.substringBeforeLast('.')
 
 fun String.toBase64() = Base64.encodeToString(this.toByteArray(), Base64.DEFAULT)!!

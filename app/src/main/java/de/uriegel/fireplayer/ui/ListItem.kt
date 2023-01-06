@@ -16,16 +16,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.uriegel.fireplayer.R
 import de.uriegel.fireplayer.extensions.getTitle
-import de.uriegel.fireplayer.extensions.isFolder
+import de.uriegel.fireplayer.requests.DirectoryItem
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import de.uriegel.fireplayer.ui.theme.card
 
 @Composable
-fun ListItem(item: String, modifier: Modifier = Modifier) {
+fun ListItem(item: DirectoryItem, modifier: Modifier = Modifier) {
 
-    val isFolder = item.isFolder()
     val boxModifier =
-        if (isFolder)
+        if (item.isDirectory)
             Modifier
                 .paint(
                     painterResource(id = R.drawable.folder),
@@ -47,13 +46,13 @@ fun ListItem(item: String, modifier: Modifier = Modifier) {
             modifier = boxModifier.background(card),
             contentAlignment = Alignment.Center
         ) {
-            Text(if (isFolder) item else item.getTitle(), textAlign = TextAlign.Center)
+            Text(if (item.isDirectory) item.name else item.name.getTitle(), textAlign = TextAlign.Center)
         }
     }
 }
 
 @Composable
-fun TestItem(item: String) {
+fun TestItem(item: DirectoryItem) {
     FirePlayerTheme {
         Box(
             modifier = Modifier
@@ -68,11 +67,11 @@ fun TestItem(item: String) {
 @Preview(showSystemUi = false)
 @Composable
 fun FolderItemPreview() {
-    TestItem("Films")
+    TestItem(DirectoryItem("Films", true))
 }
 
 @Preview(showSystemUi = false)
 @Composable
 fun ItemPreview() {
-    TestItem("Film with title.mp4")
+    TestItem(DirectoryItem("Film with title.mp4", false))
 }

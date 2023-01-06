@@ -13,7 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import de.uriegel.fireplayer.exceptions.HttpProtocolException
 import de.uriegel.fireplayer.extensions.*
-import de.uriegel.fireplayer.requests.getFilmList
+import de.uriegel.fireplayer.requests.*
 import de.uriegel.fireplayer.viewmodel.MusicViewModel
 import kotlinx.coroutines.launch
 
@@ -26,14 +26,16 @@ fun ItemsScreen(navController: NavHostController, viewModel: MusicViewModel?, pa
             Configuration.ORIENTATION_LANDSCAPE -> 6
             else -> 3
         }
-        val itemsList: MutableState<List<String>> = rememberSaveable { mutableStateOf(listOf())}
+        val fileList: MutableState<List<String>> = rememberSaveable { mutableStateOf(listOf())}
+        val dirList: MutableState<List<String>> = rememberSaveable { mutableStateOf(listOf())}
         val scrollState = rememberLazyGridState()
         val coroutineScope = rememberCoroutineScope()
 
         LaunchedEffect(Unit) {
             coroutineScope.launch {
-                getFilmList(path).fold({
-                    itemsList.value = it
+                getItemList(path).fold({
+                    fileList.value = it.files
+                    dirList.value = it.directories
                 }, {
                     if (it is HttpProtocolException)
                         navController.navigate(NavRoutes.Init.route)
@@ -49,21 +51,26 @@ fun ItemsScreen(navController: NavHostController, viewModel: MusicViewModel?, pa
             columns = GridCells.Fixed(columns),
             state = scrollState,
             content = {
-                itemsIndexed(items = itemsList.value) { index, item ->
+                val items = getAsDirectoryItems(dirList.value, fileList.value)
+                itemsIndexed(items) { index, item ->
                     ListItem(item, modifier =
                         Modifier
                             .dpadNavigation(columns, scrollState, index)
                             .clickable {
-                                val route = if (item.isFilm())
+                                val route = if (item.name.isFilm())
                                     NavRoutes.Video.route
-                                else if (item.isMusic()) {
-                                    viewModel?.items = itemsList.value
+                                else if (item.name.isMusic()) {
+                                    viewModel?.items = items
                                     NavRoutes.Music.route
                                 }
-                                else
+                                else if (item.isDirectory)
                                     NavRoutes.Items.route
-                                navController.navigate(route  + "/" + "$path/$item".toBase64()) {
-                                    popUpTo(NavRoutes.Items.route  + "/" + path.toBase64())
+                                else
+                                    null
+                                route?.let {
+                                    navController.navigate(it  + "/" + "$path/${item.name}".toBase64()) {
+                                        popUpTo(NavRoutes.Items.route  + "/" + path.toBase64())
+                                    }
                                 }
                             }
                     )

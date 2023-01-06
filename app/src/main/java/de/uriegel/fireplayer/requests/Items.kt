@@ -1,25 +1,24 @@
 package de.uriegel.fireplayer.requests
 
-import de.uriegel.fireplayer.extensions.isFilm
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 
 @Serializable
-data class Files(val files: List<String>)
+data class Files(
+    val directories: List<String>,
+    val files:       List<String>)
 
-suspend fun getFilmList(url: String): Result<List<String>> {
-    val folderComparator = compareBy<String>{ it.isFilm() }
-    val fileTypeThenStringComparator = folderComparator.thenBy { it }
+data class DirectoryItem(
+    val name:        String,
+    val isDirectory: Boolean)
 
-    fun getFilmList(stringResult: String) =
-        Json
-            .decodeFromString<Files>(stringResult)
-            .files
-            .sortedWith(fileTypeThenStringComparator)
-            .toList()
+fun getAsDirectoryItems(dirs: List<String>, files: List<String>) =
+    dirs.map { DirectoryItem(it, true) } + files.map { DirectoryItem(it, false) }
 
-    return getString(
-        url
-            .replace("+", "%20"))
-        .map { getFilmList(it) }
+suspend fun getItemList(url: String): Result<Files> {
+    fun getItemList(stringResult: String) =
+        Json.decodeFromString<Files>(stringResult)
+
+    return getString(url.replace("+", "%20"))
+        .map { getItemList(it) }
 }
