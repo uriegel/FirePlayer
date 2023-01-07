@@ -36,7 +36,10 @@ fun getBaseUrl() = url
 suspend fun getString(urlString: String) =
     runCatching { tryGetString(urlString) }
 
-suspend fun post(urlString: String, data: String, psk: String?): String {
+suspend fun post(urlString: String, data: String, psk: String?) =
+    runCatching { tryPost(urlString, data, psk) }
+
+private suspend fun tryPost(urlString: String, data: String, psk: String?): String {
     return withContext(Dispatchers.IO) {
         val url = URL(urlString)
         val connection = url.openConnection() as HttpURLConnection
@@ -50,7 +53,7 @@ suspend fun post(urlString: String, data: String, psk: String?): String {
         writer.close()
         val result = connection.responseCode
         if (result != 200)
-            throw java.lang.Exception("$result ${connection.responseMessage}")
+            throw HttpProtocolException(result, connection.responseMessage)
         val inStream =
             if (connection.contentEncoding == "gzip")
                 GZIPInputStream(connection.inputStream)

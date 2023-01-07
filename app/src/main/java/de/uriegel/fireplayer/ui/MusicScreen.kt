@@ -2,6 +2,7 @@ package de.uriegel.fireplayer.ui
 
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -21,17 +22,18 @@ import com.google.android.exoplayer2.ui.StyledPlayerView
 import de.uriegel.fireplayer.extensions.*
 import de.uriegel.fireplayer.requests.getBaseUrl
 import de.uriegel.fireplayer.requests.post
-import de.uriegel.fireplayer.viewmodel.MusicViewModel
+import de.uriegel.fireplayer.viewmodel.DirectoryItemsViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Composable
-fun MusicScreen(viewModel: MusicViewModel, path64: String?) {
+fun MusicScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
     val path = path64?.fromBase64() ?: ""
     val filePath = path.getFilePath()
 
+    val context = LocalContext.current
     val preferences = PreferenceManager.getDefaultSharedPreferences(LocalContext.current)
     val sonyUrl = preferences.getString("sony_url", null)
     val sonyPsk = preferences.getString("sony_psk", null)
@@ -56,6 +58,9 @@ fun MusicScreen(viewModel: MusicViewModel, path64: String?) {
                             111, listOf(SonyDataParam("pictureOff")))
                         val content = Json.encodeToString(data)
                         post("$sonyUrl/system", content, sonyPsk)
+                            .onFailure {
+                                Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+                            }
                     }
                 },
                 modifier = Modifier

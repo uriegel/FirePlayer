@@ -14,11 +14,11 @@ import androidx.navigation.NavHostController
 import de.uriegel.fireplayer.exceptions.HttpProtocolException
 import de.uriegel.fireplayer.extensions.*
 import de.uriegel.fireplayer.requests.*
-import de.uriegel.fireplayer.viewmodel.MusicViewModel
+import de.uriegel.fireplayer.viewmodel.DirectoryItemsViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun ItemsScreen(navController: NavHostController, viewModel: MusicViewModel?, path64: String?) {
+fun ItemsScreen(navController: NavHostController, viewModel: DirectoryItemsViewModel?, path64: String?) {
     val context = LocalContext.current
     val path = path64!!.fromBase64()
     Box(Modifier.fillMaxSize()) {
@@ -62,6 +62,10 @@ fun ItemsScreen(navController: NavHostController, viewModel: MusicViewModel?, pa
                                 else if (item.name.isMusic()) {
                                     viewModel?.items = items
                                     NavRoutes.Music.route
+                                }
+                                else if (item.name.isPicture()) {
+                                    viewModel?.items = items
+                                    NavRoutes.Photo.route
                                 }
                                 else if (item.isDirectory)
                                     NavRoutes.Items.route

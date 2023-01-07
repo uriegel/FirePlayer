@@ -23,7 +23,7 @@ import de.uriegel.fireplayer.android.LifetimeTimer
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import de.uriegel.fireplayer.extensions.onKeyDown
 import de.uriegel.fireplayer.extensions.toBase64
-import de.uriegel.fireplayer.viewmodel.MusicViewModel
+import de.uriegel.fireplayer.viewmodel.DirectoryItemsViewModel
 
 class MainActivity : ComponentExActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +65,7 @@ class MainActivity : ComponentExActivity() {
                         },
                     color = MaterialTheme.colors.background
                 ) {
-                    val musicModel: MusicViewModel = viewModel()
+                    val directoryItemsModel: DirectoryItemsViewModel = viewModel()
 
                     NavHost(
                         navController = navController,
@@ -101,24 +101,29 @@ class MainActivity : ComponentExActivity() {
                         }
                         composable(NavRoutes.MusicRoot.route) {
                             ItemsScreen(
-                                navController, musicModel, "/music".toBase64())
+                                navController, directoryItemsModel, "/music".toBase64())
                         }
-                        composable(NavRoutes.PictureRoot.route) {
+                        composable(NavRoutes.PhotoRoot.route) {
                             ItemsScreen(
-                                navController, musicModel, "/pics".toBase64())
+                                navController, directoryItemsModel, "/pics".toBase64())
                         }
                         composable(NavRoutes.Items.route + "/{path}") {
                             ItemsScreen(
                                 navController,
-                                musicModel,
+                                directoryItemsModel,
                                 it.arguments?.getString("path"))
                         }
                         composable(NavRoutes.Video.route + "/{path}") {
                            VideoScreen(it.arguments?.getString("path"))
-                       }
+                        }
                         composable(NavRoutes.Music.route + "/{path}") {
                             MusicScreen(
-                                musicModel,
+                                directoryItemsModel,
+                                it.arguments?.getString("path"))
+                        }
+                        composable(NavRoutes.Photo.route + "/{path}") {
+                            PhotoScreen(
+                                directoryItemsModel,
                                 it.arguments?.getString("path"))
                         }
                     }
