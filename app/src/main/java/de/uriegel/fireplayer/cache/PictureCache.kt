@@ -1,30 +1,51 @@
 package de.uriegel.fireplayer.cache
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import androidx.compose.runtime.MutableState
+import de.uriegel.fireplayer.R
+import de.uriegel.fireplayer.extensions.bind
+import de.uriegel.fireplayer.requests.getResponseStream
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class PictureCache(private val coroutineScope: CoroutineScope, private val items: List<String>) {
+class PictureCache(
+    private val context: Context,
+    private val coroutineScope: CoroutineScope,
+    private val items: List<String>,
+    private val bitmap: MutableState<Bitmap>) {
 
-//    @OptIn(DelicateCoroutinesApi::class)
-//    fun cache() {
-//        val okMap = map.filter { it.key.isInRange(index) }
-//        if (okMap.size < size) {
-//            val start = index + okMap.size
-//            coroutineScope.launch {
-//                if (start < items.size) {
-//                    val file = getResponseStream(newSingleThreadContext("MyOwnThread"), items[start])
-//                        .bind { it.jpgToTempFile() }
-//                    file.fold({
-//                        val okMapNew = map.filter { it.key >= index && it.key < index + 10 }
-//                        if (okMapNew.size < size) {
-//                            if (start.isInRange(index)) {
-//                                map = okMapNew + mapOf(start to it)
-//                            }
-//                        }
-//                    }, {})
-//                }
-//            }
-//        }
-//    }
+    fun next() {
+        val bitmapState = this.bitmap
+        coroutineScope.launch {
+            bitmapState.value =loadBitmap(++index)
+        }
+    }
 
-    private var index = 0
+    private suspend fun loadBitmap(index: Int): Bitmap =
+        withContext(Dispatchers.IO) {
+            return@withContext getResponseStream(items[index])
+                .bind {
+                    it.jpgToTempFile()
+                }
+                .fold({
+                    try {
+                        BitmapFactory.decodeStream(it.inputStream())
+                    } finally {
+                        it.delete()
+                    }
+                }, {
+                    // Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+                    BitmapFactory.decodeResource(context.resources, R.drawable.emptypics)
+                })
+        }
+
+    init {
+        next()
+    }
+
+    private var index = -1
 }
