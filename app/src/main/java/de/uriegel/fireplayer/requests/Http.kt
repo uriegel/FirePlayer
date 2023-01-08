@@ -39,6 +39,9 @@ suspend fun getString(urlString: String) =
 suspend fun post(urlString: String, data: String, psk: String?) =
     runCatching { tryPost(urlString, data, psk) }
 
+suspend fun getResponseStream(urlString: String) =
+    runCatching { tryGetResponseStream(urlString) }
+
 private suspend fun tryPost(urlString: String, data: String, psk: String?): String {
     return withContext(Dispatchers.IO) {
         val url = URL(urlString)
@@ -63,22 +66,29 @@ private suspend fun tryPost(urlString: String, data: String, psk: String?): Stri
     }
 }
 
-private suspend fun tryGetString(urlString: String): String {
-
+private suspend fun tryGetResponseStream(urlString: String): InputStream {
     return withContext(Dispatchers.IO) {
-        val url = URL(url + urlString)
-        val connection = url.openConnection() as HttpURLConnection
-        connection.setRequestProperty("Accept-Encoding", "gzip")
-        connection.connect()
-        val result = connection.responseCode
-        if (result != 200)
-            throw HttpProtocolException(result, connection.responseMessage)
-        val inStream =
-            if (connection.contentEncoding == "gzip")
-                GZIPInputStream(connection.inputStream)
-            else
-                connection.inputStream
-        return@withContext readStream(inStream)
+        return@withContext getResponseStreamSync(urlString)
+    }
+}
+
+private fun getResponseStreamSync(urlString: String): InputStream {
+    val url = URL(url + urlString)
+    val connection = url.openConnection() as HttpURLConnection
+    connection.setRequestProperty("Accept-Encoding", "gzip")
+    connection.connect()
+    val result = connection.responseCode
+    if (result != 200)
+        throw HttpProtocolException(result, connection.responseMessage)
+    return if (connection.contentEncoding == "gzip")
+        GZIPInputStream(connection.inputStream)
+    else
+        connection.inputStream
+}
+
+private suspend fun tryGetString(urlString: String): String {
+    return withContext(Dispatchers.IO) {
+        return@withContext readStream(getResponseStreamSync(urlString))
     }
 }
 
