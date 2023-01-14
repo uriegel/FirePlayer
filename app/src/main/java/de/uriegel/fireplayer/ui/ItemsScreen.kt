@@ -1,6 +1,7 @@
 package de.uriegel.fireplayer.ui
 
 import android.content.res.Configuration
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -60,10 +61,12 @@ fun ItemsScreen(navController: NavHostController, viewModel: DirectoryItemsViewM
                                 val route = if (item.name.isFilm())
                                     NavRoutes.Video.route
                                 else if (item.name.isMusic()) {
+                                    Log.i("PHOTO", "Set music view model")
                                     viewModel?.items = items
                                     NavRoutes.Music.route
                                 }
                                 else if (item.name.isPicture()) {
+                                    Log.i("PHOTO", "Set view model")
                                     viewModel?.items = items
                                     NavRoutes.Photo.route
                                 }
