@@ -3,6 +3,7 @@ package de.uriegel.fireplayer.ui
 import android.graphics.Bitmap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -36,30 +37,39 @@ fun ImageCrossFadePager(
         AsyncImage(
             modifier = Modifier
                 .align(Alignment.Center)
-                .alpha(if (alpha.value <= 1) 1f - alpha.value else 0F),
+                .alpha(if (index.mod(3) == 0 || index.mod(3) == 1) 1f - alpha.value else 0F),
             contentDescription = "Image",
             loadAsync = { loadAsync(0) }
         )
         AsyncImage(
             modifier = Modifier
                 .align(Alignment.Center)
-                .alpha(if (alpha.value <=1) alpha.value else 2F - alpha.value),
+                .alpha(if (index.mod(3) == 1) alpha.value else if (index.mod(3) == 2) 2f - alpha.value else 0f),
             contentDescription = "Image",
             loadAsync = { loadAsync(1) }
         )
         AsyncImage(
             modifier = Modifier
                 .align(Alignment.Center)
-                .alpha(if (alpha.value >=1) alpha.value - 1F else 0F),
+                .alpha(if (index.mod(3) == 2) alpha.value - 1f else if (index.mod(3) == 0) alpha.value else 0f),
             contentDescription = "Image",
             loadAsync = { loadAsync(2) }
         )
-        Button({
-            scope.launch {
-                index++
+        Column {
+            Button({
+                scope.launch {
+                    index--
+                }
+            }) {
+                Text("Zurück")
             }
-        }) {
-            Text("Weiter")
+            Button({
+                scope.launch {
+                    index++
+                }
+            }) {
+                Text("Weiter")
+            }
         }
     }
 }
