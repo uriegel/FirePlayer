@@ -2,9 +2,13 @@ package de.uriegel.fireplayer.ui
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Button
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,23 +29,81 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun PhotoScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
     val path = path64?.fromBase64() ?: ""
     val filePath = path.getFilePath()
-    val pagerState = rememberPagerState()
     val items = viewModel.items
         .filter { it.name.isPicture() }
         .map { (filePath + it.name).replace("+", "%20") }
+    if (false)
+        ImageFadePager(
+            count = items.size,
+            loadAsync = { loadBitmap(items[it]) }
+        )
+    else
+        ImagePager(
+            count = items.size,
+            loadAsync = { loadBitmap(items[it]) }
+        )
+}
 
-    HorizontalPager(count = items.size, state = pagerState ) { pager ->
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ImagePager(
+    count: Int,
+    loadAsync: suspend (Int)-> Bitmap?
+) {
+    val pagerState = rememberPagerState()
+    HorizontalPager(count = count, state = pagerState) { pager ->
         Box(Modifier.fillMaxSize()) {
             AsyncImage(
                 modifier = Modifier.align(Alignment.Center),
                 contentDescription = "Image",
-                loadAsync = { loadBitmap(items[pager]) }
+                loadAsync = { loadAsync(pager) }
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ImageFadePager(
+    count: Int,
+    loadAsync: suspend (Int)-> Bitmap?
+) {
+    val scope = rememberCoroutineScope()
+    var secondContent by remember { mutableStateOf(false)}
+    Box(modifier =  Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxSize()) {
+            Crossfade(
+                targetState = secondContent,
+                animationSpec = tween(durationMillis = 2000)
+            ) {
+                when (it) {
+                    false -> {
+                        AsyncImage(
+                            modifier = Modifier.align(Alignment.Center),
+                            contentDescription = "Image",
+                            loadAsync = { loadAsync(0) }
+                        )
+                    }
+                    true -> {
+                        AsyncImage(
+                            modifier = Modifier.align(Alignment.Center),
+                            contentDescription = "Image",
+                            loadAsync = { loadAsync(50) }
+                        )
+                    }
+                }
+            }
+        }
+        Button({
+            scope.launch {
+                secondContent = !secondContent
+            }
+        }) {
+            Text("Weiter")
         }
     }
 }
