@@ -36,7 +36,7 @@ fun PhotoScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
     val items = viewModel.items
         .filter { it.name.isPicture() }
         .map { (filePath + it.name).replace("+", "%20") }
-    if (false)
+    if (true)
         ImageFadePager(
             count = items.size,
             loadAsync = { loadBitmap(items[it]) }
@@ -75,28 +75,29 @@ fun ImageFadePager(
     val scope = rememberCoroutineScope()
     var secondContent by remember { mutableStateOf(false)}
     Box(modifier =  Modifier.fillMaxSize()) {
-        Box(Modifier.fillMaxSize()) {
-            Crossfade(
-                targetState = secondContent,
-                animationSpec = tween(durationMillis = 2000)
-            ) {
-                when (it) {
-                    false -> {
-                        AsyncImage(
-                            modifier = Modifier.align(Alignment.Center),
-                            contentDescription = "Image",
-                            loadAsync = { loadAsync(0) }
-                        )
-                    }
-                    true -> {
-                        AsyncImage(
-                            modifier = Modifier.align(Alignment.Center),
-                            contentDescription = "Image",
-                            loadAsync = { loadAsync(50) }
-                        )
-                    }
+        Crossfade(
+            targetState = secondContent,
+            animationSpec = tween(durationMillis = 2000)
+        ) {
+            Box(Modifier
+                .fillMaxSize()
+                .align(Alignment.Center)
+            ) { when (it) {
+                false -> {
+                    AsyncImage(
+                        modifier = Modifier.align(Alignment.Center),
+                        contentDescription = "Image",
+                        loadAsync = { loadAsync(0) }
+                    )
                 }
-            }
+                true -> {
+                    AsyncImage(
+                        modifier = Modifier.align(Alignment.Center),
+                        contentDescription = "Image",
+                        loadAsync = { loadAsync(50) }
+                    )
+                }
+            }}
         }
         Button({
             scope.launch {
@@ -110,7 +111,7 @@ fun ImageFadePager(
 
 @Composable
 fun AsyncImage(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     loadAsync: suspend ()-> Bitmap?,
     contentDescription: String,
 ) {
