@@ -2,13 +2,10 @@ package de.uriegel.fireplayer.ui
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.tween
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +34,7 @@ fun PhotoScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
         .filter { it.name.isPicture() }
         .map { (filePath + it.name).replace("+", "%20") }
     if (true)
-        ImageFadePager(
+        ImageCrossFadePager(
             count = items.size,
             loadAsync = { loadBitmap(items[it]) }
         )
@@ -62,49 +59,6 @@ fun ImagePager(
                 contentDescription = "Image",
                 loadAsync = { loadAsync(pager) }
             )
-        }
-    }
-}
-
-@OptIn(ExperimentalPagerApi::class)
-@Composable
-fun ImageFadePager(
-    count: Int,
-    loadAsync: suspend (Int)-> Bitmap?
-) {
-    val scope = rememberCoroutineScope()
-    var secondContent by remember { mutableStateOf(false)}
-    Box(modifier =  Modifier.fillMaxSize()) {
-        Crossfade(
-            targetState = secondContent,
-            animationSpec = tween(durationMillis = 2000)
-        ) {
-            Box(Modifier
-                .fillMaxSize()
-                .align(Alignment.Center)
-            ) { when (it) {
-                false -> {
-                    AsyncImage(
-                        modifier = Modifier.align(Alignment.Center),
-                        contentDescription = "Image",
-                        loadAsync = { loadAsync(0) }
-                    )
-                }
-                true -> {
-                    AsyncImage(
-                        modifier = Modifier.align(Alignment.Center),
-                        contentDescription = "Image",
-                        loadAsync = { loadAsync(50) }
-                    )
-                }
-            }}
-        }
-        Button({
-            scope.launch {
-                secondContent = !secondContent
-            }
-        }) {
-            Text("Weiter")
         }
     }
 }
@@ -138,6 +92,7 @@ fun AsyncImage(
 
 suspend fun loadBitmap(url: String): Bitmap? =
     withContext(Dispatchers.IO) {
+        Log.i("PHOTO", "Lade $url")
         return@withContext getResponseStream(url)
             .map {
                 it.readAll()
