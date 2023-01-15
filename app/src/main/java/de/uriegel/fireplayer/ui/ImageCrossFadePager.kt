@@ -31,6 +31,7 @@ fun ImageCrossFadePager(
     var bitmap1: Bitmap? by remember { mutableStateOf(null)}
     var bitmap2: Bitmap? by remember { mutableStateOf(null)}
     var bitmapNext: Bitmap? by remember { mutableStateOf(null)}
+    var bitmapPrev: Bitmap? by remember { mutableStateOf(null)}
 
     LaunchedEffect(true) {
         scope.launch {
@@ -75,15 +76,19 @@ fun ImageCrossFadePager(
         Row {
             Button({
                 if (index != 0) {
-                    if (secondVisible)
-                        bitmap1 = bitmapNext
-                    else
-                        bitmap2 = bitmapNext
+                    if (secondVisible) {
+                        bitmap1 = bitmapPrev
+                        bitmapNext = bitmap2
+                    } else {
+                        bitmap2 = bitmapPrev
+                        bitmapNext = bitmap1
+                    }
                     scope.launch {
                         secondVisible = !secondVisible
-                        loadAsync(--index + 1)?.let {
-                            bitmapNext = it
-                        }
+                        if (index > 1)
+                            loadAsync(--index - 1)?.let {
+                                bitmapPrev = it
+                            }
                     }
                 }
             }) {
@@ -91,10 +96,13 @@ fun ImageCrossFadePager(
             }
             Button({
                 if (index < count - 1) {
-                    if (secondVisible)
+                    if (secondVisible) {
                         bitmap1 = bitmapNext
-                    else
+                        bitmapPrev = bitmap2
+                    } else {
                         bitmap2 = bitmapNext
+                        bitmapPrev = bitmap1
+                    }
                     scope.launch {
                         secondVisible = !secondVisible
                         if (index < count - 2)
