@@ -15,6 +15,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import de.uriegel.fireplayer.R
+import de.uriegel.fireplayer.android.isTv
 import de.uriegel.fireplayer.extensions.fromBase64
 import de.uriegel.fireplayer.extensions.getFilePath
 import de.uriegel.fireplayer.extensions.isPicture
@@ -33,7 +34,7 @@ fun PhotoScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
     val items = viewModel.items
         .filter { it.name.isPicture() }
         .map { (filePath + it.name).replace("+", "%20") }
-    if (true)
+    if (isTv())
         ImageCrossFadePager(
             count = items.size,
             loadAsync = { loadBitmap(items[it]) }
