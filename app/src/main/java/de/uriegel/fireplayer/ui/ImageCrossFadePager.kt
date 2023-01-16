@@ -2,13 +2,11 @@ package de.uriegel.fireplayer.ui
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.view.KeyEvent
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,6 +14,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import de.uriegel.fireplayer.R
+import de.uriegel.fireplayer.extensions.onKeyDown
 import kotlinx.coroutines.launch
 
 @Composable
@@ -54,7 +53,52 @@ fun ImageCrossFadePager(
             animationSpec = tween(1000))
     }
 
-    Box(modifier =  Modifier.fillMaxSize()) {
+    Box(modifier =  Modifier
+        .fillMaxSize()
+        .onKeyDown(context) { _, evt ->
+            when (evt?.keyCode) {
+                KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                    if (index < count - 1) {
+                        if (secondVisible) {
+                            bitmap1 = bitmapNext
+                            bitmapPrev = bitmap2
+                        } else {
+                            bitmap2 = bitmapNext
+                            bitmapPrev = bitmap1
+                        }
+                        scope.launch {
+                            secondVisible = !secondVisible
+                            if (index < count - 2)
+                                loadAsync(++index + 1)?.let {
+                                    bitmapNext = it
+                                }
+                        }
+                    }
+                    true
+                }
+                KeyEvent.KEYCODE_DPAD_LEFT -> {
+                    if (index != 0) {
+                        if (secondVisible) {
+                            bitmap1 = bitmapPrev
+                            bitmapNext = bitmap2
+                        } else {
+                            bitmap2 = bitmapPrev
+                            bitmapNext = bitmap1
+                        }
+                        scope.launch {
+                            secondVisible = !secondVisible
+                            if (index > 1)
+                                loadAsync(--index - 1)?.let {
+                                    bitmapPrev = it
+                                }
+                        }
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+    ) {
         Image(
             modifier = Modifier
                 .align(Alignment.Center)
@@ -73,48 +117,6 @@ fun ImageCrossFadePager(
                     R.drawable.emptypics).asImageBitmap(),
             contentDescription = "Image",
         )
-        Row {
-            Button({
-                if (index != 0) {
-                    if (secondVisible) {
-                        bitmap1 = bitmapPrev
-                        bitmapNext = bitmap2
-                    } else {
-                        bitmap2 = bitmapPrev
-                        bitmapNext = bitmap1
-                    }
-                    scope.launch {
-                        secondVisible = !secondVisible
-                        if (index > 1)
-                            loadAsync(--index - 1)?.let {
-                                bitmapPrev = it
-                            }
-                    }
-                }
-            }) {
-                Text("Zurück")
-            }
-            Button({
-                if (index < count - 1) {
-                    if (secondVisible) {
-                        bitmap1 = bitmapNext
-                        bitmapPrev = bitmap2
-                    } else {
-                        bitmap2 = bitmapNext
-                        bitmapPrev = bitmap1
-                    }
-                    scope.launch {
-                        secondVisible = !secondVisible
-                        if (index < count - 2)
-                            loadAsync(++index + 1)?.let {
-                                bitmapNext = it
-                            }
-                    }
-                }
-            }) {
-                Text("Weiter")
-            }
-        }
     }
 }
 
