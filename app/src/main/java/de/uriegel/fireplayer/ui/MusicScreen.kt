@@ -11,6 +11,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
@@ -28,8 +31,11 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
+@Preview(showSystemUi = true)
 @Composable
-fun MusicScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
+fun MusicScreen(
+    @PreviewParameter(ViewModelPreviewProvider::class) viewModel: DirectoryItemsViewModel,
+    path64: String? = null) {
     val path = path64?.fromBase64() ?: ""
     val filePath = path.getFilePath()
 
@@ -39,10 +45,9 @@ fun MusicScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
     val sonyPsk = preferences.getString("sony_psk", null)
     val scope = rememberCoroutineScope()
 
-    Box(modifier =
-    Modifier
-        .fillMaxWidth()
-        .fillMaxHeight()
+    Box(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
     ) {
         Box(modifier = Modifier.align(Alignment.Center)) {
             MusicPlayer(viewModel
@@ -135,3 +140,10 @@ data class SonyDataParam(val mode: String)
 
 @Serializable
 data class SonyData(val method: String, val version: String, val id: Int, val params: List<SonyDataParam>)
+
+class ViewModelPreviewProvider : PreviewParameterProvider<DirectoryItemsViewModel> {
+    override val values = sequenceOf(
+        DirectoryItemsViewModel()
+    )
+}
+
