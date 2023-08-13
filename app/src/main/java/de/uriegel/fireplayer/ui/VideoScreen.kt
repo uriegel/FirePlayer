@@ -17,13 +17,18 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.PlaybackException
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import de.uriegel.fireplayer.extensions.*
+import de.uriegel.fireplayer.requests.accessDisk
 import de.uriegel.fireplayer.requests.getBaseUrl
 import de.uriegel.fireplayer.room.FilmInfo
 import de.uriegel.fireplayer.viewmodel.VideoViewModel
 import de.uriegel.fireplayer.viewmodel.VideoViewModelFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 @Composable
@@ -68,6 +73,16 @@ fun VideoPlayer(viewModel: VideoViewModel, path64: String?, playerView: MutableS
                         .setUri(getBaseUrl() + path)
                         .build()
                     it.setMediaItem(mediaItem)
+                    it.addListener(object: Player.Listener {
+                        override fun onPlayerError(error: PlaybackException) {
+                            //if (error.errorCode == 2001) {
+                                coroutineScope.launch {
+                                    accessDisk()
+                                    exoPlayer.value?.play()
+                                }
+                            //}
+                        }
+                    })
                     it.prepare()
                 }
 
