@@ -5,7 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,11 +27,12 @@ import de.uriegel.fireplayer.android.isTv
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import de.uriegel.fireplayer.ui.theme.card
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FolderSelectorScreen(navController: NavHostController) {
     Scaffold(
         topBar = { if (!isTv()) CreateTopBar(navController) },
-        content = { it ->
+        content = {
             ConstraintLayout(
                 modifier =
                 Modifier
@@ -94,7 +100,6 @@ fun FolderSelectorScreen(navController: NavHostController) {
 @Composable
 fun Folder(navController: NavHostController, textId: Int, route: String, modifier: Modifier) {
     Card(shape = RoundedCornerShape(10.dp),
-        elevation=5.dp,
         modifier = modifier
             .padding(15.dp)
             .clickable {
@@ -118,7 +123,7 @@ fun FolderSelectorScreenPreview() {
     FirePlayerTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colors.background
+            color = MaterialTheme.colorScheme.background
         ) {
             val navController = rememberNavController()
             FolderSelectorScreen(navController)
@@ -132,7 +137,7 @@ fun FolderSelectorScreenPreviewLandscape() {
     FirePlayerTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colors.background
+            color = MaterialTheme.colorScheme.background
         ) {
             val navController = rememberNavController()
             FolderSelectorScreen(navController)

@@ -10,8 +10,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+        maven { setUrl("https://jitpack.io") }
     }
 }
-rootProject.name='FirePlayer'
-include ':app'
+rootProject.name = "FirePlayer"
+include(":app")

@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
+
 @Composable
 fun PhotoScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
     val path = path64?.fromBase64() ?: ""
@@ -54,7 +55,8 @@ fun ImagePager(
 ) {
     val pagerState = rememberPagerState()
     HorizontalPager(count = count, state = pagerState) { pager ->
-        Box(Modifier.fillMaxSize()) {
+        Box(Modifier
+            .fillMaxSize()) {
             AsyncImage(
                 modifier = Modifier.align(Alignment.Center),
                 contentDescription = "Image",
@@ -85,7 +87,7 @@ fun AsyncImage(
     }
 
     Image(
-        modifier = modifier,
+        modifier = modifier, // .rotate(90f),
         bitmap = bitmap.value.asImageBitmap(),
         contentDescription = contentDescription,
     )
@@ -99,7 +101,16 @@ suspend fun loadBitmap(url: String): Bitmap? =
                 it.readAll()
             }
             .fold({
-                BitmapFactory.decodeByteArray(it, 0, it.size)
+               BitmapFactory.decodeByteArray(it, 0, it.size)
             }, { null })
     }
 
+//private fun rotateImage(data: ByteArray, angle: Float): ByteArray {
+//    var bmp = BitmapFactory.decodeByteArray(data, 0, data.size, null)
+//    val mat = Matrix()
+//    mat.postRotate(angle)
+//    bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, mat, true)
+//    val stream = ByteArrayOutputStream()
+//    bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+//    return stream.toByteArray()
+//}
