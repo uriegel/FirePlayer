@@ -18,10 +18,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import androidx.preference.PreferenceManager
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.ui.StyledPlayerView
 import de.uriegel.fireplayer.extensions.*
 import de.uriegel.fireplayer.requests.getBaseUrl
 import de.uriegel.fireplayer.requests.post
@@ -78,6 +78,7 @@ fun MusicScreen(
 }
 
 @Composable
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 fun MusicPlayer(playList: List<String>) {
     val context = LocalContext.current
 
@@ -90,20 +91,21 @@ fun MusicPlayer(playList: List<String>) {
                 .build()
                 .also {
                     playList.forEach { item ->
-                        it.addMediaItem(MediaItem.fromUri(
+                        it.addMediaItem(
+                            MediaItem.fromUri(
                             getBaseUrl() + item.replace("+", "%20")))
                     }
                     it.prepare()
                 }
 
-            StyledPlayerView(context).apply {
+            PlayerView(context).apply {
                 player = exoPlayer.value
                 this.setOnKeyListener { _, _, _ ->
                     showController()
                     false
                 }
 
-                setControllerVisibilityListener(StyledPlayerView.ControllerVisibilityListener {
+                setControllerVisibilityListener(PlayerView.ControllerVisibilityListener {
                     if (it == View.VISIBLE)
                         context.showSystemUi()
                     else

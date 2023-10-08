@@ -15,26 +15,25 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.StyledPlayerView
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import de.uriegel.fireplayer.extensions.*
 import de.uriegel.fireplayer.requests.accessDisk
 import de.uriegel.fireplayer.requests.getBaseUrl
 import de.uriegel.fireplayer.room.FilmInfo
 import de.uriegel.fireplayer.viewmodel.VideoViewModel
 import de.uriegel.fireplayer.viewmodel.VideoViewModelFactory
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 @Composable
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 fun VideoScreen(path64: String?) {
     val context = LocalContext.current
-    val playerView: MutableState<StyledPlayerView?> = remember { mutableStateOf(null) }
+    val playerView: MutableState<PlayerView?> = remember { mutableStateOf(null) }
     val owner = LocalViewModelStoreOwner.current
     owner?.let {
         val viewModel: VideoViewModel = viewModel(it, "VideoViewModel", VideoViewModelFactory(
@@ -55,7 +54,8 @@ fun VideoScreen(path64: String?) {
 }
 
 @Composable
-fun VideoPlayer(viewModel: VideoViewModel, path64: String?, playerView: MutableState<StyledPlayerView?>) {
+@androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+fun VideoPlayer(viewModel: VideoViewModel, path64: String?, playerView: MutableState<PlayerView?>) {
     val context = LocalContext.current
     val path = path64!!.fromBase64()
 
@@ -86,7 +86,7 @@ fun VideoPlayer(viewModel: VideoViewModel, path64: String?, playerView: MutableS
                     it.prepare()
                 }
 
-            StyledPlayerView(context).apply {
+            PlayerView(context).apply {
                 player = exoPlayer.value
                 playerView.value = this
                 this.setOnKeyListener { _, _, _ ->
@@ -103,7 +103,7 @@ fun VideoPlayer(viewModel: VideoViewModel, path64: String?, playerView: MutableS
                         }
                 }
 
-                setControllerVisibilityListener(StyledPlayerView.ControllerVisibilityListener {
+                setControllerVisibilityListener(PlayerView.ControllerVisibilityListener {
                     if (it == View.VISIBLE)
                         context.showSystemUi()
                     else
