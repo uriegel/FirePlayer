@@ -8,4 +8,4 @@ PSK:
 
 enter PSK in Sony TV settings and FireMusic settings
 ## Debug on Firestick
-/daten/Android/Sdk/platform-tools/adb connect 192.168.178.50
+/daten/Android/Sdk/platform-tools/adb connect 192.168.178.81
