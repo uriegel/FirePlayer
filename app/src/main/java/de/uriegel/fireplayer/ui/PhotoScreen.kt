@@ -2,15 +2,17 @@ package de.uriegel.fireplayer.ui
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Log
+import android.graphics.Matrix
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.exifinterface.media.ExifInterface
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -87,7 +89,7 @@ fun AsyncImage(
     }
 
     Image(
-        modifier = modifier, // .rotate(90f),
+        modifier = modifier.rotate(90f),
         bitmap = bitmap.value.asImageBitmap(),
         contentDescription = contentDescription,
     )
@@ -95,22 +97,36 @@ fun AsyncImage(
 
 suspend fun loadBitmap(url: String): Bitmap? =
     withContext(Dispatchers.IO) {
-        Log.i("PHOTO", "Lade $url")
         return@withContext getResponseStream(url)
             .map {
                 it.readAll()
             }
             .fold({
-               BitmapFactory.decodeByteArray(it, 0, it.size)
+                val degree = it.inputStream().use { bytes ->
+                    val exif = ExifInterface(bytes)
+                    val orientation = exif.getAttributeInt(
+                        ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.ORIENTATION_NORMAL
+                    )
+                    if (orientation == ExifInterface.ORIENTATION_ROTATE_90)
+                        90f
+                    else if (orientation == ExifInterface.ORIENTATION_ROTATE_270)
+                        270f
+                    else if (orientation == ExifInterface.ORIENTATION_ROTATE_180)
+                        180f
+                    else
+                        0f
+                }
+                rotateImage(BitmapFactory.decodeByteArray(it, 0, it.size), degree)
             }, { null })
     }
 
-//private fun rotateImage(data: ByteArray, angle: Float): ByteArray {
-//    var bmp = BitmapFactory.decodeByteArray(data, 0, data.size, null)
-//    val mat = Matrix()
-//    mat.postRotate(angle)
-//    bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, mat, true)
-//    val stream = ByteArrayOutputStream()
-//    bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-//    return stream.toByteArray()
-//}
+private fun rotateImage(bitmap: Bitmap, angle: Float): Bitmap {
+    if (angle == 0f)
+        return bitmap
+    else {
+        val mat = Matrix()
+        mat.postRotate(angle)
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, mat, true)
+    }
+}

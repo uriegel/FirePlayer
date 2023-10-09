@@ -11,6 +11,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import de.uriegel.fireplayer.R
@@ -27,6 +29,7 @@ fun ImageCrossFadePager(
     var secondVisible by remember { mutableStateOf(false)}
     val alpha = remember { androidx.compose.animation.core.Animatable(1F) }
     var index by remember { mutableStateOf(0)}
+    var loading by remember { mutableStateOf(false)}
     var bitmap1: Bitmap? by remember { mutableStateOf(null)}
     var bitmap2: Bitmap? by remember { mutableStateOf(null)}
     var bitmapNext: Bitmap? by remember { mutableStateOf(null)}
@@ -58,7 +61,7 @@ fun ImageCrossFadePager(
         .onKeyDown(context) { _, evt ->
             when (evt?.keyCode) {
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                    if (index < count - 1) {
+                    if (!loading && index < count - 1) {
                         if (secondVisible) {
                             bitmap1 = bitmapNext
                             bitmapPrev = bitmap2
@@ -66,18 +69,21 @@ fun ImageCrossFadePager(
                             bitmap2 = bitmapNext
                             bitmapPrev = bitmap1
                         }
+                        loading = true
                         scope.launch {
                             secondVisible = !secondVisible
-                            if (index < count - 2)
-                                loadAsync(++index + 1)?.let {
+                            if (index++ < count - 2)
+                                loadAsync(index + 1)?.let {
                                     bitmapNext = it
-                                }
+                                    loading = false
+                                } else
+                                loading = false
                         }
                     }
                     true
                 }
                 KeyEvent.KEYCODE_DPAD_LEFT -> {
-                    if (index != 0) {
+                    if (!loading && index != 0) {
                         if (secondVisible) {
                             bitmap1 = bitmapPrev
                             bitmapNext = bitmap2
@@ -85,12 +91,16 @@ fun ImageCrossFadePager(
                             bitmap2 = bitmapPrev
                             bitmapNext = bitmap1
                         }
+                        loading = true
                         scope.launch {
                             secondVisible = !secondVisible
-                            if (index > 1)
-                                loadAsync(--index - 1)?.let {
+                            if (index-- > 1)
+                                loadAsync(index - 1)?.let {
                                     bitmapPrev = it
-                                }
+                                    loading = false
+                                } else
+                                loading = false
+
                         }
                     }
                     true
@@ -101,6 +111,8 @@ fun ImageCrossFadePager(
     ) {
         Image(
             modifier = Modifier
+                .rotate(90f)
+                .scale((bitmap2?.height?.toFloat() ?: 1f) / (bitmap2?.width?.toFloat() ?: 1f))
                 .align(Alignment.Center)
                 .alpha(alpha.value),
             bitmap = bitmap1?.asImageBitmap()
@@ -110,6 +122,8 @@ fun ImageCrossFadePager(
         )
         Image(
             modifier = Modifier
+                .rotate(90f)
+                .scale((bitmap2?.height?.toFloat() ?: 1f) / (bitmap2?.width?.toFloat() ?: 1f))
                 .align(Alignment.Center)
                 .alpha(1f - alpha.value),
             bitmap = bitmap2?.asImageBitmap()
