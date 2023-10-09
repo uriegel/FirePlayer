@@ -2,7 +2,6 @@ package de.uriegel.fireplayer.ui
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,7 +52,7 @@ fun PhotoScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
 @Composable
 fun ImagePager(
     count: Int,
-    loadAsync: suspend (Int)-> Bitmap?
+    loadAsync: suspend (Int)-> ImageData?
 ) {
     val pagerState = rememberPagerState()
     HorizontalPager(count = count, state = pagerState) { pager ->
@@ -71,11 +70,12 @@ fun ImagePager(
 @Composable
 fun AsyncImage(
     modifier: Modifier = Modifier,
-    loadAsync: suspend ()-> Bitmap?,
+    loadAsync: suspend ()-> ImageData?,
     contentDescription: String,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    var angle by remember { mutableFloatStateOf(0f)}
     val bitmap = remember {
         mutableStateOf(BitmapFactory.decodeResource(context.resources, R.drawable.emptypics))
     }
@@ -83,26 +83,27 @@ fun AsyncImage(
     LaunchedEffect(true) {
         scope.launch {
             loadAsync()?.apply {
-                bitmap.value = this
+                angle = this.angle
+                bitmap.value = this.bitmap
             }
         }
     }
 
     Image(
-        modifier = modifier.rotate(90f),
+        modifier = modifier.rotate(angle),
         bitmap = bitmap.value.asImageBitmap(),
         contentDescription = contentDescription,
     )
 }
 
-suspend fun loadBitmap(url: String): Bitmap? =
+suspend fun loadBitmap(url: String): ImageData? =
     withContext(Dispatchers.IO) {
         return@withContext getResponseStream(url)
             .map {
                 it.readAll()
             }
             .fold({
-                val degree = it.inputStream().use { bytes ->
+                val angle = it.inputStream().use { bytes ->
                     val exif = ExifInterface(bytes)
                     val orientation = exif.getAttributeInt(
                         ExifInterface.TAG_ORIENTATION,
@@ -117,16 +118,11 @@ suspend fun loadBitmap(url: String): Bitmap? =
                     else
                         0f
                 }
-                rotateImage(BitmapFactory.decodeByteArray(it, 0, it.size), degree)
+                ImageData(BitmapFactory.decodeByteArray(it, 0, it.size), angle)
             }, { null })
     }
 
-private fun rotateImage(bitmap: Bitmap, angle: Float): Bitmap {
-    if (angle == 0f)
-        return bitmap
-    else {
-        val mat = Matrix()
-        mat.postRotate(angle)
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, mat, true)
-    }
-}
+data class ImageData(
+    val bitmap: Bitmap,
+    val angle: Float
+)
