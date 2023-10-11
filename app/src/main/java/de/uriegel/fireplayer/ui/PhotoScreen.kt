@@ -7,8 +7,6 @@ import de.uriegel.fireplayer.extensions.getFilePath
 import de.uriegel.fireplayer.extensions.isPicture
 import de.uriegel.fireplayer.extensions.readAll
 import de.uriegel.fireplayer.requests.getResponseStream
-import de.uriegel.fireplayer.ui.image.ImageCrossFadePager
-import de.uriegel.fireplayer.ui.image.ImagePager
 import de.uriegel.fireplayer.viewmodel.DirectoryItemsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,18 +18,12 @@ fun PhotoScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
     val items = viewModel.items
         .filter { it.name.isPicture() }
         .map { (filePath + it.name).replace("+", "%20") }
-    if (isTv())
-        ImageCrossFadePager(
-            count = items.size,
-            loadAsync = { loadBitmap(items[it]) }
-        )
-    else
-        ImagePager(
-            count = items.size,
-            loadAsync = { loadBitmap(items[it]) }
-        )
+    ImagePager(
+        count = items.size,
+        loadAsync = { loadBitmap(items[it]) },
+        crossFade = isTv()
+    )
 }
-
 
 suspend fun loadBitmap(url: String): ByteArray? =
     withContext(Dispatchers.IO) {
