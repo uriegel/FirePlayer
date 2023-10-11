@@ -1,4 +1,4 @@
-package de.uriegel.fireplayer.ui
+package de.uriegel.fireplayer.ui.image
 
 import android.graphics.BitmapFactory
 import android.view.KeyEvent
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ImageCrossFadePager(
     count: Int,
-    loadAsync: suspend (Int)-> ImageData?
+    loadAsync: suspend (Int)-> ByteArray?
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -37,10 +37,10 @@ fun ImageCrossFadePager(
     LaunchedEffect(true) {
         scope.launch {
             loadAsync(0)?.let {
-                imageData1 = it
+                imageData1 = loadImageData(it)
             }
             loadAsync(1)?.let {
-                imageDataNext = it
+                imageDataNext = loadImageData(it)
             }
         }
 
@@ -73,7 +73,7 @@ fun ImageCrossFadePager(
                             secondVisible = !secondVisible
                             if (index++ < count - 2)
                                 loadAsync(index + 1)?.let {
-                                    imageDataNext = it
+                                    imageDataNext = loadImageData(it)
                                     loading = false
                                 } else
                                 loading = false
@@ -95,7 +95,7 @@ fun ImageCrossFadePager(
                             secondVisible = !secondVisible
                             if (index-- > 1)
                                 loadAsync(index - 1)?.let {
-                                    imageDataPrev = it
+                                    imageDataPrev = loadImageData(it)
                                     loading = false
                                 } else
                                 loading = false
