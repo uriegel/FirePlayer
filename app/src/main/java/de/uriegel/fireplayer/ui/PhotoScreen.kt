@@ -1,7 +1,6 @@
 package de.uriegel.fireplayer.ui
 
 import androidx.compose.runtime.*
-import de.uriegel.fireplayer.android.isTv
 import de.uriegel.fireplayer.extensions.fromBase64
 import de.uriegel.fireplayer.extensions.getFilePath
 import de.uriegel.fireplayer.extensions.isPicture
@@ -21,7 +20,6 @@ fun PhotoScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
     ImagePager(
         count = items.size,
         loadAsync = { loadBitmap(items[it]) },
-        crossFade = isTv()
     )
 }
 
