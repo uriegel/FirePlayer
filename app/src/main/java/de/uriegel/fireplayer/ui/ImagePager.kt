@@ -1,7 +1,9 @@
 package de.uriegel.fireplayer.ui
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.KeyEvent
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -137,51 +139,34 @@ fun ImagePager(
             }
         }
     ) {
-        Image(
-            modifier = Modifier
-                .then(
-                    if (imageData1?.angle != 0f) {
-                        Modifier
-                            .rotate(imageData1?.angle ?: 0f)
-                            .scale(
-                                (imageData1?.bitmap?.height?.toFloat()
-                                    ?: 1f) / (imageData1?.bitmap?.width?.toFloat() ?: 1f)
-                            )
-                    } else
-                        Modifier
-                )
-                .align(Alignment.Center)
-                .alpha(alpha.value),
-            bitmap = imageData1?.bitmap?.asImageBitmap()
-                ?: BitmapFactory.decodeResource(
-                    context.resources,
-                    R.drawable.emptypics
-                ).asImageBitmap(),
-            contentDescription = "Image",
-        )
-        Image(
-            modifier = Modifier
-                .then(
-                    if (imageData2?.angle != 0f) {
-                        Modifier
-                            .rotate(imageData2?.angle ?: 0f)
-                            .scale(
-                                (imageData2?.bitmap?.height?.toFloat()
-                                    ?: 1f) / (imageData2?.bitmap?.width?.toFloat() ?: 1f)
-                            )
-                    } else
-                        Modifier
-                )
-                .align(Alignment.Center)
-                .alpha(1f - alpha.value),
-            bitmap = imageData2?.bitmap?.asImageBitmap()
-                ?: BitmapFactory.decodeResource(
-                    context.resources,
-                    R.drawable.emptypics
-                ).asImageBitmap(),
-            contentDescription = "Image",
-        )
+        AsyncImage(context, Modifier.align(Alignment.Center), imageData1, alpha.value)
+        AsyncImage(context, Modifier.align(Alignment.Center), imageData2, 1f - alpha.value)
     }
+}
+
+@Composable
+fun AsyncImage(context: Context, modifier: Modifier, imageData: ImageData?, alpha: Float) {
+    Image(
+        modifier = modifier
+            .then(
+                if (imageData?.angle != 0f) {
+                    Modifier
+                        .rotate(imageData?.angle ?: 0f)
+                        .scale(
+                            (imageData?.bitmap?.height?.toFloat()
+                                ?: 1f) / (imageData?.bitmap?.width?.toFloat() ?: 1f)
+                        )
+                } else
+                    Modifier
+            )
+            .alpha(alpha),
+        bitmap = imageData?.bitmap?.asImageBitmap()
+            ?: BitmapFactory.decodeResource(
+                context.resources,
+                R.drawable.emptypics
+            ).asImageBitmap(),
+        contentDescription = "Image"
+    )
 }
 
 data class ImageData(
@@ -203,6 +188,7 @@ fun loadImageData(bitmapBytes: ByteArray): ImageData {
             else -> 0f
         }
     }
+    Log.i("FOTO", "Winkel $angle")
     return ImageData(BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.size), angle)
 }
 
