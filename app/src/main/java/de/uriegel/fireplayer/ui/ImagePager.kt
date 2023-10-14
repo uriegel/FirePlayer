@@ -1,5 +1,6 @@
 package de.uriegel.fireplayer.ui
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.KeyEvent
@@ -39,18 +40,18 @@ fun ImagePager(
     var secondVisible by remember { mutableStateOf(false)}
     var index by remember { mutableIntStateOf(0) }
     var loading by remember { mutableStateOf(false)}
-    var bitmap1: ImageData? by remember { mutableStateOf(null)}
-    var bitmap2: ImageData? by remember { mutableStateOf(null)}
-    var bitmapNext: ImageData? by remember { mutableStateOf(null)}
-    var bitmapPrev: ImageData? by remember { mutableStateOf(null)}
+    var imageData1: ImageData? by remember { mutableStateOf(null)}
+    var imageData2: ImageData? by remember { mutableStateOf(null)}
+    var imageDataNext: ImageData? by remember { mutableStateOf(null)}
+    var imageDataPrev: ImageData? by remember { mutableStateOf(null)}
 
     LaunchedEffect(true) {
         scope.launch {
             loadAsync(0)?.let {
-                bitmap1 = loadImageData(it)
+                imageData1 = loadImageData(it)
             }
             loadAsync(1)?.let {
-                bitmapNext = loadImageData(it)
+                imageDataNext = loadImageData(it)
             }
         }
     }
@@ -58,18 +59,18 @@ fun ImagePager(
     fun next() {
         if (!loading && index < count - 1) {
             if (secondVisible) {
-                bitmap1 = bitmapNext
-                bitmapPrev = bitmap2
+                imageData1 = imageDataNext
+                imageDataPrev = imageData2
             } else {
-                bitmap2 = bitmapNext
-                bitmapPrev = bitmap1
+                imageData2 = imageDataNext
+                imageDataPrev = imageData1
             }
             loading = true
             secondVisible = !secondVisible
             scope.launch {
                 if (index++ < count - 2)
                     loadAsync(index + 1)?.let {
-                        bitmapNext = loadImageData(it)
+                        imageDataNext = loadImageData(it)
                     }
                 loading = false
             }
@@ -79,18 +80,18 @@ fun ImagePager(
     fun previous() {
         if (!loading && index != 0) {
             if (secondVisible) {
-                bitmap1 = bitmapPrev
-                bitmapNext = bitmap2
+                imageData1 = imageDataPrev
+                imageDataNext = imageData2
             } else {
-                bitmap2 = bitmapPrev
-                bitmapNext = bitmap1
+                imageData2 = imageDataPrev
+                imageDataNext = imageData1
             }
             loading = true
             secondVisible = !secondVisible
             scope.launch {
                 if (index-- > 1)
                     loadAsync(index - 1)?.let {
-                        bitmapPrev = loadImageData(it)
+                        imageDataPrev = loadImageData(it)
                     }
                 loading = false
             }
@@ -135,24 +136,7 @@ fun ImagePager(
                 tween(tween)
             )
         ) {
-            Image(
-                modifier = Modifier
-                    .then(
-                        if (bitmap1?.angle != 0f) {
-                            Modifier
-                                .rotate(bitmap1?.angle ?: 0f)
-                                .scale(
-                                    (bitmap1?.bitmap?.height?.toFloat()
-                                        ?: 1f) / (bitmap1?.bitmap?.width?.toFloat() ?: 1f)
-                                )
-                        } else
-                            Modifier
-                    ),
-                bitmap = bitmap1?.bitmap?.asImageBitmap()
-                    ?: BitmapFactory.decodeResource(context.resources,
-                        R.drawable.emptypics).asImageBitmap(),
-                contentDescription = "Image",
-            )
+            RotatableImage(imageData1, context)
         }
         AnimatedVisibility(
             modifier = Modifier
@@ -163,30 +147,33 @@ fun ImagePager(
             ),
             exit = fadeOut(
                 tween(tween)
-
             )
         ) {
-            Image(
-                modifier = Modifier
-                    .then(
-                        if (bitmap2?.angle != 0f) {
-                            Modifier
-                                .rotate(bitmap2?.angle ?: 0f)
-                                .scale(
-                                    (bitmap2?.bitmap?.height?.toFloat()
-                                        ?: 1f) / (bitmap2?.bitmap?.width?.toFloat() ?: 1f)
-                                )
-                        } else
-                            Modifier
-                    ),
-                bitmap = bitmap2?.bitmap?.asImageBitmap()
-                    ?: BitmapFactory.decodeResource(context.resources,
-                        R.drawable.emptypics).asImageBitmap(),
-                contentDescription = "Image",
-            )
+            RotatableImage(imageData2, context)
         }
     }
 }
+
+@Composable
+private fun RotatableImage(imageData: ImageData?, context: Context, modifier: Modifier = Modifier) =
+    Image(
+        modifier = modifier
+            .then(
+                if (imageData?.angle != 0f) {
+                    Modifier
+                        .rotate(imageData?.angle ?: 0f)
+                        .scale(
+                            (imageData?.bitmap?.height?.toFloat()
+                                ?: 1f) / (imageData?.bitmap?.width?.toFloat() ?: 1f)
+                        )
+                } else
+                    Modifier
+            ),
+        bitmap = imageData?.bitmap?.asImageBitmap()
+            ?: BitmapFactory.decodeResource(context.resources,
+                R.drawable.emptypics).asImageBitmap(),
+        contentDescription = "Image",
+    )
 
 private suspend fun loadImageData(bytes: ByteArray): ImageData =
     withContext(Dispatchers.IO) {
