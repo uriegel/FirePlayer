@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.exifinterface.media.ExifInterface
 import de.uriegel.fireplayer.R
 import de.uriegel.fireplayer.extensions.onKeyDown
-import de.uriegel.fireplayer.extensions.toBase64
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -150,11 +149,11 @@ fun ImagePager(
 
 @Composable
 private fun MediaContent(imageData: ImageData, context: Context) {
-    Box() {
+    Box {
         if (imageData.bitmap != null)
             RotatableImage(imageData, context)
         else if (imageData.videoUrl != null)
-            VideoScreen(imageData.videoUrl.toBase64())
+            VideoClip(imageData.videoUrl)
         else
             Text(text = "")
     }
