@@ -9,7 +9,9 @@ fun String.isMusic() =
     this.endsWith(".mp3", true) or this.endsWith(".ogg", true)
 
 fun String.isPicture() =
-    this.endsWith(".jpg", true) or this.endsWith(".png", true)
+    this.endsWith(".jpg", true) or
+            this.endsWith(".png", true) or
+            this.endsWith(".mp4", true)
 
 fun String.getTitle() = this.substringBeforeLast('.')
 

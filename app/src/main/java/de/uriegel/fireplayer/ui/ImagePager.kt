@@ -14,6 +14,7 @@ import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.exifinterface.media.ExifInterface
 import de.uriegel.fireplayer.R
 import de.uriegel.fireplayer.extensions.onKeyDown
+import de.uriegel.fireplayer.extensions.toBase64
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,26 +35,22 @@ const val tween = 2000
 @Composable
 fun ImagePager(
     count: Int,
-    loadAsync: suspend (Int)-> ByteArray?
+    loadAsync: suspend (Int)-> MediaContent
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var secondVisible by remember { mutableStateOf(false)}
     var index by remember { mutableIntStateOf(0) }
     var loading by remember { mutableStateOf(false)}
-    var imageData1: ImageData? by remember { mutableStateOf(null)}
-    var imageData2: ImageData? by remember { mutableStateOf(null)}
-    var imageDataNext: ImageData? by remember { mutableStateOf(null)}
-    var imageDataPrev: ImageData? by remember { mutableStateOf(null)}
+    var imageData1: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
+    var imageData2: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
+    var imageDataNext: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
+    var imageDataPrev: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
 
     LaunchedEffect(true) {
         scope.launch {
-            loadAsync(0)?.let {
-                imageData1 = loadImageData(it)
-            }
-            loadAsync(1)?.let {
-                imageDataNext = loadImageData(it)
-            }
+            imageData1 = loadImageData(loadAsync(0))
+            imageDataNext = loadImageData(loadAsync(1))
         }
     }
 
@@ -69,9 +67,7 @@ fun ImagePager(
             secondVisible = !secondVisible
             scope.launch {
                 if (index++ < count - 2)
-                    loadAsync(index + 1)?.let {
-                        imageDataNext = loadImageData(it)
-                    }
+                    imageDataNext = loadImageData(loadAsync(index + 1))
                 loading = false
             }
         }
@@ -90,9 +86,7 @@ fun ImagePager(
             secondVisible = !secondVisible
             scope.launch {
                 if (index-- > 1)
-                    loadAsync(index - 1)?.let {
-                        imageDataPrev = loadImageData(it)
-                    }
+                    imageDataPrev = loadImageData(loadAsync(index - 1))
                 loading = false
             }
         }
@@ -136,7 +130,7 @@ fun ImagePager(
                 tween(tween)
             )
         ) {
-            RotatableImage(imageData1, context)
+            MediaContent(imageData1, context)
         }
         AnimatedVisibility(
             modifier = Modifier
@@ -149,10 +143,23 @@ fun ImagePager(
                 tween(tween)
             )
         ) {
-            RotatableImage(imageData2, context)
+            MediaContent(imageData2, context)
         }
     }
 }
+
+@Composable
+private fun MediaContent(imageData: ImageData, context: Context) {
+    Box() {
+        if (imageData.bitmap != null)
+            RotatableImage(imageData, context)
+        else if (imageData.videoUrl != null)
+            VideoScreen(imageData.videoUrl.toBase64())
+        else
+            Text(text = "")
+    }
+}
+
 
 @Composable
 private fun RotatableImage(imageData: ImageData?, context: Context, modifier: Modifier = Modifier) =
@@ -175,25 +182,28 @@ private fun RotatableImage(imageData: ImageData?, context: Context, modifier: Mo
         contentDescription = "Image",
     )
 
-private suspend fun loadImageData(bytes: ByteArray): ImageData =
-    withContext(Dispatchers.IO) {
-        val angle = bytes.inputStream().use {
-            val exif = ExifInterface(it)
-            val orientation = exif.getAttributeInt(
-                ExifInterface.TAG_ORIENTATION,
-                ExifInterface.ORIENTATION_NORMAL
-            )
-            when (orientation) {
-                ExifInterface.ORIENTATION_ROTATE_90 -> 90f
-                ExifInterface.ORIENTATION_ROTATE_270 -> 270f
-                ExifInterface.ORIENTATION_ROTATE_180 -> 180f
-                else -> 0f
+private suspend fun loadImageData(content: MediaContent): ImageData =
+    if (content.pictureBytes != null)
+        withContext(Dispatchers.IO) {
+            val angle = content.pictureBytes.inputStream().use {
+                val exif = ExifInterface(it)
+                val orientation = exif.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL
+                )
+                when (orientation) {
+                    ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+                    ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+                    ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+                    else -> 0f
+                }
             }
-        }
-        return@withContext ImageData(BitmapFactory.decodeByteArray(bytes, 0, bytes.size), angle)
-    }
+            return@withContext ImageData(BitmapFactory.decodeByteArray(content.pictureBytes, 0, content.pictureBytes.size), angle, null)
+        } else
+            ImageData(null, 0f, content.videoUrl)
 
 private data class ImageData(
-    val bitmap: Bitmap,
-    val angle: Float
+    val bitmap: Bitmap?,
+    val angle: Float,
+    val videoUrl: String?
 )
