@@ -51,30 +51,30 @@ fun ItemsScreen(navController: NavHostController, viewModel: DirectoryItemsViewM
             columns = GridCells.Fixed(columns),
             state = scrollState,
             content = {
-                val items = getAsDirectoryItems(dirList.value, fileList.value)
+                val items = getAsDirectoryItems(dirList.value, fileList.value, if (path.isPicturePath()) path else null)
                 itemsIndexed(items) { index, item ->
                     ListItem(item, modifier =
                         Modifier
                             .dpadNavigation(columns, scrollState, index)
                             .clickable {
-                                val route = if (item.name.isFilm())
+                                val route = if (item.isDirectory)
+                                    NavRoutes.Items.route
+                                else if (path.isFilmPath()) {
+                                    viewModel?.items = items
                                     NavRoutes.Video.route
-                                else if (item.name.isMusic()) {
+                                }
+                                else if (path.isMusicPath()) {
                                     viewModel?.items = items
                                     NavRoutes.Music.route
                                 }
-                                else if (item.name.isPicture()) {
+                                else if (path.isPicturePath()) {
                                     viewModel?.items = items
                                     NavRoutes.Photo.route
                                 }
-                                else if (item.isDirectory)
-                                    NavRoutes.Items.route
                                 else
                                     null
                                 route?.let {
-                                    navController.navigate(it  + "/" + "$path/${item.name}".toBase64()) {
-                                        popUpTo(NavRoutes.Items.route  + "/" + path.toBase64())
-                                    }
+                                    navController.navigate(it  + "/" + "$path/${item.name}".toBase64())
                                 }
                             }
                     )

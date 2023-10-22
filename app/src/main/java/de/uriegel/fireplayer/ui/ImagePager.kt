@@ -216,8 +216,3 @@ private data class ImageData(
     val videoUrl: String?
 )
 
-// TODO ItemsScreen is a base component for videoItemsScreen, photoItemsScreen and MusicItemsScreen
-// TODO These Screens starts the PlayerScreens directly, not with the help of navigation manager
-// TODO Use FadeAnimation when changing Views
-// TODO Index is the mutual state of photoItemsScreen and ImagePager. When starting at an image > 0, then the show begins with this image
-// TODO In photoItemsScreen, when selecting an image, a thumbnail is loaded

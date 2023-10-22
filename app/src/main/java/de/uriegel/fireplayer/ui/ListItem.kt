@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,7 +46,13 @@ fun ListItem(item: DirectoryItem, modifier: Modifier = Modifier) {
             modifier = boxModifier.background(card),
             contentAlignment = Alignment.Center
         ) {
-            Text(if (item.isDirectory) item.name else item.name.getTitle(), textAlign = TextAlign.Center)
+            if (item.thumbnail == null)
+                Text(if (item.isDirectory) item.name else item.name.getTitle(), textAlign = TextAlign.Center)
+            else
+                Icon(
+                    painter = painterResource(id = R.drawable.emptypics),
+                    contentDescription = "Localized description"
+                )
         }
     }
 }
@@ -66,11 +73,11 @@ fun TestItem(item: DirectoryItem) {
 @Preview(showSystemUi = false)
 @Composable
 fun FolderItemPreview() {
-    TestItem(DirectoryItem("Films", true))
+    TestItem(DirectoryItem("Films", true, null))
 }
 
 @Preview(showSystemUi = false)
 @Composable
 fun ItemPreview() {
-    TestItem(DirectoryItem("Film with title.mp4", false))
+    TestItem(DirectoryItem("Film with title.mp4", false, null))
 }

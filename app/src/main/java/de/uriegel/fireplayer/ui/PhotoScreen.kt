@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun PhotoScreen(position: Int,
-                onPositionChanged: (Int)->Unit,viewModel: DirectoryItemsViewModel,
+                onPositionChanged: (Int)->Unit, viewModel: DirectoryItemsViewModel,
                 path64: String?) {
     val path = path64?.fromBase64() ?: ""
     val filePath = path.getFilePath()

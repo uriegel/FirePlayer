@@ -1,5 +1,6 @@
 package de.uriegel.fireplayer.requests
 
+import de.uriegel.fireplayer.extensions.append
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 
@@ -10,10 +11,14 @@ data class Files(
 
 data class DirectoryItem(
     val name:        String,
-    val isDirectory: Boolean)
+    val isDirectory: Boolean,
+    val thumbnail: String?)
 
-fun getAsDirectoryItems(dirs: List<String>, files: List<String>) =
-    dirs.map { DirectoryItem(it, true) } + files.map { DirectoryItem(it, false) }
+fun getAsDirectoryItems(dirs: List<String>, files: List<String>, thumbnailDirPath: String?) =
+    dirs.map { DirectoryItem(it, true, null) } +
+            files.map {
+                DirectoryItem(it, false, thumbnailDirPath?.append("/$it"))
+            }
 
 suspend fun getItemList(url: String): Result<Files> {
     fun getItemList(stringResult: String) =
