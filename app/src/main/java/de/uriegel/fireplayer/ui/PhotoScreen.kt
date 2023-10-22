@@ -11,13 +11,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-fun PhotoScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
+fun PhotoScreen(position: Int,
+                onPositionChanged: (Int)->Unit,viewModel: DirectoryItemsViewModel,
+                path64: String?) {
     val path = path64?.fromBase64() ?: ""
     val filePath = path.getFilePath()
     val items = viewModel.items
         .filter { it.name.isPicture() }
         .map { (filePath + it.name).replace("+", "%20") }
     ImagePager(
+        position,
+        onPositionChanged,
         count = items.size,
         loadAsync = { loadBitmap(items[it]) }
     )

@@ -3,6 +3,7 @@ package de.uriegel.fireplayer.ui
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.KeyEvent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -33,13 +34,14 @@ const val tween = 2000
 
 @Composable
 fun ImagePager(
+    position: Int,
+    onPositionChanged: (Int)->Unit,
     count: Int,
     loadAsync: suspend (Int)-> MediaContent
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var secondVisible by remember { mutableStateOf(false)}
-    var index by remember { mutableIntStateOf(0) }
     var loading by remember { mutableStateOf(false)}
     var imageData1: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
     var imageData2: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
@@ -47,6 +49,7 @@ fun ImagePager(
     var imageDataPrev: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
 
     LaunchedEffect(true) {
+        Log.i("FOTO", "launch: ")
         scope.launch {
             imageData1 = loadImageData(loadAsync(0))
             imageDataNext = loadImageData(loadAsync(1))
@@ -54,7 +57,9 @@ fun ImagePager(
     }
 
     fun next() {
-        if (!loading && index < count - 1) {
+        Log.i("FOTO", "next: ")
+        var index = position
+        if (!loading && position < count - 1) {
             if (secondVisible) {
                 imageData1 = imageDataNext
                 imageDataPrev = imageData2
@@ -68,12 +73,15 @@ fun ImagePager(
                 if (index++ < count - 2)
                     imageDataNext = loadImageData(loadAsync(index + 1))
                 loading = false
+                onPositionChanged(index)
             }
         }
     }
 
     fun previous() {
-        if (!loading && index != 0) {
+        Log.i("FOTO", "prev: ")
+        var index = position
+        if (!loading && position != 0) {
             if (secondVisible) {
                 imageData1 = imageDataPrev
                 imageDataNext = imageData2
@@ -87,6 +95,7 @@ fun ImagePager(
                 if (index-- > 1)
                     imageDataPrev = loadImageData(loadAsync(index - 1))
                 loading = false
+                onPositionChanged(index)
             }
         }
     }
@@ -206,3 +215,9 @@ private data class ImageData(
     val angle: Float,
     val videoUrl: String?
 )
+
+// TODO ItemsScreen is a base component for videoItemsScreen, photoItemsScreen and MusicItemsScreen
+// TODO These Screens starts the PlayerScreens directly, not with the help of navigation manager
+// TODO Use FadeAnimation when changing Views
+// TODO Index is the mutual state of photoItemsScreen and ImagePager. When starting at an image > 0, then the show begins with this image
+// TODO In photoItemsScreen, when selecting an image, a thumbnail is loaded
