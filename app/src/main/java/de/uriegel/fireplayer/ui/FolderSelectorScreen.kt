@@ -48,49 +48,49 @@ fun FolderSelectorScreen(navController: NavHostController) {
                 val route3 = NavRoutes.MusicRoot.route
                 val (card1, card2, card3) = createRefs()
                 if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    Folder(navController, folder1, route1,
-                        modifier = Modifier
+                    Folder(folder1, modifier = Modifier
                             .constrainAs(card1) {
                                 start.linkTo(parent.start)
                                 end.linkTo(card2.start)
                                 centerVerticallyTo(parent)
-                            })
-                    Folder(navController, folder2, route2,
-                        modifier = Modifier
+                            }
+                    ) { navController.navigate(route1) }
+                    Folder(folder2, modifier = Modifier
                             .constrainAs(card2) {
                                 start.linkTo(card1.end)
                                 end.linkTo(card3.start)
                                 centerVerticallyTo(parent)
-                            })
-                    Folder(navController, folder3, route3,
-                        modifier = Modifier
+                            }
+                    ) { navController.navigate(route2) }
+                    Folder(folder3, modifier = Modifier
                             .constrainAs(card3) {
                                 start.linkTo(card2.end)
                                 end.linkTo(parent.end)
                                 centerVerticallyTo(parent)
-                            })
+                            }
+                    ) { navController.navigate(route3) }
                 } else {
-                    Folder(navController, folder1, route1,
-                        modifier = Modifier
+                    Folder(folder1, modifier = Modifier
                             .constrainAs(card1) {
                                 top.linkTo(parent.top)
                                 bottom.linkTo(card2.top)
                                 centerHorizontallyTo(parent)
-                            })
-                    Folder(navController, folder2, route2,
-                        modifier = Modifier
+                            }
+                    ) { navController.navigate(route1) }
+                    Folder(folder2, modifier = Modifier
                             .constrainAs(card2) {
                                 top.linkTo(card1.bottom)
                                 bottom.linkTo(card3.top)
                                 centerHorizontallyTo(parent)
-                            })
-                    Folder(navController, folder3, route3,
-                        modifier = Modifier
+                            }
+                    ) { navController.navigate(route2) }
+                    Folder(folder3,modifier = Modifier
                             .constrainAs(card3) {
                                 top.linkTo(card2.bottom)
                                 bottom.linkTo(parent.bottom)
                                 centerHorizontallyTo(parent)
-                            })
+                            }
+                    ) { navController.navigate(route3) }
                 }
             }
         }
@@ -98,13 +98,11 @@ fun FolderSelectorScreen(navController: NavHostController) {
 }
 
 @Composable
-fun Folder(navController: NavHostController, textId: Int, route: String, modifier: Modifier) {
+fun Folder(textId: Int, modifier: Modifier, onClick: ()->Unit) {
     Card(shape = RoundedCornerShape(10.dp),
         modifier = modifier
             .padding(15.dp)
-            .clickable {
-                navController.navigate(route)
-            }
+            .clickable { onClick() }
     ){
         Box(modifier = Modifier
             .background(card)
