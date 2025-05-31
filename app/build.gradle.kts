@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
-    id("kotlin-kapt")
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -62,6 +62,7 @@ android {
 dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
@@ -74,14 +75,11 @@ dependencies {
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.preference.ktx)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
     implementation(libs.accompanist.pager)
     implementation(libs.kotlinx.serialization.json)
-    kapt("androidx.room:room-compiler:2.7.1")
-    annotationProcessor("androidx.room:room-compiler:2.7.1")
-    val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
-    implementation(composeBom)
     debugImplementation(libs.androidx.ui.tooling)
     implementation(libs.ui.tooling.preview)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.ksp)
 }
