@@ -1,13 +1,14 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.serialization")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     id("kotlin-kapt")
 }
 
 android {
     namespace = "de.uriegel.fireplayer"
-    compileSdk = 34
+    compileSdk = 35
 
     signingConfigs {
         create("signing") {
@@ -21,7 +22,7 @@ android {
     defaultConfig {
         applicationId = "de.uriegel.fireplayer"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
     }
@@ -39,20 +40,17 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -62,28 +60,28 @@ android {
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
-    implementation("androidx.activity:activity-compose:1.8.0")
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.exifinterface:exifinterface:1.3.6")
-    implementation("androidx.media3:media3-exoplayer:1.1.1")
-    implementation("androidx.media3:media3-ui:1.1.1")
-    implementation("androidx.navigation:navigation-compose:2.7.4")
-    implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("androidx.room:room-runtime:2.5.2")
-    implementation("androidx.room:room-ktx:2.5.2")
-    implementation("com.google.accompanist:accompanist-pager:0.28.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
-    kapt("androidx.room:room-compiler:2.5.2")
-    annotationProcessor("androidx.room:room-compiler:2.5.2")
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.constraintlayout.compose)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.exifinterface)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.preference.ktx)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.accompanist.pager)
+    implementation(libs.kotlinx.serialization.json)
+    kapt("androidx.room:room-compiler:2.7.1")
+    annotationProcessor("androidx.room:room-compiler:2.7.1")
     val composeBom = platform("androidx.compose:compose-bom:2023.01.00")
     implementation(composeBom)
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    implementation("androidx.compose.ui:ui-tooling-preview")
+    debugImplementation(libs.androidx.ui.tooling)
+    implementation(libs.ui.tooling.preview)
 }
