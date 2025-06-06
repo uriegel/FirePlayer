@@ -32,6 +32,21 @@ import kotlinx.coroutines.withContext
 
 const val tween = 2000
 
+//TODO ImagePager Control
+//TODO ImagePager Control on Next sets the next image (already loaded)
+//TODO ImagePager Control on Next sets the next image and asynchronously loads the next next image
+//TODO ImagePager Control States: current image, next image, previous image
+//TODO ImagePager Control only change states when loaded
+
+//TODO ImagePager Control starting with state machine and logging (when image loaded):
+// on next, p:1, c: 2 n: 3
+// on next, p:2, c: 3 n: 4
+// on next, p:3, c: 4 n: 5
+// on prev, p:2, c: 3 n: 4
+
+//TODO ImagePager with  O N E  variable imageData
+//TODO ImagePager changes between old image and new image
+
 @Composable
 fun ImagePager(
     position: Int,
@@ -47,7 +62,9 @@ fun ImagePager(
     var imageData2: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
     var imageDataNext: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
     var imageDataPrev: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
-
+    val currentPosition by rememberUpdatedState(position)
+    val currentSecondVisible by rememberUpdatedState(secondVisible)
+    Log.i("FOTO", "render: $position")
     LaunchedEffect(true) {
         Log.i("FOTO", "launch: ")
         scope.launch {
@@ -57,32 +74,32 @@ fun ImagePager(
     }
 
     fun next() {
-        Log.i("FOTO", "next: ")
-        var index = position
-        if (!loading && position < count - 1) {
-            if (secondVisible) {
+        if (!loading && currentPosition < count - 1) {
+            if (currentSecondVisible) {
+                Log.i("FOTO", "2nd visible")
                 imageData1 = imageDataNext
                 imageDataPrev = imageData2
             } else {
+                Log.i("FOTO", "2nd not visible")
                 imageData2 = imageDataNext
                 imageDataPrev = imageData1
             }
             loading = true
-            secondVisible = !secondVisible
+            secondVisible = !currentSecondVisible
             scope.launch {
-                if (index++ < count - 2)
-                    imageDataNext = loadImageData(loadAsync(index + 1))
+                val newIndex = currentPosition + 1
+                if (newIndex < count - 1)
+                    imageDataNext = loadImageData(loadAsync(newIndex + 1))
                 loading = false
-                onPositionChanged(index)
+                Log.i("FOTO", "next launched: $newIndex")
+                onPositionChanged(newIndex)
             }
         }
     }
 
     fun previous() {
-        Log.i("FOTO", "prev: ")
-        var index = position
-        if (!loading && position != 0) {
-            if (secondVisible) {
+        if (!loading && currentPosition != 0) {
+            if (currentSecondVisible) {
                 imageData1 = imageDataPrev
                 imageDataNext = imageData2
             } else {
@@ -90,12 +107,13 @@ fun ImagePager(
                 imageDataNext = imageData1
             }
             loading = true
-            secondVisible = !secondVisible
+            secondVisible = !currentSecondVisible
             scope.launch {
-                if (index-- > 1)
-                    imageDataPrev = loadImageData(loadAsync(index - 1))
+                val newIndex = currentPosition - 1
+                if (newIndex > 1)
+                    imageDataPrev = loadImageData(loadAsync(newIndex - 1))
                 loading = false
-                onPositionChanged(index)
+                onPositionChanged(newIndex)
             }
         }
     }
@@ -114,6 +132,7 @@ fun ImagePager(
         .onKeyDown(context) { _, evt ->
             when (evt?.keyCode) {
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                    Log.i("FOTO", "KEYCODE_DPAD_RIGHT: $position")
                     next()
                     true
                 }
@@ -127,6 +146,7 @@ fun ImagePager(
             }
         }
     ) {
+        Log.i("FOTO", "Render Animation Box: 2nd visible: $secondVisible")
         AnimatedVisibility(
             modifier = Modifier
                 .align(Alignment.Center),
@@ -138,6 +158,7 @@ fun ImagePager(
                 tween(tween)
             )
         ) {
+            Log.i("FOTO", "Animation 2nd not visible")
             MediaContent(imageData1, context)
         }
         AnimatedVisibility(
@@ -151,6 +172,7 @@ fun ImagePager(
                 tween(tween)
             )
         ) {
+            Log.i("FOTO", "Animation 2nd visible")
             MediaContent(imageData2, context)
         }
     }
