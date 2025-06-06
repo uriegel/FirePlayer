@@ -1,7 +1,6 @@
 package de.uriegel.fireplayer.ui
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import android.view.KeyEvent
@@ -23,12 +22,11 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.exifinterface.media.ExifInterface
 import de.uriegel.fireplayer.R
+import de.uriegel.fireplayer.controller.ImageData
+import de.uriegel.fireplayer.controller.ImagePagerController
 import de.uriegel.fireplayer.extensions.onKeyDown
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 const val tween = 2000
 
@@ -49,96 +47,80 @@ const val tween = 2000
 
 @Composable
 fun ImagePager(
-    position: Int,
-    onPositionChanged: (Int)->Unit,
     count: Int,
     loadAsync: suspend (Int)-> MediaContent
 ) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    var secondVisible by remember { mutableStateOf(false)}
+    val nextFlow = remember { MutableSharedFlow<Boolean>(extraBufferCapacity = 1) }
+    val imageDataFlow = remember { MutableSharedFlow<ImageData>(extraBufferCapacity = 1) }
     var loading by remember { mutableStateOf(false)}
-    var imageData1: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
-    var imageData2: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
-    var imageDataNext: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
-    var imageDataPrev: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
-    val currentPosition by rememberUpdatedState(position)
-    val currentSecondVisible by rememberUpdatedState(secondVisible)
-    Log.i("FOTO", "render: $position")
-    LaunchedEffect(true) {
-        Log.i("FOTO", "launch: ")
-        scope.launch {
-            imageData1 = loadImageData(loadAsync(0))
-            imageDataNext = loadImageData(loadAsync(1))
-        }
-    }
+//    var imageDataPrev: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
 
-    fun next() {
-        if (!loading && currentPosition < count - 1) {
-            if (currentSecondVisible) {
-                Log.i("FOTO", "2nd visible")
-                imageData1 = imageDataNext
-                imageDataPrev = imageData2
-            } else {
-                Log.i("FOTO", "2nd not visible")
-                imageData2 = imageDataNext
-                imageDataPrev = imageData1
-            }
-            loading = true
-            secondVisible = !currentSecondVisible
-            scope.launch {
-                val newIndex = currentPosition + 1
-                if (newIndex < count - 1)
-                    imageDataNext = loadImageData(loadAsync(newIndex + 1))
-                loading = false
-                Log.i("FOTO", "next launched: $newIndex")
-                onPositionChanged(newIndex)
-            }
-        }
-    }
-
-    fun previous() {
-        if (!loading && currentPosition != 0) {
-            if (currentSecondVisible) {
-                imageData1 = imageDataPrev
-                imageDataNext = imageData2
-            } else {
-                imageData2 = imageDataPrev
-                imageDataNext = imageData1
-            }
-            loading = true
-            secondVisible = !currentSecondVisible
-            scope.launch {
-                val newIndex = currentPosition - 1
-                if (newIndex > 1)
-                    imageDataPrev = loadImageData(loadAsync(newIndex - 1))
-                loading = false
-                onPositionChanged(newIndex)
-            }
-        }
-    }
-
+//    fun next() {
+//        if (!loading && currentPosition < count - 1) {
+//            if (currentSecondVisible) {
+//                Log.i("FOTO", "2nd visible")
+//                imageData1 = imageDataNext
+//                imageDataPrev = imageData2
+//            } else {
+//                Log.i("FOTO", "2nd not visible")
+//                imageData2 = imageDataNext
+//                imageDataPrev = imageData1
+//            }
+//            loading = true
+//            secondVisible = !currentSecondVisible
+//            scope.launch {
+//                val newIndex = currentPosition + 1
+//                if (newIndex < count - 1)
+//                    imageDataNext = loadImageData(loadAsync(newIndex + 1))
+//                loading = false
+//                Log.i("FOTO", "next launched: $newIndex")
+//                onPositionChanged(newIndex)
+//            }
+//        }
+//    }
+//
+//    fun previous() {
+//        if (!loading && currentPosition != 0) {
+//            if (currentSecondVisible) {
+//                imageData1 = imageDataPrev
+//                imageDataNext = imageData2
+//            } else {
+//                imageData2 = imageDataPrev
+//                imageDataNext = imageData1
+//            }
+//            loading = true
+//            secondVisible = !currentSecondVisible
+//            scope.launch {
+//                val newIndex = currentPosition - 1
+//                if (newIndex > 1)
+//                    imageDataPrev = loadImageData(loadAsync(newIndex - 1))
+//                loading = false
+//                onPositionChanged(newIndex)
+//            }
+//        }
+//    }
+    ImagePagerController(nextFlow, imageDataFlow, loadAsync)
     Box(modifier = Modifier
         .fillMaxSize()
         .draggable(
             orientation = Orientation.Horizontal,
             state = rememberDraggableState {
                 if (it > -20 && it < 0)
-                    next()
+                    nextFlow.tryEmit(true)
                 else if (it < 20 && it > 0)
-                    previous()
+                    nextFlow.tryEmit(false)
             }
         )
         .onKeyDown(context) { _, evt ->
             when (evt?.keyCode) {
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                    Log.i("FOTO", "KEYCODE_DPAD_RIGHT: $position")
-                    next()
+                    nextFlow.tryEmit(true)
                     true
                 }
 
                 KeyEvent.KEYCODE_DPAD_LEFT -> {
-                    previous()
+                    nextFlow.tryEmit(false)
                     true
                 }
 
@@ -146,7 +128,22 @@ fun ImagePager(
             }
         }
     ) {
-        Log.i("FOTO", "Render Animation Box: 2nd visible: $secondVisible")
+        var imageData1: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
+        var imageData2: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
+        var secondVisible by remember { mutableStateOf(true)}
+
+        LaunchedEffect(Unit) {
+            imageDataFlow.collect {
+                if (secondVisible) {
+                    imageData1 = it
+                    secondVisible = false
+                } else {
+                    imageData2 = it
+                    secondVisible = true
+                }
+            }
+        }
+
         AnimatedVisibility(
             modifier = Modifier
                 .align(Alignment.Center),
@@ -158,7 +155,6 @@ fun ImagePager(
                 tween(tween)
             )
         ) {
-            Log.i("FOTO", "Animation 2nd not visible")
             MediaContent(imageData1, context)
         }
         AnimatedVisibility(
@@ -190,7 +186,6 @@ private fun MediaContent(imageData: ImageData, context: Context) {
     }
 }
 
-
 @Composable
 private fun RotatableImage(imageData: ImageData?, context: Context, modifier: Modifier = Modifier) =
     Image(
@@ -211,30 +206,4 @@ private fun RotatableImage(imageData: ImageData?, context: Context, modifier: Mo
                 R.drawable.emptypics).asImageBitmap(),
         contentDescription = "Image",
     )
-
-private suspend fun loadImageData(content: MediaContent): ImageData =
-    if (content.pictureBytes != null)
-        withContext(Dispatchers.IO) {
-            val angle = content.pictureBytes.inputStream().use {
-                val exif = ExifInterface(it)
-                val orientation = exif.getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_NORMAL
-                )
-                when (orientation) {
-                    ExifInterface.ORIENTATION_ROTATE_90 -> 90f
-                    ExifInterface.ORIENTATION_ROTATE_270 -> 270f
-                    ExifInterface.ORIENTATION_ROTATE_180 -> 180f
-                    else -> 0f
-                }
-            }
-            return@withContext ImageData(BitmapFactory.decodeByteArray(content.pictureBytes, 0, content.pictureBytes.size), angle, null)
-        } else
-            ImageData(null, 0f, content.videoUrl)
-
-private data class ImageData(
-    val bitmap: Bitmap?,
-    val angle: Float,
-    val videoUrl: String?
-)
 

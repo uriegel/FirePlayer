@@ -7,11 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -71,7 +67,6 @@ class MainActivity : ComponentExActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val directoryItemsModel: DirectoryItemsViewModel = viewModel()
-                    var photoPosition by remember { mutableIntStateOf(0) }
 
                     NavHost(
                         navController = navController,
@@ -129,8 +124,6 @@ class MainActivity : ComponentExActivity() {
                         }
                         composable(NavRoutes.Photo.route + "/{path}") {
                             PhotoScreen(
-                                photoPosition,
-                                { photoPosition = it },
                                 directoryItemsModel,
                                 it.arguments?.getString("path"))
                         }
