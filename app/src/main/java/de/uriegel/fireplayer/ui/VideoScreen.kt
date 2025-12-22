@@ -21,7 +21,6 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import de.uriegel.fireplayer.extensions.*
-import de.uriegel.fireplayer.requests.accessDisk
 import de.uriegel.fireplayer.requests.getBaseUrl
 import de.uriegel.fireplayer.room.FilmInfo
 import de.uriegel.fireplayer.viewmodel.VideoViewModel
@@ -77,7 +76,6 @@ fun VideoPlayer(viewModel: VideoViewModel, path64: String?, playerView: MutableS
                         override fun onPlayerError(error: PlaybackException) {
                             //if (error.errorCode == 2001) {
                                 coroutineScope.launch {
-                                    accessDisk()
                                     exoPlayer.value?.play()
                                 }
                             //}

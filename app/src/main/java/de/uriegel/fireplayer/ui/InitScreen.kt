@@ -12,9 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import de.uriegel.fireplayer.R
 import de.uriegel.fireplayer.exceptions.HttpProtocolException
 import de.uriegel.fireplayer.exceptions.NotInitializedException
-import de.uriegel.fireplayer.extensions.bind
 import de.uriegel.fireplayer.extensions.toBase64
-import de.uriegel.fireplayer.requests.accessDisk
 import de.uriegel.fireplayer.requests.initializeHttp
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import kotlinx.coroutines.CancellationException
@@ -31,7 +29,6 @@ fun InitScreen(navController: NavHostController) {
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             initializeHttp(context)
-                .bind { accessDisk() }
                 .fold({ navController.navigate(NavRoutes.Folders.route) { popUpTo(0) }
                       }, {
                     when (it) {

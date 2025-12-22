@@ -16,7 +16,6 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
-import de.uriegel.fireplayer.requests.accessDisk
 import de.uriegel.fireplayer.requests.getBaseUrl
 import kotlinx.coroutines.launch
 
@@ -53,7 +52,6 @@ fun VideoClipPlayer(path: String?) {
                     override fun onPlayerError(error: PlaybackException) {
                         //if (error.errorCode == 2001) {
                         coroutineScope.launch {
-                            accessDisk()
                             play()
                         }
                         //}
