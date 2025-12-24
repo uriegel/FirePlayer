@@ -1,7 +1,7 @@
 [versions]
 accompanistPager = "0.28.0"
 activityCompose = "1.10.1"
-agp = "8.10.1"
+agp = "8.13.2"
 composeBom = "2025.05.01"
 appcompat = "1.7.0"
 constraintlayoutCompose = "1.1.1"
@@ -9,6 +9,7 @@ coreKtx = "1.16.0"
 exifinterface = "1.4.1"
 kotlin = "2.1.21"
 kotlinxSerializationJson = "1.7.3"
+lifecycle = "2.8.4"
 lifecycleRuntimeKtx = "2.9.0"
 media3Exoplayer = "1.7.1"
 media3Ui = "1.7.1"
@@ -26,6 +27,7 @@ androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", versi
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
+androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-material3 = { module = "androidx.compose.material3:material3" }

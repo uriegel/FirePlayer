@@ -1,2 +1,6 @@
 /build
 /schemas/de.uriegel.fireplayer.room.FilmInfosRoom/1.json
+/release/app-release.apk
+/release/baselineProfiles/0/app-release.dm
+/release/baselineProfiles/1/app-release.dm
+/release/output-metadata.json

@@ -17,9 +17,13 @@ abstract class FilmInfosRoom: RoomDatabase() {
         fun getDatabase(context: Context): FilmInfosRoom {
             synchronized(this) {
                 if (instance == null) {
-                    instance = Room.databaseBuilder(context.applicationContext, FilmInfosRoom::class.java, "filmInfos")
+                    instance = Room.databaseBuilder(
+                        context.applicationContext,
+                        FilmInfosRoom::class.java,
+                        "filmInfos"
+                    )
                         //.addMigrations(Migration_1_2)
-                        .fallbackToDestructiveMigration()
+                        .fallbackToDestructiveMigration(false)
                         .build()
                 }
                 return instance!!
