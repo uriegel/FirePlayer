@@ -1,22 +1,23 @@
 [versions]
-accompanistPager = "0.28.0"
-activityCompose = "1.10.1"
+accompanistPager = "0.36.0"
+activityCompose = "1.12.2"
 agp = "8.13.2"
-composeBom = "2025.05.01"
-appcompat = "1.7.0"
+composeBom = "2025.12.01"
+appcompat = "1.7.1"
 constraintlayoutCompose = "1.1.1"
-coreKtx = "1.16.0"
-exifinterface = "1.4.1"
-kotlin = "2.1.21"
-kotlinxSerializationJson = "1.7.3"
-lifecycle = "2.8.4"
-lifecycleRuntimeKtx = "2.9.0"
-media3Exoplayer = "1.7.1"
-media3Ui = "1.7.1"
-navigationCompose = "2.9.0"
+compose-icons = "1.7.8"
+coreKtx = "1.17.0"
+exifinterface = "1.4.2"
+kotlin = "2.3.0"
+kotlinxSerializationJson = "1.9.0"
+lifecycle = "2.10.0"
+lifecycleRuntimeKtx = "2.10.0"
+media3Exoplayer = "1.9.0"
+media3Ui = "1.9.0"
+navigationCompose = "2.9.6"
 preferenceKtx = "1.2.1"
-room = "2.7.1"
-ksp = "2.1.21-2.0.1"
+room = "2.8.4"
+ksp = "2.3.0"
 
 
 [libraries]
@@ -24,6 +25,7 @@ accompanist-pager = { module = "com.google.accompanist:accompanist-pager", versi
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core", version.ref = "compose-icons" }
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
