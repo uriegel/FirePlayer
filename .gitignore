@@ -10,3 +10,4 @@
 /webapp/.gitignore
 /app/src/main/assets/
 /app/gradle.properties
+/app/release/app.apk
