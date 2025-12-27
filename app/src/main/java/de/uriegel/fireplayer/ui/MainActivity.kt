@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,6 +39,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         server = WebServer(this, 8888)
         server.start()
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                sendToWeb("BACK pressed")
+                // TODO finish or not
+                finish()
+            }
+        })
 
         setContent {
             FirePlayerTheme {
@@ -88,9 +97,6 @@ class MainActivity : ComponentActivity() {
 
             KeyEvent.KEYCODE_MEDIA_STOP ->
                 sendToWeb("STOP")
-
-            KeyEvent.KEYCODE_BACK ->
-                sendToWeb("BACK")
 
             KeyEvent.KEYCODE_MEDIA_REWIND ->
                 sendToWeb("REWIND")

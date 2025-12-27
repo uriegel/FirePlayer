@@ -13,7 +13,7 @@ class WebServer(private val context: Context, port: Int = 8080) : NanoHTTPD(port
             //val inputStream = context.assets.open("$assetsDir/$assetPath")
             val mime = getMimeType(assetPath)
             newFixedLengthResponse(Response.Status.OK, mime, inputStream, inputStream.available().toLong())
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", "Not Found")
         }
     }
