@@ -5,7 +5,7 @@ composeBom = "2025.12.01"
 coreKtx = "1.17.0"
 kotlin = "2.3.0"
 lifecycleRuntimeKtx = "2.10.0"
-
+nanohttp = "2.3.1"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
@@ -15,6 +15,7 @@ androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtim
 androidx-material3 = { module = "androidx.compose.material3:material3" }
 androidx-ui = { module = "androidx.compose.ui:ui" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+nanohttp = { module = "org.nanohttpd:nanohttpd", version.ref = "nanohttp" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 
 [plugins]

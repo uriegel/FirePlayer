@@ -5,18 +5,18 @@ import android.view.KeyEvent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import de.uriegel.fireplayer.WebServer
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 
 /*
  TODO
- * HTTP Server
- * Lifecycle rotate
  * Insert React app
  * Layout
                         =
@@ -35,6 +35,9 @@ import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        server = WebServer(this, 8888)
+        server.start()
 
         setContent {
             FirePlayerTheme {
@@ -46,6 +49,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        server.stop()
+        super.onDestroy()
     }
 
     @Suppress("RestrictedApi")
@@ -104,6 +112,8 @@ class MainActivity : ComponentActivity() {
 //            null
 //        )
     }
+
+    private lateinit var server: WebServer
 }
 
 @Composable
