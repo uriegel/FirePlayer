@@ -2,110 +2,114 @@ package de.uriegel.fireplayer.ui
 
 import android.os.Bundle
 import android.view.KeyEvent
+import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import de.uriegel.fireplayer.android.ComponentExActivity
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
-import de.uriegel.fireplayer.extensions.onKeyDown
-import de.uriegel.fireplayer.extensions.toBase64
-import de.uriegel.fireplayer.viewmodel.DirectoryItemsViewModel
 
-class MainActivity : ComponentExActivity() {
+/*
+ TODO
+ * HTTP Server
+ * Lifecycle rotate
+ * Insert React app
+ * Layout
+                        =
+    Filme  Bilder   Musik
+
+ * =: Options
+
+ * Navigate to new page: Settings
+
+    url
+
+    Sony Bravia (later)
+ */
+
+
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             FirePlayerTheme {
-                val context = LocalContext.current
-                val navController = rememberNavController()
-                Surface(
-                    modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .onKeyDown(context) { keyCode, _ ->
-                            if (keyCode == KeyEvent.KEYCODE_MENU) {
-                                navController.navigate(NavRoutes.ShowSettings.route)
-                                true
-                            } else
-                                false
-                        },
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val directoryItemsModel: DirectoryItemsViewModel = viewModel()
-
-                    NavHost(
-                        navController = navController,
-                        startDestination = NavRoutes.Init.route,
-                    ) {
-                        composable(NavRoutes.Init.route) {
-                            InitScreen(navController)
-                        }
-                        composable(NavRoutes.ShowSettings.route) {
-                            ShowSettings(navController)
-                        }
-                        composable(NavRoutes.Dialog.route + "/{stringId}",
-                            arguments = listOf(navArgument("stringId") { type = NavType.IntType })
-                        ) {
-                            StateDialog(navController, it.arguments?.getInt("stringId")!!)
-                        }
-                        composable(NavRoutes.Dialog2.route + "/{stringId}/{info}",
-                            arguments = listOf(
-                                navArgument("stringId") { type = NavType.IntType },
-                                navArgument("info") { type = NavType.StringType })
-                        ) {
-                            StateDialog(
-                                navController,
-                                it.arguments?.getInt("stringId")!!,
-                                it.arguments?.getString("info")!!)
-                        }
-                        composable(NavRoutes.Folders.route) {
-                            FolderSelectorScreen(navController)
-                        }
-                        composable(NavRoutes.VideoRoot.route) {
-                            ItemsScreen(
-                                navController, null, "/video".toBase64())
-                        }
-                        composable(NavRoutes.MusicRoot.route) {
-                            ItemsScreen(
-                                navController, directoryItemsModel, "/music".toBase64())
-                        }
-                        composable(NavRoutes.PhotoRoot.route) {
-                            ItemsScreen(
-                                navController, directoryItemsModel, "/pics".toBase64())
-                        }
-                        composable(NavRoutes.Items.route + "/{path}") {
-                            ItemsScreen(
-                                navController,
-                                directoryItemsModel,
-                                it.arguments?.getString("path"))
-                        }
-                        composable(NavRoutes.Video.route + "/{path}") {
-                           VideoScreen(it.arguments?.getString("path"))
-                        }
-                        composable(NavRoutes.Music.route + "/{path}") {
-                            MusicScreen(
-                                directoryItemsModel,
-                                it.arguments?.getString("path"))
-                        }
-                        composable(NavRoutes.Photo.route + "/{path}") {
-                            PhotoScreen(
-                                directoryItemsModel,
-                                it.arguments?.getString("path"))
-                        }
-                    }
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Greeting(
+                        name = "Android",
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }
     }
+
+    @Suppress("RestrictedApi")
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.action != KeyEvent.ACTION_DOWN)
+            return super.dispatchKeyEvent(event)
+
+        when (event.keyCode) {
+            KeyEvent.KEYCODE_DPAD_LEFT ->
+                sendToWeb("LEFT")
+
+            KeyEvent.KEYCODE_DPAD_RIGHT ->
+                sendToWeb("RIGHT")
+
+            KeyEvent.KEYCODE_DPAD_UP ->
+                sendToWeb("UP")
+
+            KeyEvent.KEYCODE_DPAD_DOWN ->
+                sendToWeb("DOWN")
+
+            KeyEvent.KEYCODE_DPAD_CENTER ->
+                sendToWeb("SELECT")
+
+            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE ->
+                sendToWeb("PLAY_PAUSE")
+
+            KeyEvent.KEYCODE_MEDIA_PLAY ->
+                sendToWeb("PLAY")
+
+            KeyEvent.KEYCODE_MEDIA_PAUSE ->
+                sendToWeb("PAUSE")
+
+            KeyEvent.KEYCODE_MEDIA_STOP ->
+                sendToWeb("STOP")
+
+            KeyEvent.KEYCODE_BACK ->
+                sendToWeb("BACK")
+
+            KeyEvent.KEYCODE_MEDIA_REWIND ->
+                sendToWeb("REWIND")
+
+            KeyEvent.KEYCODE_MEDIA_FAST_FORWARD ->
+                sendToWeb("FAST_FORWARD")
+
+            else ->
+                sendToWeb("Sonstige: ${event.keyCode}")
+        }
+
+        return super.dispatchKeyEvent(event)
+    }
+
+    private fun sendToWeb(action: String) {
+        Toast.makeText(this, action, Toast.LENGTH_SHORT).show()
+//        webView?.evaluateJavascript(
+//            "window.onFireTvRemote && window.onFireTvRemote('$action');",
+//            null
+//        )
+    }
 }
 
+@Composable
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = "Hello $name!",
+        modifier = modifier
+    )
+}

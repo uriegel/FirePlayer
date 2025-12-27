@@ -4,8 +4,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -22,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "de.uriegel.fireplayer"
+        applicationId = "de.uriegel.fireplayer2"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -64,28 +62,12 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.core.ktx)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.material.icons.core)
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.constraintlayout.compose)
-    implementation(libs.androidx.exifinterface)
-    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.ui)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.preference.ktx)
-    implementation(libs.accompanist.pager)
-    implementation(libs.kotlinx.serialization.json)
-    debugImplementation(libs.androidx.ui.tooling)
     implementation(libs.ui.tooling.preview)
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    ksp(libs.room.ksp)
 }

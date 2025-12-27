@@ -1,29 +1,3 @@
 <resources>
     <string name="app_title">Fire Player</string>
-    <string name="title_activity_settings">Einstellungen</string>
-    <!-- Preference Titles -->
-    <string name="url_header">URL</string>
-    <!-- Messages Preferences -->
-    <string name="url_title">Die URL des Servers (z.B. https://&lt;domäne&gt;/media)</string>
-    <string name="menu_settings">Einstellungen</string>
-    <string name="auth_name" >Name</string>
-    <string name="auth_pw">Passwort</string>
-    <string name="pw_summary">Passwort eingeben</string>
-    <string name="sony_title">Sony Bravia</string>
-    <string name="sony_description">Die URL des Sony Bravia-Fernsehers, falls vorhanden</string>
-    <string name="sony_psk">Authentication PSK</string>
-    <string name="screen_off">Bildschirm ausschalten</string>
-
-    <string name="initializing">Fire Player wird initialisiert…</string>
-    <string name="general_error">Fehlerhafte Konfiguration</string>
-    <string name="protocol_error">Der Dienst antwortete nicht korrekt</string>
-    <string name="connect_error">Keine Verbindung zum Server</string>
-    <string name="unknown_host_error">Der Servername ist unbekannt</string>
-    <string name="ssl_error">Fehler bei der Verschlüsselung zum Server</string>
-    <string name="extended">Mehr Infos</string>
-    <string name="connection_lost">Verbindung zum Server verloren</string>
-    <string name="videos">Filme</string>
-    <string name="music">Musik</string>
-    <string name="pics">Bilder</string>
-
 </resources>
