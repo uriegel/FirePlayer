@@ -59,10 +59,12 @@ class MainActivity : ComponentActivity() {
             )
         )
 
+        val webViewFocus = false
+
         setContent {
             FirePlayerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    ReactView({ webView = it }, Modifier.padding(innerPadding))
+                    ReactView(webViewFocus, { webView = it }, Modifier.padding(innerPadding))
                 }
             }
         }

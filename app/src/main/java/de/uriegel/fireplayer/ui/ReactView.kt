@@ -10,7 +10,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun ReactView(onWebViewReady: (WebView)->Unit, modifier: Modifier = Modifier) {
+fun ReactView(webViewFocus: Boolean, onWebViewReady: (WebView)->Unit, modifier: Modifier = Modifier) {
     AndroidView(
         modifier = modifier.fillMaxSize(),
         factory = { context ->
@@ -21,8 +21,10 @@ fun ReactView(onWebViewReady: (WebView)->Unit, modifier: Modifier = Modifier) {
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
 
-                settings.javaScriptCanOpenWindowsAutomatically = true
-
+                isFocusable = webViewFocus
+                isFocusableInTouchMode = webViewFocus
+//
+//                post { if (webViewFocus) requestFocus() }
 
                 settings.mediaPlaybackRequiresUserGesture = false
                 settings.cacheMode = WebSettings.LOAD_NO_CACHE
