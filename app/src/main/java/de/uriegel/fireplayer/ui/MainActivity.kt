@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
             )
         )
 
-        val webViewFocus = false
+        val webViewFocus = true
 
         setContent {
             FirePlayerTheme {
