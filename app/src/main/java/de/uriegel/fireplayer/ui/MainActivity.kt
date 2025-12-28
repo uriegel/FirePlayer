@@ -20,6 +20,8 @@ import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 
 /*
  TODO
+ * Test custom buttons
+
  * Layout
                         =
     Filme  Bilder   Musik
@@ -31,6 +33,8 @@ import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
     url
 
     Sony Bravia (later)
+
+ * Video screen displaying video folders and videos
  */
 
 
