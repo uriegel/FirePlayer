@@ -22,11 +22,16 @@ import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
  TODO
  * Test custom buttons
 
+ * useWideViewPort
+ * loadWithOverviewMode
+
  * Layout
                         =
     Filme  Bilder   Musik
 
  * =: Options
+
+ * rotate on smart phone
 
  * Navigate to new page: Settings
 

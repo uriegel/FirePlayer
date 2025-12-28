@@ -17,15 +17,14 @@ fun ReactView(webViewFocus: Boolean, onWebViewReady: (WebView)->Unit, modifier: 
         modifier = modifier.fillMaxSize(),
         factory = { context ->
             WebView(context).apply {
+                settings.javaScriptEnabled = true
+                settings.domStorageEnabled = true
+                isFocusable = webViewFocus
+                isFocusableInTouchMode = webViewFocus
+
                 settings.useWideViewPort = true
                 settings.loadWithOverviewMode = true
 
-                settings.javaScriptEnabled = true
-                settings.domStorageEnabled = true
-
-                isFocusable = webViewFocus
-                isFocusableInTouchMode = webViewFocus
-//
 //                post { if (webViewFocus) requestFocus() }
 
                 settings.mediaPlaybackRequiresUserGesture = false
