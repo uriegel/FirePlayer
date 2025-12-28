@@ -1,14 +1,17 @@
 [versions]
 activityCompose = "1.12.2"
 agp = "8.13.2"
+appcompat = "1.7.1"
 composeBom = "2025.12.01"
 coreKtx = "1.17.0"
 kotlin = "2.3.0"
 lifecycleRuntimeKtx = "2.10.0"
 nanohttp = "2.3.1"
+webkit = "1.15.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -17,6 +20,7 @@ androidx-ui = { module = "androidx.compose.ui:ui" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 nanohttp = { module = "org.nanohttpd:nanohttpd", version.ref = "nanohttp" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-webkit = { group = "androidx.webkit", name = "webkit", version.ref = "webkit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

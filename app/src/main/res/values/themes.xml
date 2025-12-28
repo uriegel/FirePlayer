@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.FirePlayer.Launch" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/black</item>
+    </style>
 
-    <style name="Theme.FirePlayer" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.FirePlayer" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/black</item>
+    </style>
 </resources>

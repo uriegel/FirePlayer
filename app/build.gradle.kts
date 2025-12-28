@@ -63,6 +63,7 @@ android {
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -71,4 +72,5 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.nanohttp)
     implementation(libs.ui.tooling.preview)
+    implementation(libs.androidx.webkit)
 }

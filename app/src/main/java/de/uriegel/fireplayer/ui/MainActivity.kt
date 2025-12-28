@@ -1,24 +1,25 @@
 package de.uriegel.fireplayer.ui
 
+import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
+import android.webkit.WebView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import de.uriegel.fireplayer.WebServer
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 
 /*
  TODO
- * Insert React app
  * Layout
                         =
     Filme  Bilder   Musik
@@ -34,9 +35,10 @@ import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
         server = WebServer(this, 8888)
         server.start()
 
@@ -48,13 +50,19 @@ class MainActivity : ComponentActivity() {
             }
         })
 
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(
+                android.graphics.Color.BLACK
+            ),
+            navigationBarStyle = SystemBarStyle.dark(
+                android.graphics.Color.BLACK
+            )
+        )
+
         setContent {
             FirePlayerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    ReactView({ webView = it }, Modifier.padding(innerPadding))
                 }
             }
         }
@@ -120,12 +128,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private lateinit var server: WebServer
+    private var webView: WebView? = null
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
