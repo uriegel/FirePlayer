@@ -12,7 +12,7 @@ export default function App() {
 	return (
 		<div className='viewer'>
 			<button ref={fokusButton} onClick={() => onClick("Button 1")}>Erste Aktion</button>
-			<button onClick={() => onClick("Button 2")}>Zweite Aktion</button>
+			<div tabIndex={0} onClick={() => onClick("Button 2")}>Zweite Aktion</div>
 			<button onClick={() => onClick("Button 3")}>Dritte Aktion</button>
         	<video className='mediaPlayer' controls autoPlay src="http://roxy:9865/video/2010.mp4" />        
 		</div>

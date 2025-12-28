@@ -6,9 +6,24 @@
     height: 100%;
 }
 
-button {
+button, .viewer>div {
     max-width: 200px;
     margin: 20px;
+}
+
+.viewer>div {
+    border-radius: 1%;
+    background-color: gray;
+    padding: 50px;
+    transition: background-color 0.5s;
+}
+
+.viewer>div:hover {
+    background-color: rgb(168, 168, 168);
+}
+
+.viewer>div:active {
+    background-color: rgb(85, 85, 85);
 }
 
 .mediaPlayer {
