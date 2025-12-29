@@ -7,14 +7,15 @@ import { delayAsync } from 'functional-extensions'
 
 export default function Welcome() {
 
-    const fokusButton = useRef<HTMLButtonElement | null>(null)
+    const focusButton = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
         if (window.AndroidBridge)
             window.AndroidBridge.setWelcome(true)
     }, [])
 
-    useEffect(() => fokusButton.current?.focus(), [])
+    useEffect(() => focusButton.current?.focus(), [])
+
     const ripple = useRipple()
 
     const onClick = (text: string) => {
@@ -36,7 +37,7 @@ export default function Welcome() {
                 </div>
             </div>
             <div className="controls">
-                <div className="ripple-container button" onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={1}
+                <div className="ripple-container button" ref={focusButton} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={1}
                     onClick={() => onClick("Filme")}>
                     Filme
                 </div>

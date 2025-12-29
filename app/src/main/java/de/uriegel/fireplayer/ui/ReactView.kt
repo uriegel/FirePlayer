@@ -26,7 +26,7 @@ fun ReactView(webViewFocus: Boolean, onWebViewReady: (WebView)->Unit,
                 settings.useWideViewPort = true
                 settings.loadWithOverviewMode = true
 
-//                post { if (webViewFocus) requestFocus() }
+                post { if (webViewFocus) requestFocus() }
 
                 settings.mediaPlaybackRequiresUserGesture = false
                 settings.cacheMode = WebSettings.LOAD_NO_CACHE
