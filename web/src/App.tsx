@@ -21,3 +21,8 @@ export default function App() {
 	)
 }
 
+// TODO React Router for routing settings, video, photo, music pages
+// TODO React Router transitions
+// TODO React Settings: UI, saving in local storage
+// TODO Video file view
+// TODO Video player view
