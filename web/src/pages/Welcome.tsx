@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRipple } from '../hooks/ripple'
 import './Welcome.css'
+import 'functional-extensions'
+import { delayAsync } from 'functional-extensions'
 
 export default function Welcome() {
 
@@ -26,7 +28,10 @@ export default function Welcome() {
         <div className="page">
             <div className="settings">
                 <div className="ripple-container" onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={4}
-                    onClick={() => navigate("/settings")}>
+                    onClick={async () => {
+                        await delayAsync(250)
+                        navigate("/settings", { viewTransition: true })
+                    }}>
                     =
                 </div>
             </div>

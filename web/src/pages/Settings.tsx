@@ -11,9 +11,7 @@ export default function Settings() {
     }, [])
 
     useEffect(() => {
-        window.onBackPressed = () => {
-            navigate("/");
-        }
+        window.onBackPressed = () => navigate("/", { viewTransition: true })
 
         return () => {
             delete window.onBackPressed;
