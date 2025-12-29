@@ -12,7 +12,8 @@ button, .viewer>div {
 }
 
 .viewer>div {
-    border-radius: 1%;
+    text-align: center;
+    border-radius: 10px;
     background-color: gray;
     padding: 50px;
     transition: background-color 0.5s;
@@ -31,5 +32,32 @@ button, .viewer>div {
 }
 
 :focus {
-  outline: 3px solid #00aaff;
+    outline: 3px solid #00aaff;
+}
+
+.ripple-container {
+    position: relative;
+    overflow: hidden; /* required */
+    display: inline-flex;        /* IMPORTANT */
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 16px;          /* give it real size */
+    box-sizing: border-box;    
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: scale(0);
+    background-color: rgba(255, 255, 255, 0.35);  
+    animation: ripple-animation 600ms ease-out;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
 }
