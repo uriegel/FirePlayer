@@ -51,11 +51,15 @@ class MainActivity : ComponentActivity() {
         server = WebServer(this, 8888)
         server.start()
 
+        var welcomePage = false
+
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 sendToWeb("BACK pressed")
-                // TODO finish or not
-                finish()
+                if (welcomePage)
+                    finish()
+                else
+                    sendBackPressed()
             }
         })
 
@@ -73,7 +77,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             FirePlayerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    ReactView(webViewFocus, { webView = it }, Modifier.padding(innerPadding))
+                    ReactView(webViewFocus, { webView = it },
+                        { set -> welcomePage = set },
+                        Modifier.padding(innerPadding))
                 }
             }
         }
@@ -136,6 +142,10 @@ class MainActivity : ComponentActivity() {
 //            "window.onFireTvRemote && window.onFireTvRemote('$action');",
 //            null
 //        )
+    }
+
+    private fun sendBackPressed() {
+        webView?.evaluateJavascript("window.onBackPressed()", null)
     }
 
     private lateinit var server: WebServer

@@ -2,12 +2,13 @@ package de.uriegel.fireplayer
 
 import android.webkit.JavascriptInterface
 
-class WebAppBridge(private val onAction: (String) -> Unit) {
-
-    // Must be annotated with @JavascriptInterface
+class WebAppBridge(private val onWelcome: (Boolean) -> Unit, private val onAction: (String) -> Unit) {
     @JavascriptInterface
     fun postMessage(message: String) {
-        // This is called from JS
         onAction(message)
+    }
+    @JavascriptInterface
+    fun setWelcome(set: Boolean) {
+        onWelcome(set)
     }
 }

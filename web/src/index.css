@@ -12,3 +12,34 @@ body {
     height: 100%;
     width: 100%;
 }
+
+:focus {
+    outline: 3px solid #00aaff;
+}
+
+.ripple-container {
+    position: relative;
+    overflow: hidden; /* required */
+    display: inline-flex;        /* IMPORTANT */
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 16px;          /* give it real size */
+    box-sizing: border-box;    
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: scale(0);
+    background-color: rgba(255, 255, 255, 0.35);  
+    animation: ripple-animation 600ms ease-out;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}

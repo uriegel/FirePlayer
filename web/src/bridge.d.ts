@@ -3,7 +3,8 @@ export {};
 declare global {
     interface Window {
         AndroidBridge: {
-            postMessage: (text: string) => void
+            postMessage: (text: string) => void,
+            setWelcome: (message: boolean) => void
         }
     }
 }

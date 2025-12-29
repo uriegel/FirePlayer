@@ -12,7 +12,8 @@ import de.uriegel.fireplayer.WebAppBridge
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun ReactView(webViewFocus: Boolean, onWebViewReady: (WebView)->Unit, modifier: Modifier = Modifier) {
+fun ReactView(webViewFocus: Boolean, onWebViewReady: (WebView)->Unit,
+              onWelcome: (Boolean)->Unit, modifier: Modifier = Modifier) {
     AndroidView(
         modifier = modifier.fillMaxSize(),
         factory = { context ->
@@ -31,10 +32,10 @@ fun ReactView(webViewFocus: Boolean, onWebViewReady: (WebView)->Unit, modifier: 
                 settings.cacheMode = WebSettings.LOAD_NO_CACHE
                 clearCache(true)
 
-                addJavascriptInterface(WebAppBridge { message ->
+                addJavascriptInterface(WebAppBridge(onWelcome, { message ->
                     // Handle messages from JS
                     Toast.makeText(this.context, message, Toast.LENGTH_SHORT).show()
-                }, "AndroidBridge")
+                }), "AndroidBridge")
 
                 loadUrl("http://127.0.0.1:8888/")
                 onWebViewReady(this)

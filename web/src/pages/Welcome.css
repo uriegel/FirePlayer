@@ -1,0 +1,28 @@
+.page{
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    display: flex;
+}
+
+.controls {
+    width: 100%;
+    height: 300px;
+    flex-direction: row;
+    display: flex;
+}
+
+.settings {
+    text-align: end;
+    margin: 20px;    
+}
+
+.button {
+    margin: 20px;
+    flex-grow: 1;
+    text-align: center;
+    border-radius: 10px;
+    background-color: rgb(58, 2, 2);
+    padding: 50px;
+    transition: background-color 0.5s;
+}
