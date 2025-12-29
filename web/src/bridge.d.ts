@@ -6,6 +6,7 @@ declare global {
             postMessage: (text: string) => void,
             setWelcome: (message: boolean) => void
         }
+        onBackPressed?: () => void
     }
 }
 
