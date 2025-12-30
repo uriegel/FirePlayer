@@ -1,7 +1,8 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import './App.css'
+import WithDialog from 'web-dialog-react'
 import Welcome from './pages/Welcome'
 import Settings from './pages/Settings'
+import './App.css'
 
 export default function App() {
 
@@ -17,7 +18,9 @@ export default function App() {
 	])
 
 	return (
-		<RouterProvider router={router} />
+		<WithDialog>
+			<RouterProvider router={router} />
+		</WithDialog>
 	)
 }
 

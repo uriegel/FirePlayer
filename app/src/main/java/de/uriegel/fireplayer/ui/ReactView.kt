@@ -32,12 +32,13 @@ fun ReactView(webViewFocus: Boolean, onWebViewReady: (WebView)->Unit,
                 settings.cacheMode = WebSettings.LOAD_NO_CACHE
                 clearCache(true)
 
-                addJavascriptInterface(WebAppBridge(onWelcome, { message ->
+                addJavascriptInterface(WebAppBridge(onWelcome) { message ->
                     // Handle messages from JS
                     Toast.makeText(this.context, message, Toast.LENGTH_SHORT).show()
-                }), "AndroidBridge")
+                }, "AndroidBridge")
 
                 loadUrl("http://127.0.0.1:8888/")
+                //loadUrl("http://192.168.178.36:5173/")
                 onWebViewReady(this)
 //                post {
 //                    evaluateJavascript(

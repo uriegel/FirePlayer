@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react"
+import { useContext, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
+import { DialogContext } from "web-dialog-react"
 import { useRipple } from '../hooks/ripple'
 import styles from "./Settings.module.css"
 
@@ -8,6 +9,7 @@ export default function Settings() {
     const focusButton = useRef<HTMLDivElement | null>(null)
     const navigate = useNavigate()
     const ripple = useRipple()
+    const dialog = useContext(DialogContext)
 
     useEffect(() => focusButton.current?.focus(), [])
 
@@ -24,6 +26,17 @@ export default function Settings() {
         }
     }, [navigate])
 
+    const onUrl = async () => {
+        await dialog.show({
+            text: "Url des Media-Servers eingeben",
+            inputText: "",
+            inputType: "url",
+            btnOk: true,
+            btnCancel: true,
+            defBtnOk: true
+        })
+    }
+
     return (
         <div className={styles.settings}>
             <h1>
@@ -32,7 +45,8 @@ export default function Settings() {
             <h2>
                 Url
             </h2>
-            <div className={`ripple-container`} ref={focusButton} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={0}>
+            <div className={`ripple-container`} ref={focusButton} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown}
+                onClick={onUrl} tabIndex={0}>
                 <div>
                     Die Url des Servers (z.B. http://domain)
                 </div>
@@ -40,7 +54,6 @@ export default function Settings() {
                     http://roxy:9865
                 </div>
             </div>
-            <input type="url" placeholder="Gib die Url ein, Mann!" ></input>
         </div>
     )
 }
