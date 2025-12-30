@@ -1,7 +1,10 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import WithDialog from 'web-dialog-react'
 import Welcome from './pages/Welcome'
 import Settings from './pages/Settings'
+import VideoList from './pages/VideoList'
+import { VideoError } from './pages/VideoError'
+import { videosLoader } from './videosLoader'
 import './App.css'
 
 export default function App() {
@@ -14,6 +17,12 @@ export default function App() {
 		{
 			path: "settings",
 			element: <Settings />,
+		},
+		{
+			path: "videolist",
+			element: <VideoList />,
+			loader: videosLoader,
+			errorElement: <VideoError />
 		}
 	])
 
@@ -24,8 +33,11 @@ export default function App() {
 	)
 }
 
+// TODO CORS on home-server only for specific hosts and only for fireplayer
+// TODO In VideoList, set backpress = true => navigate to welcome
 // TODO Video file view
 // TODO Video player view
+// TODO Carousel open exception in VideoError
 
 // TODO React Settings: show input dialog and then "zurück" doesn't close the dialog
 // TODO React more beautiful focus settings in Android phone

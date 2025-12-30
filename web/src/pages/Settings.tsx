@@ -11,11 +11,9 @@ export default function Settings() {
     const ripple = useRipple()
     const dialog = useContext(DialogContext)
 
-    const [url, setUrl] = useState("")
+    const [url, setUrl] = useState(localStorage.getItem("url") || "")
 
     useEffect(() => focusButton.current?.focus(), [])
-
-    useEffect(() => setUrl(localStorage.getItem("url") || ""), [])
 
     useEffect(() => {
         if (window.AndroidBridge)
