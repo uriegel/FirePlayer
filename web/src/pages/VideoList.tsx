@@ -3,6 +3,7 @@ import { Await, useLoaderData, useNavigate } from "react-router-dom"
 import "functional-extensions"
 import type { Videos } from "../videosLoader"
 import styles from "./VideoList.module.css"
+import VideoGridItems from "./VideoGridItems"
 
 export default function VideoList() {
 
@@ -27,9 +28,7 @@ export default function VideoList() {
             <Await resolve={videos}>
                 { videos => (
                     <div className={styles.container}>
-                        {videos.files.map(n => (
-                            <div key={n} tabIndex={0}>{n}</div>
-                        ))}
+                        <VideoGridItems files={videos.files} />
                     </div>
                 )}
             </Await>
