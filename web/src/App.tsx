@@ -33,8 +33,6 @@ export default function App() {
 	)
 }
 
-// TODO CORS on home-server only for specific hosts and only for fireplayer
-// TODO In VideoList, set backpress = true => navigate to welcome
 // TODO Video file view
 // TODO Video player view
 // TODO Carousel open exception in VideoError
