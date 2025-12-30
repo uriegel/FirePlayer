@@ -24,12 +24,12 @@ export default function App() {
 	)
 }
 
-// TODO React Settings: UI, saving in local storage
 // TODO Video file view
 // TODO Video player view
 
 // TODO React Settings: show input dialog and then "zurück" doesn't close the dialog
 // TODO React more beautiful focus settings in Android phone
+// TODO Dialog: plain simple with "Abbrechen", "Übernehmen", styled colors
 
 // TODO Welcome UI: 
 // Title with an Image
