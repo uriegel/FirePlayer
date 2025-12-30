@@ -20,12 +20,7 @@ body {
 .ripple-container {
     position: relative;
     overflow: hidden; /* required */
-    display: inline-flex;        /* IMPORTANT */
-    align-items: center;
-    justify-content: center;
-
-    padding: 10px 16px;          /* give it real size */
-    box-sizing: border-box;    
+        box-sizing: border-box;    
 }
 
 .ripple {

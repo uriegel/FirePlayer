@@ -21,6 +21,8 @@ export default function App() {
 	)
 }
 
+// TODO React don't show focus settings in Android phone	
+// TODO React Settings: show input dialog (url instead of text!)
 // TODO React Settings: UI, saving in local storage
 // TODO Video file view
 // TODO Video player view

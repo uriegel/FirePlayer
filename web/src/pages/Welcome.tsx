@@ -1,9 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useRipple } from '../hooks/ripple'
-import './Welcome.css'
-import 'functional-extensions'
 import { delayAsync } from 'functional-extensions'
+import { useRipple } from '../hooks/ripple'
+import styles from './Welcome.module.css'
 
 export default function Welcome() {
 
@@ -26,8 +25,8 @@ export default function Welcome() {
     const navigate = useNavigate()
 
     return (
-        <div className="page">
-            <div className="settings">
+        <div className={styles.page}>
+            <div className={styles.settings}>
                 <div className="ripple-container" onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={4}
                     onClick={async () => {
                         await delayAsync(250)
@@ -36,16 +35,16 @@ export default function Welcome() {
                     =
                 </div>
             </div>
-            <div className="controls">
-                <div className="ripple-container button" ref={focusButton} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={1}
+            <div className={styles.controls}>
+                <div className={`ripple-container ${styles.button}`} ref={focusButton} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={1}
                     onClick={() => onClick("Filme")}>
                     Filme
                 </div>
-                <div className="ripple-container button" onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={2}
+                <div className={`ripple-container ${styles.button}`} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={2}
                     onClick={() => onClick("Fotos")}>
                     Fotos
                 </div>
-                <div className="ripple-container button" onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={3}
+                <div className={`ripple-container ${styles.button}`} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={3}
                     onClick={() => onClick("Musik")}>
                     Musik
                 </div>

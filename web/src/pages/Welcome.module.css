@@ -17,8 +17,16 @@
     margin: 20px;    
 }
 
+.settings>div {
+    display: inline-flex;
+    padding: 10px 16px;          /* give it real size */        
+}
+
 .button {
     margin: 20px;
+    display: inline-flex;        /* IMPORTANT */
+    align-items: center;
+    justify-content: center;
     flex-grow: 1;
     text-align: center;
     border-radius: 10px;
@@ -26,3 +34,4 @@
     padding: 50px;
     transition: background-color 0.5s;
 }
+
