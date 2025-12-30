@@ -1,6 +1,6 @@
-import { useContext, useEffect, useRef } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { DialogContext } from "web-dialog-react"
+import { DialogContext, ResultType } from "web-dialog-react"
 import { useRipple } from '../hooks/ripple'
 import styles from "./Settings.module.css"
 
@@ -11,7 +11,11 @@ export default function Settings() {
     const ripple = useRipple()
     const dialog = useContext(DialogContext)
 
+    const [url, setUrl] = useState("")
+
     useEffect(() => focusButton.current?.focus(), [])
+
+    useEffect(() => setUrl(localStorage.getItem("url") || ""), [])
 
     useEffect(() => {
         if (window.AndroidBridge)
@@ -27,14 +31,18 @@ export default function Settings() {
     }, [navigate])
 
     const onUrl = async () => {
-        await dialog.show({
+        const res = await dialog.show({
             text: "Url des Media-Servers eingeben",
-            inputText: "",
+            inputText: localStorage.getItem("url") || "",
             inputType: "url",
             btnOk: true,
             btnCancel: true,
             defBtnOk: true
         })
+        if (res.result == ResultType.Ok && res.input) {
+            localStorage.setItem("url", res.input)
+            setUrl(res.input)
+        }
     }
 
     return (
@@ -51,7 +59,7 @@ export default function Settings() {
                     Die Url des Servers (z.B. http://domain)
                 </div>
                 <div className={styles.value}>
-                    http://roxy:9865
+                    {url}
                 </div>
             </div>
         </div>
