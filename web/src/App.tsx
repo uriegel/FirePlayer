@@ -19,7 +19,7 @@ export default function App() {
 			element: <Settings />,
 		},
 		{
-			path: "videolist",
+			path: "videolist/*",
 			element: <VideoList />,
 			loader: videosLoader,
 			errorElement: <VideoError />

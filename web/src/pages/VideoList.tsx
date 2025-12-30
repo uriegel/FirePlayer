@@ -1,12 +1,14 @@
 import { Suspense, useEffect } from "react"
-import { Await, useLoaderData, useNavigate } from "react-router-dom"
+import { Await, useLoaderData, useNavigate, useParams } from "react-router-dom"
 import "functional-extensions"
 import type { Videos } from "../videosLoader"
 import styles from "./VideoList.module.css"
 import VideoGridItems from "./VideoGridItems"
 
 export default function VideoList() {
-
+    const { '*': subPath } = useParams() // catch-all parameter
+    console.log("subPath", subPath)
+    
     const navigate = useNavigate()
     const { videos } = useLoaderData() as { videos: Promise<Videos> }
 
