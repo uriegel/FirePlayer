@@ -1,0 +1,18 @@
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    padding: 10px;
+    height: 100%;
+    overflow: auto;    
+}
+
+.container>div {
+    background-color: #500000;
+    margin: 3px;                                
+    padding: 10px;
+    border-radius: 5px;
+    min-height: 70px;
+    word-wrap: break-word;
+    text-align: center;
+    align-content: center;
+}   

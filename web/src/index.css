@@ -20,7 +20,7 @@ body {
 .ripple-container {
     position: relative;
     overflow: hidden; /* required */
-        box-sizing: border-box;    
+    box-sizing: border-box;    
 }
 
 .ripple {

@@ -2,7 +2,7 @@ import { Suspense, useEffect } from "react"
 import { Await, useLoaderData, useNavigate } from "react-router-dom"
 import "functional-extensions"
 import type { Videos } from "../videosLoader"
-//import styles from "./VideoList.module.css"
+import styles from "./VideoList.module.css"
 
 export default function VideoList() {
 
@@ -26,11 +26,11 @@ export default function VideoList() {
         <Suspense fallback={<p>Lade Filme...</p>}>
             <Await resolve={videos}>
                 { videos => (
-                    <ul>
+                    <div className={styles.container}>
                         {videos.files.map(n => (
-                            <li key={n}>{n}</li>
+                            <div key={n} tabIndex={0}>{n}</div>
                         ))}
-                    </ul>
+                    </div>
                 )}
             </Await>
         </Suspense>
