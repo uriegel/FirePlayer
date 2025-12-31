@@ -19,6 +19,7 @@ export default function App() {
 			element: <Settings />,
 		},
 		{
+			id: "videolist",
 			path: "videolist/*",
 			element: <VideoList />,
 			loader: videosLoader,
@@ -37,9 +38,11 @@ export default function App() {
 	)
 }
 
-// TODO Video file view
+// TODO style video folder differntly
 // TODO Video player view
 // TODO Carousel open exception in VideoError
+
+// TODO Video file view: back select last video
 
 // TODO React Settings: show input dialog and then "zurück" doesn't close the dialog
 // TODO React more beautiful focus settings in Android phone

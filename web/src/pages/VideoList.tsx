@@ -1,7 +1,7 @@
 import { Suspense, useEffect } from "react"
 import { Await, useLoaderData, useParams } from "react-router-dom"
 import "functional-extensions"
-import type { Videos } from "../videosLoader"
+import type { VideoItem } from "../videosLoader"
 import VideoGridItems from "./VideoGridItems"
 import { useNavigateTo } from "../hooks/NavigateTo"
 import styles from "./VideoList.module.css"
@@ -11,7 +11,7 @@ export default function VideoList() {
     console.log("subPath", subPath)
     
     const navigate = useNavigateTo()
-    const { videos } = useLoaderData() as { videos: Promise<Videos> }
+    const { videos } = useLoaderData() as { videos: Promise<VideoItem[]> }
 
     useEffect(() => {
         if (window.AndroidBridge)
@@ -31,7 +31,7 @@ export default function VideoList() {
             <Await resolve={videos}>
                 { videos => (
                     <div className={styles.container}>
-                        <VideoGridItems files={videos.files} path={subPath} />
+                        <VideoGridItems videos={videos} path={subPath} />
                     </div>
                 )}
             </Await>

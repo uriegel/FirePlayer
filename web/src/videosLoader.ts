@@ -1,12 +1,41 @@
-export type Videos = {
+import type { LoaderFunctionArgs } from "react-router-dom"
+
+type Videos = {
     directories: string[],
     files: string[]
 }
 
+export type VideoItem = {
+    name: string,
+    file?: string,
+    isDirectory?: boolean
+}
+
 export const getUrl = (relativeUrl: string) => `${localStorage.getItem("url") || ""}/${relativeUrl}`
 
-export async function videosLoader() {
+function getFilenameWithoutExtension(filename: string) {
+    const pos = filename.lastIndexOf(".")
+    return filename.substring(0, pos)
+}
+
+export async function videosLoader({ params }: LoaderFunctionArgs) {
+    // params["*"] contains the subPath or undefined
+    const subPath = params["*"] ?? "";
+
+    const endpoint = subPath
+        ? `video/${subPath}`
+        : "video";
+
+
     return {
-        videos: fetch(getUrl("video")).then(r => r.json() as Promise<Videos>)
+        videos: fetch(getUrl(endpoint))
+                    .then(r => r.json() as Promise<Videos>)
+                    .then(r => r.directories.map(n => ({
+                        name: n,
+                        isDirectory: true
+                    } as VideoItem)).concat(r.files.map(n => ({
+                        file: n,
+                        name: getFilenameWithoutExtension(n)
+                    }))))
     }
 }
