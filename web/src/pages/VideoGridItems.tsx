@@ -3,6 +3,8 @@ import "functional-extensions"
 import { useRipple } from "../hooks/ripple"
 import { useNavigateTo } from "../hooks/NavigateTo"
 import type { VideoItem } from "../videosLoader"
+import styles from "./VideoList.module.css"
+
 
 type VideoGridItemsProps = {
     videos: VideoItem[]
@@ -34,7 +36,7 @@ export default function VideoGridItems({ videos, path }: VideoGridItemsProps) {
     return (
         <>
             {videos.map((n, index) => (
-                    <div className={`ripple-container`} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown}
+                    <div className={`ripple-container${n.isDirectory ? " " + styles.folder : ""}`} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown}
                         onClick={() => onVideoClick(n)} key={n.name} tabIndex={0} ref={index === 0 ? firstItemRef : null}>
                         {n.name}
                     </div>

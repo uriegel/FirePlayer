@@ -38,7 +38,6 @@ export default function App() {
 	)
 }
 
-// TODO style video folder differntly
 // TODO Video player view
 // TODO Carousel open exception in VideoError
 

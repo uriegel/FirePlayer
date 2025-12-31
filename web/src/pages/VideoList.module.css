@@ -1,6 +1,6 @@
 .container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     padding: 10px;
     height: 100%;
     overflow: auto;    
@@ -12,7 +12,14 @@
     padding: 10px;
     border-radius: 5px;
     min-height: 70px;
+    max-height: 250px;
     word-wrap: break-word;
     text-align: center;
     align-content: center;
 }   
+
+.folder {
+    border-style: solid;
+    border-color: #9f0000;
+    border-width: 8px;
+}
