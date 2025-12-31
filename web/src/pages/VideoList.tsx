@@ -1,15 +1,16 @@
 import { Suspense, useEffect } from "react"
-import { Await, useLoaderData, useNavigate, useParams } from "react-router-dom"
+import { Await, useLoaderData, useParams } from "react-router-dom"
 import "functional-extensions"
 import type { Videos } from "../videosLoader"
-import styles from "./VideoList.module.css"
 import VideoGridItems from "./VideoGridItems"
+import { useNavigateTo } from "../hooks/NavigateTo"
+import styles from "./VideoList.module.css"
 
 export default function VideoList() {
     const { '*': subPath } = useParams() // catch-all parameter
     console.log("subPath", subPath)
     
-    const navigate = useNavigate()
+    const navigate = useNavigateTo()
     const { videos } = useLoaderData() as { videos: Promise<Videos> }
 
     useEffect(() => {
@@ -18,7 +19,7 @@ export default function VideoList() {
     }, [])
     
     useEffect(() => {
-        window.onBackPressed = () => navigate("/", { viewTransition: true })
+        window.onBackPressed = () => navigate("/", 0)
 
         return () => {
             delete window.onBackPressed;
@@ -30,7 +31,7 @@ export default function VideoList() {
             <Await resolve={videos}>
                 { videos => (
                     <div className={styles.container}>
-                        <VideoGridItems files={videos.files} />
+                        <VideoGridItems files={videos.files} path={subPath} />
                     </div>
                 )}
             </Await>

@@ -5,10 +5,10 @@ import Settings from './pages/Settings'
 import VideoList from './pages/VideoList'
 import { VideoError } from './pages/VideoError'
 import { videosLoader } from './videosLoader'
-import './App.css'
+import { Video } from './pages/Video'
 
 export default function App() {
-
+	
 	const router = createBrowserRouter([
 		{
 			path: "/",
@@ -23,6 +23,10 @@ export default function App() {
 			element: <VideoList />,
 			loader: videosLoader,
 			errorElement: <VideoError />
+		},
+		{
+			path: "video/*",
+			element: <Video />,
 		}
 	])
 

@@ -1,13 +1,12 @@
 import { useContext, useEffect, useRef, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import { DialogContext, ResultType } from "web-dialog-react"
 import { useRipple } from '../hooks/ripple'
 import styles from "./Settings.module.css"
+import { useNavigateTo } from "../hooks/NavigateTo"
 
 export default function Settings() {
-
     const focusButton = useRef<HTMLDivElement | null>(null)
-    const navigate = useNavigate()
+    const navigate = useNavigateTo()
     const ripple = useRipple()
     const dialog = useContext(DialogContext)
 
@@ -21,7 +20,7 @@ export default function Settings() {
     }, [])
 
     useEffect(() => {
-        window.onBackPressed = () => navigate("/", { viewTransition: true })
+        window.onBackPressed = () => navigate("/", 0)
 
         return () => {
             delete window.onBackPressed;

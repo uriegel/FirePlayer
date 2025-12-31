@@ -6,10 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build --emptyOutDir",
-    "lint": "eslint ."
+    "lint": "tsc && eslint ."
   },
   "dependencies": {
-    "functional-extensions": "^2.8.0",
+    "functional-extensions": "^2.8.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.11.0",

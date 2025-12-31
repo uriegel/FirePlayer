@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { delayAsync } from 'functional-extensions'
 import { useRipple } from '../hooks/ripple'
+import { useNavigateTo } from '../hooks/NavigateTo'
 import styles from './Welcome.module.css'
 
 export default function Welcome() {
@@ -22,25 +21,19 @@ export default function Welcome() {
             window.AndroidBridge.postMessage(text)
     }
 
-    const navigate = useNavigate()
+    const navigate = useNavigateTo()
 
     return (
         <div className={styles.page}>
             <div className={styles.settings}>
                 <div className="ripple-container" onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={4}
-                    onClick={async () => {
-                        await delayAsync(250)
-                        navigate("/settings", { viewTransition: true })
-                    }}>
+                    onClick={async () => navigate("/settings")}>
                     =
                 </div>
             </div>
             <div className={styles.controls}>
                 <div className={`ripple-container ${styles.button}`} ref={focusButton} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={1}
-                    onClick={async () => {
-                        await delayAsync(250)
-                        navigate("/videolist", { viewTransition: true })
-                    }}>
+                    onClick={async () => navigate("/videolist")}>
                     Filme
                 </div>
                 <div className={`ripple-container ${styles.button}`} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={2}
@@ -51,8 +44,6 @@ export default function Welcome() {
                     onClick={() => onClick("Musik")}>
                     Musik
                 </div>
-                {/* 		<div className='viewer'>
-                                    <video className='mediaPlayer' controls autoPlay src="http://roxy:9865/video/2010.mp4" />         */}
             </div>
         </div>
     )
