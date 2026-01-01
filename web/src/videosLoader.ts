@@ -18,9 +18,12 @@ function getFilenameWithoutExtension(filename: string) {
     return filename.substring(0, pos)
 }
 
-export async function videosLoader({ params }: LoaderFunctionArgs) {
+export async function videosLoader({ params, request }: LoaderFunctionArgs) {
     // params["*"] contains the subPath or undefined
-    const subPath = params["*"] ?? "";
+    const subPath = params["*"] ?? ""
+
+    const url = new URL(request.url)
+    const from = url.searchParams.get("from") ?? ""
 
     const endpoint = subPath
         ? `video/${subPath}`
@@ -36,6 +39,7 @@ export async function videosLoader({ params }: LoaderFunctionArgs) {
                     } as VideoItem)).concat(r.files.map(n => ({
                         file: n,
                         name: getFilenameWithoutExtension(n)
-                    }))))
+                    })))),
+        from
     }
 }

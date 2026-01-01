@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom"
-import { useEffect } from "react"
+import { useCallback, useEffect } from "react"
 import { useNavigateTo } from "../hooks/NavigateTo"
 import styles from "./Video.module.css"
 
@@ -12,14 +12,28 @@ export function Video() {
             window.AndroidBridge.setWelcome(false)
     }, [])
 
+    const navigateBack = useCallback(() => {
+        const parent = subPath?.getParentPath()
+        const path = subPath?.endsWith("/") ? subPath.substring(0, subPath.length-1) : subPath
+        const url = parent
+            ? `/videolist/${parent}`
+            : path
+            ? "/videolist"
+            : "/"
+        const search = new URLSearchParams({
+            from: path?.getFileName() || "",
+        }).toString()
+        navigate(`${url}?${search}`, 0)
+    }, [navigate, subPath])
+
     useEffect(() => {
-        window.onBackPressed = () => navigate("/videolist", 0) // TODO fill parent and select movie
+        window.onBackPressed = navigateBack
 
         return () => {
             delete window.onBackPressed;
         }
-    }, [navigate])    
-    
+    }, [navigateBack, subPath])
+
     return (
         <div className={styles.viewer}>
             <video className={styles.mediaPlayer} controls autoPlay src={`${localStorage.getItem("url") || ""}/video/${subPath}`} />         

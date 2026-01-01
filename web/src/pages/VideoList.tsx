@@ -9,7 +9,7 @@ import styles from "./VideoList.module.css"
 export default function VideoList() {
     const { '*': subPath } = useParams() // catch-all parameter
     const navigate = useNavigateTo()
-    const { videos } = useLoaderData() as { videos: Promise<VideoItem[]> }
+    const { videos, from } = useLoaderData() as { videos: Promise<VideoItem[]>, from: string }
 
     useEffect(() => {
         if (window.AndroidBridge)
@@ -18,12 +18,16 @@ export default function VideoList() {
 
     const navigateBack = useCallback(() => {
         const parent = subPath?.getParentPath()
+        const path = subPath?.endsWith("/") ? subPath.substring(0, subPath.length-1) : subPath
         const url = parent
             ? `/videolist/${parent}`
-            : subPath
+            : path
             ? "/videolist"
             : "/"
-        navigate(url , 0)
+        const search = new URLSearchParams({
+            from: path?.getFileName() || "",
+        }).toString()
+        navigate(`${url}?${search}`, 0)
     }, [navigate, subPath])
     
     useEffect(() => {
@@ -39,7 +43,7 @@ export default function VideoList() {
             <Await resolve={videos}>
                 { videos => (
                     <div className={styles.container}>
-                        <VideoGridItems videos={videos} path={subPath} />
+                        <VideoGridItems videos={videos} path={subPath} from={from} />
                     </div>
                 )}
             </Await>

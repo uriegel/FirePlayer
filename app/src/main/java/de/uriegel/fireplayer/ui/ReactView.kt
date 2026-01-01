@@ -37,8 +37,8 @@ fun ReactView(webViewFocus: Boolean, onWebViewReady: (WebView)->Unit,
                     Toast.makeText(this.context, message, Toast.LENGTH_SHORT).show()
                 }, "AndroidBridge")
 
-                //loadUrl("http://127.0.0.1:8888/")
-                loadUrl("http://192.168.178.36:5173/")
+                loadUrl("http://127.0.0.1:8888/")
+                //loadUrl("http://192.168.178.36:5173/")
                 onWebViewReady(this)
 //                post {
 //                    evaluateJavascript(

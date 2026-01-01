@@ -9,9 +9,10 @@ import styles from "./VideoList.module.css"
 type VideoGridItemsProps = {
     videos: VideoItem[]
     path?: string
+    from: string
 }
 
-export default function VideoGridItems({ videos, path }: VideoGridItemsProps) {
+export default function VideoGridItems({ videos, path, from }: VideoGridItemsProps) {
     const firstItemRef = useRef<HTMLDivElement>(null)
     const ripple = useRipple()
     const navigate = useNavigateTo()
@@ -33,11 +34,17 @@ export default function VideoGridItems({ videos, path }: VideoGridItemsProps) {
             onVideoList(video.name)
     }
 
+    console.log("from", from)
+
+    const focused = from.includes(".")
+                    ? Math.max(videos.findIndex(n => n.file?.endsWith(from)), 0)
+                    : Math.max(videos.findIndex(n => n.name == from), 0)
+
     return (
         <>
             {videos.map((n, index) => (
                     <div className={`ripple-container${n.isDirectory ? " " + styles.folder : ""}`} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown}
-                        onClick={() => onVideoClick(n)} key={n.name} tabIndex={0} ref={index === 0 ? firstItemRef : null}>
+                        onClick={() => onVideoClick(n)} key={n.name} tabIndex={0} ref={index === focused ? firstItemRef : null}>
                         {n.name}
                     </div>
                 )
