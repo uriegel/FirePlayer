@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from "react"
+import { Suspense, useCallback, useEffect } from "react"
 import { Await, useLoaderData, useParams } from "react-router-dom"
 import "functional-extensions"
 import type { VideoItem } from "../videosLoader"
@@ -8,8 +8,6 @@ import styles from "./VideoList.module.css"
 
 export default function VideoList() {
     const { '*': subPath } = useParams() // catch-all parameter
-    console.log("subPath", subPath)
-    
     const navigate = useNavigateTo()
     const { videos } = useLoaderData() as { videos: Promise<VideoItem[]> }
 
@@ -17,14 +15,24 @@ export default function VideoList() {
         if (window.AndroidBridge)
             window.AndroidBridge.setWelcome(false)
     }, [])
+
+    const navigateBack = useCallback(() => {
+        const parent = subPath?.getParentPath()
+        const url = parent
+            ? `/videolist/${parent}`
+            : subPath
+            ? "/videolist"
+            : "/"
+        navigate(url , 0)
+    }, [navigate, subPath])
     
     useEffect(() => {
-        window.onBackPressed = () => navigate("/", 0)
+        window.onBackPressed = navigateBack
 
         return () => {
             delete window.onBackPressed;
         }
-    }, [navigate])
+    }, [navigateBack, subPath])
 
     return (
         <Suspense fallback={<p>Lade Filme...</p>}>
