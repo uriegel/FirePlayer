@@ -1,15 +1,26 @@
 import { useParams } from "react-router-dom"
-import { useCallback, useEffect } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import { useNavigateTo } from "../hooks/NavigateTo"
 import styles from "./Video.module.css"
 
 export function Video() {
     const { '*': subPath } = useParams() 
     const navigate = useNavigateTo()
+    const videoRef = useRef<HTMLVideoElement>(null)
 
     useEffect(() => {
         if (window.AndroidBridge)
             window.AndroidBridge.setWelcome(false)
+    }, [])
+
+    const onForward = useCallback(() => {
+        if (videoRef.current) 
+            videoRef.current.currentTime = (videoRef.current?.currentTime || 0) + 10
+    }, [])
+
+    const onRewind = useCallback(() => {
+        if (videoRef.current) 
+            videoRef.current.currentTime = (videoRef.current?.currentTime || 0) - 10
     }, [])
 
     const navigateBack = useCallback(() => {
@@ -28,15 +39,21 @@ export function Video() {
 
     useEffect(() => {
         window.onBackPressed = navigateBack
-
-        return () => {
-            delete window.onBackPressed;
-        }
+        return () => { delete window.onBackPressed }
     }, [navigateBack, subPath])
+
+    useEffect(() => {
+        window.onForward = onForward
+        window.onRewind = onRewind
+        return () => {
+            delete window.onForward
+            delete window.onRewind
+        }
+    }, [onForward, onRewind])
 
     return (
         <div className={styles.viewer}>
-            <video className={styles.mediaPlayer} controls autoPlay src={`${localStorage.getItem("url") || ""}/video/${subPath}`} />         
+            <video ref={videoRef} className={styles.mediaPlayer} controls autoPlay src={`${localStorage.getItem("url") || ""}/video/${subPath}`} />         
         </div>
     )
 }

@@ -7,6 +7,8 @@ declare global {
             setWelcome: (message: boolean) => void
         }
         onBackPressed?: () => void
+        onForward?: () => void
+        onRewind?: () => void
     }
 }
 

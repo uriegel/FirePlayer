@@ -97,10 +97,10 @@ class MainActivity : ComponentActivity() {
 
         when (event.keyCode) {
             KeyEvent.KEYCODE_DPAD_LEFT ->
-                sendToWeb("LEFT")
+                sendRewind()
 
             KeyEvent.KEYCODE_DPAD_RIGHT ->
-                sendToWeb("RIGHT")
+                sendForward()
 
             KeyEvent.KEYCODE_DPAD_UP ->
                 sendToWeb("UP")
@@ -124,13 +124,10 @@ class MainActivity : ComponentActivity() {
                 sendToWeb("STOP")
 
             KeyEvent.KEYCODE_MEDIA_REWIND ->
-                sendToWeb("REWIND")
+                sendRewind()
 
             KeyEvent.KEYCODE_MEDIA_FAST_FORWARD ->
-                sendToWeb("FAST_FORWARD")
-
-            else ->
-                sendToWeb("Sonstige: ${event.keyCode}")
+                sendForward()
         }
 
         return super.dispatchKeyEvent(event)
@@ -146,6 +143,14 @@ class MainActivity : ComponentActivity() {
 
     private fun sendBackPressed() {
         webView?.evaluateJavascript("window.onBackPressed()", null)
+    }
+
+    private fun sendForward() {
+        webView?.evaluateJavascript("window.onForward()", null)
+    }
+
+    private fun sendRewind() {
+        webView?.evaluateJavascript("window.onRewind()", null)
     }
 
     private lateinit var server: WebServer
