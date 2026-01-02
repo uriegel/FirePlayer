@@ -38,9 +38,16 @@ export default function App() {
 	)
 }
 
-// TODO Video player view controlling video
-// TODO Carousel open exception in VideoError
+// TODO Video player 3 fast forward modes with overlay (>> 2-fach)
 // TODO Portrait to Landscape: save state
+
+// TODO Picture viewer
+// TODO Picture viewer with transitions
+
+// TODO Music player
+// TODO Music player switch TV off
+
+// TODO Carousel open exception in VideoError
 
 // TODO React Settings: show input dialog and then "zurück" doesn't close the dialog
 // TODO React more beautiful focus settings in Android phone

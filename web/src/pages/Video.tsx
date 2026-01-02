@@ -23,6 +23,16 @@ export function Video() {
             videoRef.current.currentTime = (videoRef.current?.currentTime || 0) - 10
     }, [])
 
+    const onFastForward = useCallback(() => {
+        if (videoRef.current) 
+            videoRef.current.currentTime = (videoRef.current?.currentTime || 0) + 120
+    }, [])
+
+    const onFastRewind = useCallback(() => {
+        if (videoRef.current) 
+            videoRef.current.currentTime = (videoRef.current?.currentTime || 0) - 120
+    }, [])
+
     const navigateBack = useCallback(() => {
         const parent = subPath?.getParentPath()
         const path = subPath?.endsWith("/") ? subPath.substring(0, subPath.length-1) : subPath
@@ -45,11 +55,15 @@ export function Video() {
     useEffect(() => {
         window.onForward = onForward
         window.onRewind = onRewind
+        window.onFastForward = onFastForward
+        window.onFastRewind = onFastRewind
         return () => {
             delete window.onForward
             delete window.onRewind
+            delete window.onFastForward
+            delete window.onFastRewind
         }
-    }, [onForward, onRewind])
+    }, [onForward, onRewind, onFastForward, onFastRewind])
 
     return (
         <div className={styles.viewer}>

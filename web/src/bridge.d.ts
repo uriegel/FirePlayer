@@ -9,6 +9,8 @@ declare global {
         onBackPressed?: () => void
         onForward?: () => void
         onRewind?: () => void
+        onFastForward?: () => void
+        onFastRewind?: () => void
     }
 }
 
