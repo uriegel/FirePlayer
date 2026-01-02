@@ -40,14 +40,22 @@ export function Video() {
     }, [forwardMode])
 
     const onFastForward = useCallback(() => {
-        if (videoRef.current) 
-            videoRef.current.currentTime = videoRef.current.currentTime + 120
-    }, [])
+        if (seekDirection == 1) {
+            setSeekDirection(0)
+            setForwardMode(1) 
+        }
+        else
+            setForwardMode(p => p < 3 ? p+1 : 0)
+    }, [seekDirection])
 
     const onFastRewind = useCallback(() => {
-        if (videoRef.current) 
-            videoRef.current.currentTime = videoRef.current.currentTime - 120
-    }, [])
+        if (seekDirection == 0) {
+            setSeekDirection(1)
+            setForwardMode(1)
+        }
+        else
+            setForwardMode(p => p < 3 ? p+1 : 0)
+    }, [seekDirection])
 
     const navigateBack = useCallback(() => {
         const parent = subPath?.getParentPath()
@@ -96,25 +104,6 @@ export function Video() {
             videoRef.current.muted = forwardMode != 0
     }, [forwardMode])
 
-    const onKeyDown = useCallback((e: React.KeyboardEvent) => {
-        if (e.key == "f") {
-            if (seekDirection == 1) {
-                setSeekDirection(0)
-                setForwardMode(1) 
-            }
-            else
-                setForwardMode(p => p < 3 ? p+1 : 0)
-        }
-        else if (e.key == "r") {
-            if (seekDirection == 0) {
-                setSeekDirection(1)
-                setForwardMode(1)
-            }
-            else
-                setForwardMode(p => p < 3 ? p+1 : 0)
-        }
-    }, [seekDirection])
-
     const getOverlay = () => {
         const getText = () => forwardMode == 1 && seekDirection == 0
             ? "> 1-fach"
@@ -131,7 +120,7 @@ export function Video() {
     }
 
     return (
-        <div className={styles.viewer} onKeyDown={onKeyDown}>
+        <div className={styles.viewer}>
             <video ref={videoRef} className={styles.mediaPlayer} controls autoPlay src={`${localStorage.getItem("url") || ""}/video/${subPath}`} />         
             {getOverlay()}
         </div>
