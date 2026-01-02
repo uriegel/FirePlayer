@@ -38,7 +38,8 @@ export default function App() {
 	)
 }
 
-// TODO Video player 3 fast forward modes with overlay (>> 2-fach)
+// TODO Video build Fireplayer
+// TODO Video: play, pause, set forwardMode = 0
 // TODO Portrait to Landscape: save state
 
 // TODO Picture viewer
