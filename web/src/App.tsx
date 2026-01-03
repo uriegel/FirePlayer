@@ -4,7 +4,7 @@ import Welcome from './pages/Welcome'
 import Settings from './pages/Settings'
 import VideoList from './pages/VideoList'
 import { VideoError } from './pages/VideoError'
-import { videosLoader } from './videosLoader'
+import { picturesLoader, videosLoader } from './itemsLoader'
 import { Video } from './pages/Video'
 
 export default function App() {
@@ -13,19 +13,22 @@ export default function App() {
 		{
 			path: "/",
 			element: <Welcome />,
-		},
-		{
+		}, {
 			path: "settings",
 			element: <Settings />,
-		},
-		{
+		}, {
 			id: "videolist",
 			path: "videolist/*",
 			element: <VideoList />,
 			loader: videosLoader,
 			errorElement: <VideoError />
-		},
-		{
+		}, {
+			id: "picturelist",
+			path: "picturelist/*",
+			element: <VideoList />,
+			loader: picturesLoader,
+			errorElement: <VideoError />
+		}, {
 			path: "video/*",
 			element: <Video />,
 		}

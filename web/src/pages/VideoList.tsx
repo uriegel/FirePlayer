@@ -1,7 +1,7 @@
 import { Suspense, useCallback, useEffect } from "react"
 import { Await, useLoaderData, useParams } from "react-router-dom"
 import "functional-extensions"
-import type { VideoItem } from "../videosLoader"
+import type { Item } from "../itemsLoader"
 import VideoGridItems from "./VideoGridItems"
 import { useNavigateTo } from "../hooks/NavigateTo"
 import styles from "./VideoList.module.css"
@@ -9,7 +9,7 @@ import styles from "./VideoList.module.css"
 export default function VideoList() {
     const { '*': subPath } = useParams() // catch-all parameter
     const navigate = useNavigateTo()
-    const { videos, from } = useLoaderData() as { videos: Promise<VideoItem[]>, from: string }
+    const { videos, from } = useLoaderData() as { videos: Promise<Item[]>, from: string }
 
     useEffect(() => {
         if (window.AndroidBridge)
@@ -41,11 +41,15 @@ export default function VideoList() {
     return (
         <Suspense fallback={<p>Lade Filme...</p>}>
             <Await resolve={videos}>
-                { videos => (
-                    <div className={styles.container}>
-                        <VideoGridItems videos={videos} path={subPath} from={from} />
-                    </div>
-                )}
+                {
+                    videos => {
+                        console.log("schwein", videos)
+                        return (
+                            <div className={styles.container}>
+                                <VideoGridItems videos={videos} path={subPath} from={from} />
+                            </div>
+                        )
+                    }}
             </Await>
         </Suspense>
     )

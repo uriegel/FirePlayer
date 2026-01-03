@@ -37,7 +37,7 @@ export default function Welcome() {
                     Filme
                 </div>
                 <div className={`ripple-container ${styles.button}`} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={2}
-                    onClick={() => onClick("Fotos")}>
+                    onClick={async () => navigate("/picturelist")}>
                     Fotos
                 </div>
                 <div className={`ripple-container ${styles.button}`} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={3}

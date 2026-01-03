@@ -1,11 +1,11 @@
-import type { LoaderFunctionArgs } from "react-router-dom"
+import { type LoaderFunctionArgs } from "react-router-dom"
 
-type Videos = {
+type Items = {
     directories: string[],
     files: string[]
 }
 
-export type VideoItem = {
+export type Item = {
     name: string,
     file?: string,
     isDirectory?: boolean
@@ -18,7 +18,10 @@ function getFilenameWithoutExtension(filename: string) {
     return filename.substring(0, pos)
 }
 
-export async function videosLoader({ params, request }: LoaderFunctionArgs) {
+export const videosLoader = (args: LoaderFunctionArgs) => itemsLoader("video", args)
+export const picturesLoader = (args: LoaderFunctionArgs) => itemsLoader("pics", args)
+
+function itemsLoader(baseUrl: string, { params, request }: LoaderFunctionArgs) {
     // params["*"] contains the subPath or undefined
     const subPath = params["*"] ?? ""
 
@@ -26,20 +29,21 @@ export async function videosLoader({ params, request }: LoaderFunctionArgs) {
     const from = url.searchParams.get("from") ?? ""
 
     const endpoint = subPath
-        ? `video/${subPath}`
-        : "video";
+        ? `${baseUrl}/${subPath}`
+        : baseUrl
 
 
     return {
         videos: fetch(getUrl(endpoint))
-                    .then(r => r.json() as Promise<Videos>)
+                    .then(r => r.json() as Promise<Items>)
                     .then(r => r.directories.map(n => ({
                         name: n,
                         isDirectory: true
-                    } as VideoItem)).concat(r.files.map(n => ({
+                    } as Item)).concat(r.files.map(n => ({
                         file: n,
                         name: getFilenameWithoutExtension(n)
                     })))),
         from
     }
 }
+

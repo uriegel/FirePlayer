@@ -2,12 +2,12 @@ import { useEffect, useRef } from "react"
 import "functional-extensions"
 import { useRipple } from "../hooks/ripple"
 import { useNavigateTo } from "../hooks/NavigateTo"
-import type { VideoItem } from "../videosLoader"
+import type { Item } from "../itemsLoader"
 import styles from "./VideoList.module.css"
 
 
 type VideoGridItemsProps = {
-    videos: VideoItem[]
+    videos: Item[]
     path?: string
     from: string
 }
@@ -26,7 +26,7 @@ export default function VideoGridItems({ videos, path, from }: VideoGridItemsPro
     const onVideo = (movie: string) => navigate(path ? "/video".appendPath(path).appendPath(movie) : "/video".appendPath(movie))
     const onVideoList = (videoPath: string) => navigate(path ? "/videolist".appendPath(path).appendPath(videoPath) : "/videolist".appendPath(videoPath))
 
-    const onVideoClick = (video: VideoItem) => {
+    const onVideoClick = (video: Item) => {
         if (!video.isDirectory && video.file)
             onVideo(video.file)
         else
