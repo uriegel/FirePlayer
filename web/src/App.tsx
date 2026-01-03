@@ -40,9 +40,6 @@ export default function App() {
 
 // TODO Don't show focus rect in Android
 
-// TODO Video build Fireplayer
-// TODO Video: play, pause, set forwardMode = 0
-
 // TODO save video state in indexedDB
 
 // TODO Portrait to Landscape: save state

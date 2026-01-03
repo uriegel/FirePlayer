@@ -30,6 +30,16 @@ export function Video() {
         ? 20
         : 50
 
+    const onPlay = () => {
+        setForwardMode(0)
+        videoRef.current?.play()
+    }
+    
+    const onPause = () => {
+        setForwardMode(0)
+        videoRef.current?.pause()
+    }
+    
     const onForward = useCallback(() => {
         if (videoRef.current) {
             videoRef.current.currentTime = Math.min(videoRef.current.currentTime + getSkipTime(forwardMode), videoRef.current.duration)
@@ -78,23 +88,31 @@ export function Video() {
         navigate(`${url}?${search}`, 0)
     }, [navigate, subPath])
 
+    const onStop = useCallback(() => navigateBack(), [navigateBack])
+
     useEffect(() => {
         window.onBackPressed = navigateBack
         return () => { delete window.onBackPressed }
     }, [navigateBack, subPath])
 
     useEffect(() => {
+        window.onPlay = onPlay
+        window.onPause = onPause
+        window.onStop = onStop
         window.onForward = onForward
         window.onRewind = onRewind
         window.onFastForward = onFastForward
         window.onFastRewind = onFastRewind
         return () => {
+            delete window.onPlay
+            delete window.onPause
+            delete window.onStop
             delete window.onForward
             delete window.onRewind
             delete window.onFastForward
             delete window.onFastRewind
         }
-    }, [onForward, onRewind, onFastForward, onFastRewind])
+    }, [onForward, onRewind, onFastForward, onFastRewind, onStop])
 
     const timer = useRef(-1)
 

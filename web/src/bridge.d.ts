@@ -8,6 +8,9 @@ declare global {
             enterFullscreen: () => void
             exitFullscreen: () => void
         }
+        onPlay?: () => void
+        onPause?: () => void
+        onStop?: () => void
         onBackPressed?: () => void
         onForward?: () => void
         onRewind?: () => void

@@ -27,7 +27,8 @@ class MainActivity : ComponentActivity() {
 
         var welcomePage = false
 
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+        onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (welcomePage)
                     finish()
@@ -69,38 +70,17 @@ class MainActivity : ComponentActivity() {
             return super.dispatchKeyEvent(event)
 
         when (event.keyCode) {
-            KeyEvent.KEYCODE_DPAD_LEFT ->
-                sendRewind()
-
-            KeyEvent.KEYCODE_DPAD_RIGHT ->
-                sendForward()
-
-//            KeyEvent.KEYCODE_DPAD_UP ->
-//                sendToWeb("UP")
-//
-//            KeyEvent.KEYCODE_DPAD_DOWN ->
-//                sendToWeb("DOWN")
-
-//            KeyEvent.KEYCODE_DPAD_CENTER ->
-//                sendToWeb("SELECT")
-
-            //KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE ->
-                //sendToWeb("PLAY_PAUSE")
-
-//            KeyEvent.KEYCODE_MEDIA_PLAY ->
-//                sendToWeb("PLAY")
-//
-//            KeyEvent.KEYCODE_MEDIA_PAUSE ->
-//                sendToWeb("PAUSE")
-//
-//            KeyEvent.KEYCODE_MEDIA_STOP ->
-//                sendToWeb("STOP")
-
-            KeyEvent.KEYCODE_MEDIA_REWIND ->
-                sendFastRewind()
-
-            KeyEvent.KEYCODE_MEDIA_FAST_FORWARD ->
-                sendFastForward()
+            KeyEvent.KEYCODE_DPAD_LEFT -> sendRewind()
+            KeyEvent.KEYCODE_DPAD_RIGHT -> sendForward()
+            KeyEvent.KEYCODE_MEDIA_PLAY -> sendPlay()
+            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> sendPause()
+            KeyEvent.KEYCODE_MEDIA_PAUSE -> sendPause()
+            KeyEvent.KEYCODE_MEDIA_STOP -> sendStop()
+            KeyEvent.KEYCODE_MEDIA_REWIND -> sendFastRewind()
+            KeyEvent.KEYCODE_MEDIA_FAST_FORWARD -> sendFastForward()
+//            KeyEvent.KEYCODE_DPAD_UP -> sendToWeb("UP")
+//            KeyEvent.KEYCODE_DPAD_DOWN -> sendToWeb("DOWN")
+//            KeyEvent.KEYCODE_DPAD_CENTER -> sendToWeb("SELECT")
         }
 
         return super.dispatchKeyEvent(event)
@@ -108,6 +88,18 @@ class MainActivity : ComponentActivity() {
 
     private fun sendBackPressed() {
         webView?.evaluateJavascript("window.onBackPressed()", null)
+    }
+
+    private fun sendPlay() {
+        webView?.evaluateJavascript("window.onPlay()", null)
+    }
+
+    private fun sendPause() {
+        webView?.evaluateJavascript("window.onPause()", null)
+    }
+
+    private fun sendStop() {
+        webView?.evaluateJavascript("window.onStop()", null)
     }
 
     private fun sendForward() {
