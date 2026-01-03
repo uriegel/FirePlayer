@@ -1,8 +1,9 @@
 import { useParams } from "react-router-dom"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useNavigateTo } from "../hooks/NavigateTo"
-import styles from "./Video.module.css"
 import { getPosition, savePosition } from "../videoPositions"
+import styles from "./Video.module.css"
+
 
 const SAVE_INTERVAL_MS = 5000
 
