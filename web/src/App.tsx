@@ -2,9 +2,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import WithDialog from 'web-dialog-react'
 import Welcome from './pages/Welcome'
 import Settings from './pages/Settings'
-import VideoList from './pages/VideoList'
+import ItemList from './pages/ItemList'
 import { VideoError } from './pages/VideoError'
-import { picturesLoader, videosLoader } from './itemsLoader'
+import { musicLoader, picturesLoader, videosLoader } from './itemsLoader'
 import { Video } from './pages/Video'
 
 export default function App() {
@@ -19,14 +19,20 @@ export default function App() {
 		}, {
 			id: "videolist",
 			path: "videolist/*",
-			element: <VideoList />,
+			element: <ItemList baseUrl='video' />,
 			loader: videosLoader,
 			errorElement: <VideoError />
 		}, {
 			id: "picturelist",
 			path: "picturelist/*",
-			element: <VideoList />,
+			element: <ItemList baseUrl='picture' />,
 			loader: picturesLoader,
+			errorElement: <VideoError />
+		}, {
+			id: "musiclist",
+			path: "musiclist/*",
+			element: <ItemList baseUrl='music' />,
+			loader: musicLoader,
 			errorElement: <VideoError />
 		}, {
 			path: "video/*",

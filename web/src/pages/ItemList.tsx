@@ -1,15 +1,19 @@
 import { Suspense, useCallback, useEffect } from "react"
 import { Await, useLoaderData, useParams } from "react-router-dom"
 import "functional-extensions"
-import type { Item } from "../itemsLoader"
-import VideoGridItems from "./VideoGridItems"
+import GridItems from "./GridItems"
 import { useNavigateTo } from "../hooks/NavigateTo"
-import styles from "./VideoList.module.css"
+import styles from "./ItemList.module.css"
+import type { ItemsResult } from "../itemsLoader"
 
-export default function VideoList() {
+type ItemListProps = {
+    baseUrl: string
+}
+
+export default function ItemList({ baseUrl }: ItemListProps) {
     const { '*': subPath } = useParams() // catch-all parameter
     const navigate = useNavigateTo()
-    const { videos, from } = useLoaderData() as { videos: Promise<Item[]>, from: string }
+    const { items, from } = useLoaderData() as ItemsResult
 
     useEffect(() => {
         if (window.AndroidBridge)
@@ -20,15 +24,15 @@ export default function VideoList() {
         const parent = subPath?.getParentPath()
         const path = subPath?.endsWith("/") ? subPath.substring(0, subPath.length-1) : subPath
         const url = parent
-            ? `/videolist/${parent}`
+            ? `/${baseUrl}list/${parent}`
             : path
-            ? "/videolist"
+            ? `/${baseUrl}list`
             : "/"
         const search = new URLSearchParams({
             from: path?.getFileName() || "",
         }).toString()
         navigate(`${url}?${search}`, 0)
-    }, [navigate, subPath])
+    }, [navigate, subPath, baseUrl])
     
     useEffect(() => {
         window.onBackPressed = navigateBack
@@ -40,16 +44,14 @@ export default function VideoList() {
 
     return (
         <Suspense fallback={<p>Lade Filme...</p>}>
-            <Await resolve={videos}>
+            <Await resolve={items}>
                 {
-                    videos => {
-                        console.log("schwein", videos)
-                        return (
-                            <div className={styles.container}>
-                                <VideoGridItems videos={videos} path={subPath} from={from} />
-                            </div>
-                        )
-                    }}
+                    items => (
+                        <div className={styles.container}>
+                            <GridItems baseUrl={baseUrl} items={items} path={subPath} from={from} />
+                        </div>
+                    )
+                }
             </Await>
         </Suspense>
     )

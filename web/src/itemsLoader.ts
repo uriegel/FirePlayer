@@ -11,6 +11,11 @@ export type Item = {
     isDirectory?: boolean
 }
 
+export type ItemsResult = {
+    items: Promise<Item[]>,
+    from: string
+}
+
 export const getUrl = (relativeUrl: string) => `${localStorage.getItem("url") || ""}/${relativeUrl}`
 
 function getFilenameWithoutExtension(filename: string) {
@@ -20,6 +25,7 @@ function getFilenameWithoutExtension(filename: string) {
 
 export const videosLoader = (args: LoaderFunctionArgs) => itemsLoader("video", args)
 export const picturesLoader = (args: LoaderFunctionArgs) => itemsLoader("pics", args)
+export const musicLoader = (args: LoaderFunctionArgs) => itemsLoader("music", args)
 
 function itemsLoader(baseUrl: string, { params, request }: LoaderFunctionArgs) {
     // params["*"] contains the subPath or undefined
@@ -34,7 +40,7 @@ function itemsLoader(baseUrl: string, { params, request }: LoaderFunctionArgs) {
 
 
     return {
-        videos: fetch(getUrl(endpoint))
+        items: fetch(getUrl(endpoint))
                     .then(r => r.json() as Promise<Items>)
                     .then(r => r.directories.map(n => ({
                         name: n,
@@ -44,6 +50,6 @@ function itemsLoader(baseUrl: string, { params, request }: LoaderFunctionArgs) {
                         name: getFilenameWithoutExtension(n)
                     })))),
         from
-    }
+    } as ItemsResult
 }
 

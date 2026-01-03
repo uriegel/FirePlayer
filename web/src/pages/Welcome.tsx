@@ -16,11 +16,6 @@ export default function Welcome() {
 
     const ripple = useRipple()
 
-    const onClick = (text: string) => {
-        if (window.AndroidBridge)
-            window.AndroidBridge.postMessage(text)
-    }
-
     const navigate = useNavigateTo()
 
     return (
@@ -41,7 +36,7 @@ export default function Welcome() {
                     Fotos
                 </div>
                 <div className={`ripple-container ${styles.button}`} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown} tabIndex={3}
-                    onClick={() => onClick("Musik")}>
+                    onClick={async () => navigate("/musiclist")}>
                     Musik
                 </div>
             </div>
