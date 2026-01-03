@@ -5,6 +5,8 @@ declare global {
         AndroidBridge: {
             postMessage: (text: string) => void,
             setWelcome: (message: boolean) => void
+            enterFullscreen: () => void
+            exitFullscreen: () => void
         }
         onBackPressed?: () => void
         onForward?: () => void

@@ -38,8 +38,13 @@ export default function App() {
 	)
 }
 
+// TODO Don't show focus rect in Android
+
 // TODO Video build Fireplayer
 // TODO Video: play, pause, set forwardMode = 0
+
+// TODO save video state in indexedDB
+
 // TODO Portrait to Landscape: save state
 
 // TODO Picture viewer
@@ -60,3 +65,12 @@ export default function App() {
 // Last viewed movies
 
 // TODO Welcome UI Portrait: flex.direction: row
+
+// TODO useWideViewPort?
+// TODO loadWithOverviewMode ?
+
+// TODO Navigate to new page: Settings
+//    url
+// 	  ------
+//    Sony Bravia (later)
+

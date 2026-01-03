@@ -11,8 +11,15 @@ export function Video() {
     const [seekDirection, setSeekDirection] = useState(0)
 
     useEffect(() => {
-        if (window.AndroidBridge)
+        if (window.AndroidBridge) {
             window.AndroidBridge.setWelcome(false)
+            window.AndroidBridge.enterFullscreen()
+        }
+        return () => {
+            if (window.AndroidBridge) {
+                window.AndroidBridge.exitFullscreen()
+            }
+        }
     }, [])
 
     const getSkipTime = (mode: number) => mode == 0

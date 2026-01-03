@@ -17,23 +17,6 @@ import androidx.compose.ui.Modifier
 import de.uriegel.fireplayer.WebServer
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 
-/*
- TODO
- * useWideViewPort
- * loadWithOverviewMode
-
- * rotate on smart phone
-
- * Navigate to new page: Settings
-
-    url
-
-    Sony Bravia (later)
-
- * Video screen displaying video folders and videos
- */
-
-
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {

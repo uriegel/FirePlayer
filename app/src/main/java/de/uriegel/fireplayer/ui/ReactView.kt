@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.widget.Toast
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.viewinterop.AndroidView
 import de.uriegel.fireplayer.WebAppBridge
 
@@ -14,6 +16,10 @@ import de.uriegel.fireplayer.WebAppBridge
 @Composable
 fun ReactView(webViewFocus: Boolean, onWebViewReady: (WebView)->Unit,
               onWelcome: (Boolean)->Unit, modifier: Modifier = Modifier) {
+    val activity = LocalActivity.current
+    val view = LocalView.current
+    if (activity == null)
+        return
     AndroidView(
         modifier = modifier.fillMaxSize(),
         factory = { context ->
@@ -32,24 +38,17 @@ fun ReactView(webViewFocus: Boolean, onWebViewReady: (WebView)->Unit,
                 settings.cacheMode = WebSettings.LOAD_NO_CACHE
                 clearCache(true)
 
-                addJavascriptInterface(WebAppBridge(onWelcome) { message ->
-                    // Handle messages from JS
-                    Toast.makeText(this.context, message, Toast.LENGTH_SHORT).show()
+                addJavascriptInterface(WebAppBridge(activity, view, onWelcome) {
+                    message ->
+                        Toast
+                            .makeText(this.context, message, Toast.LENGTH_SHORT)
+                            .show()
                 }, "AndroidBridge")
 
                 loadUrl("http://127.0.0.1:8888/")
                 //loadUrl("http://192.168.178.36:5173/")
                 onWebViewReady(this)
-//                post {
-//                    evaluateJavascript(
-//                        "window.dispatchEvent(new Event('resize'))",
-//                        null
-//                    )
-//                }
             }
         },
-//        update = { webView ->
-//            // You can update WebView state here if needed
-//        }
     )
 }
