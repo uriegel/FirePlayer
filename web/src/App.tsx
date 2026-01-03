@@ -6,7 +6,7 @@ import ItemList from './pages/ItemList'
 import { VideoError } from './pages/VideoError'
 import { musicLoader, picturesLoader, videosLoader } from './itemsLoader'
 import { Video } from './pages/Video'
-import { Picture } from './pages/Picture'
+import { Picture, PictureLayout } from './pages/Picture'
 
 export default function App() {
 
@@ -24,12 +24,6 @@ export default function App() {
 			loader: videosLoader,
 			errorElement: <VideoError />
 		}, {
-			id: "picturelist",
-			path: "picturelist/*",
-			element: <ItemList baseUrl='picture' />,
-			loader: picturesLoader,
-			errorElement: <VideoError />
-		}, {
 			id: "musiclist",
 			path: "musiclist/*",
 			element: <ItemList baseUrl='music' />,
@@ -38,10 +32,19 @@ export default function App() {
 		}, {
 			path: "video/*",
 			element: <Video />,
-		}, {
-			path: "picture/*",
-			element: <Picture />,
-		}
+		},{
+    		element: <PictureLayout />, // no path = layout-only route
+    		children: [{
+				id: "picturelist",
+				path: "picturelist/*",
+				element: <ItemList baseUrl='picture' />,
+				loader: picturesLoader,
+				errorElement: <VideoError />
+			}, {
+        		path: "picture/*",
+        		element: <Picture />,
+      		}],
+  		}
 	])
 
 	return (

@@ -1,13 +1,27 @@
-import { useCallback, useEffect } from "react"
-import { useParams } from "react-router-dom"
-import styles from "./Picture.module.css"
+import { useCallback, useEffect, useRef } from "react"
+import { Outlet, useParams } from "react-router-dom"
 import { useNavigateTo } from "../hooks/NavigateTo"
+import { usePictures } from "../context/getPicturesContext"
+import { PicturesProvider } from "../context/PicturesProvider"
+import styles from "./Picture.module.css"
+
+export function PictureLayout() {
+    return (
+        <PicturesProvider>
+            <Outlet />
+        </PicturesProvider>
+    )
+}
 
 export function Picture() {
     const { '*': subPath } = useParams() 
     const navigate = useNavigateTo()
 
     console.log("subPath", subPath)
+
+    const pos = useRef(0)
+
+    const { images } = usePictures()
 
     useEffect(() => {
         if (window.AndroidBridge) {
@@ -42,9 +56,14 @@ export function Picture() {
 
     const getPictureUrl = useCallback(() => `${localStorage.getItem("url") || ""}/pics/${subPath}`, [subPath])
 
+    const onClick = () => {
+        pos.current = pos.current + 1
+        console.log("neues Bild", images[pos.current])
+    }
+
     return (
         <div className={styles.viewer}>
-            <img className={styles.viewerImg} src={getPictureUrl()}></img>
+            <img className={styles.viewerImg} src={getPictureUrl()}  onClick={onClick} tabIndex={0}></img>
         </div>        
     )
 }

@@ -5,6 +5,7 @@ import GridItems from "./GridItems"
 import { useNavigateTo } from "../hooks/NavigateTo"
 import styles from "./ItemList.module.css"
 import type { ItemsResult } from "../itemsLoader"
+import { useOptionalPictures } from "../context/getPicturesContext"
 
 type ItemListProps = {
     baseUrl: string
@@ -14,6 +15,7 @@ export default function ItemList({ baseUrl }: ItemListProps) {
     const { '*': subPath } = useParams() // catch-all parameter
     const navigate = useNavigateTo()
     const { items, from } = useLoaderData() as ItemsResult
+    const viewer = useOptionalPictures()
 
     useEffect(() => {
         if (window.AndroidBridge)
@@ -46,11 +48,15 @@ export default function ItemList({ baseUrl }: ItemListProps) {
         <Suspense fallback={<p>Lade Filme...</p>}>
             <Await resolve={items}>
                 {
-                    items => (
-                        <div className={styles.container}>
-                            <GridItems baseUrl={baseUrl} items={items} path={subPath} from={from} />
-                        </div>
-                    )
+                    items => {
+                        if (baseUrl == "picture")
+                            viewer?.setImages(items)
+                        return (
+                            <div className={styles.container}>
+                                <GridItems baseUrl={baseUrl} items={items} path={subPath} from={from} />
+                            </div>
+                        )
+                    }
                 }
             </Await>
         </Suspense>
