@@ -27,14 +27,11 @@ export default function VideoGridItems({ videos, path, from }: VideoGridItemsPro
     const onVideoList = (videoPath: string) => navigate(path ? "/videolist".appendPath(path).appendPath(videoPath) : "/videolist".appendPath(videoPath))
 
     const onVideoClick = (video: VideoItem) => {
-        console.log("video", video)
         if (!video.isDirectory && video.file)
             onVideo(video.file)
         else
             onVideoList(video.name)
     }
-
-    console.log("from", from)
 
     const focused = from.includes(".")
                     ? Math.max(videos.findIndex(n => n.file?.endsWith(from)), 0)
