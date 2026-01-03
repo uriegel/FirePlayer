@@ -15,7 +15,9 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.FirePlayer.Launch">
 
-        <activity android:name=".ui.MainActivity"
+        <activity
+            android:name=".ui.MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="true"
             android:theme="@style/Theme.FirePlayer">
             <intent-filter>

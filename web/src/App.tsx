@@ -39,10 +39,7 @@ export default function App() {
 }
 
 // TODO Don't show focus rect in Android
-
 // TODO save video state in indexedDB
-
-// TODO Portrait to Landscape: save state
 
 // TODO Picture viewer
 // TODO Picture viewer with transitions
