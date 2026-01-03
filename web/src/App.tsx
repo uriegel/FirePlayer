@@ -38,8 +38,6 @@ export default function App() {
 	)
 }
 
-// TODO save video state in indexedDB
-
 // TODO Picture viewer
 // TODO Picture viewer with transitions
 

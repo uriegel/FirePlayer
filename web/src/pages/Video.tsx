@@ -2,6 +2,9 @@ import { useParams } from "react-router-dom"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useNavigateTo } from "../hooks/NavigateTo"
 import styles from "./Video.module.css"
+import { getPosition, savePosition } from "../videoPositions"
+
+const SAVE_INTERVAL_MS = 5000
 
 export function Video() {
     const { '*': subPath } = useParams() 
@@ -21,6 +24,28 @@ export function Video() {
             }
         }
     }, [])
+
+    const lastSaved = useRef(0)
+    const getVideoUrl = useCallback(() => `${localStorage.getItem("url") || ""}/video/${subPath}`, [subPath])
+
+    useEffect(() => {
+        const url = getVideoUrl()
+        videoRef.current?.addEventListener("loadedmetadata", async () => {
+            const pos = await getPosition(url)
+            if (videoRef.current)
+                videoRef.current.currentTime = pos
+        })
+        videoRef.current?.addEventListener("timeupdate", async () => {
+            const now = Date.now()
+            if (videoRef.current) {
+                const currentTime = videoRef.current.currentTime
+                if (now - lastSaved.current > SAVE_INTERVAL_MS) {
+                    await savePosition(url, currentTime)
+                    lastSaved.current = now
+                }
+            }
+        })
+    })
 
     const getSkipTime = (mode: number) => mode == 0
         ? 5
@@ -146,7 +171,7 @@ export function Video() {
 
     return (
         <div className={styles.viewer}>
-            <video ref={videoRef} className={styles.mediaPlayer} controls autoPlay src={`${localStorage.getItem("url") || ""}/video/${subPath}`} />         
+            <video ref={videoRef} className={styles.mediaPlayer} controls autoPlay src={getVideoUrl()} />         
             {getOverlay()}
         </div>
     )
