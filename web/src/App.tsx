@@ -8,7 +8,7 @@ import { videosLoader } from './videosLoader'
 import { Video } from './pages/Video'
 
 export default function App() {
-	
+
 	const router = createBrowserRouter([
 		{
 			path: "/",
@@ -38,7 +38,6 @@ export default function App() {
 	)
 }
 
-// TODO Don't show focus rect in Android
 // TODO save video state in indexedDB
 
 // TODO Picture viewer
