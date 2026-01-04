@@ -12,8 +12,8 @@ declare global {
         onPause?: () => void
         onStop?: () => void
         onBackPressed?: () => void
-        onForward?: () => void
-        onRewind?: () => void
+        onRight?: () => void
+        onLeft?: () => void
         onFastForward?: () => void
         onFastRewind?: () => void
     }

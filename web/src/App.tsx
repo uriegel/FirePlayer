@@ -54,8 +54,6 @@ export default function App() {
 	)
 }
 
-// TODO Picture viewer no focus rect
-// TODO Picture viewer Firestick control
 // TODO Picture list thumbnails
 // TODO Picture list page control
 

@@ -70,8 +70,8 @@ class MainActivity : ComponentActivity() {
             return super.dispatchKeyEvent(event)
 
         when (event.keyCode) {
-            KeyEvent.KEYCODE_DPAD_LEFT -> sendRewind()
-            KeyEvent.KEYCODE_DPAD_RIGHT -> sendForward()
+            KeyEvent.KEYCODE_DPAD_LEFT -> sendLeft()
+            KeyEvent.KEYCODE_DPAD_RIGHT -> sendRight()
             KeyEvent.KEYCODE_MEDIA_PLAY -> sendPlay()
             KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> sendPause()
             KeyEvent.KEYCODE_MEDIA_PAUSE -> sendPause()
@@ -102,12 +102,12 @@ class MainActivity : ComponentActivity() {
         webView?.evaluateJavascript("window.onStop()", null)
     }
 
-    private fun sendForward() {
-        webView?.evaluateJavascript("window.onForward()", null)
+    private fun sendRight() {
+        webView?.evaluateJavascript("window.onRight()", null)
     }
 
-    private fun sendRewind() {
-        webView?.evaluateJavascript("window.onRewind()", null)
+    private fun sendLeft() {
+        webView?.evaluateJavascript("window.onLeft()", null)
     }
 
     private fun sendFastForward() {

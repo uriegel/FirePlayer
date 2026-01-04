@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "de.uriegel.fireplayer2"
+        applicationId = "de.uriegel.fireplayer"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

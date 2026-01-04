@@ -125,16 +125,16 @@ export function Video() {
         window.onPlay = onPlay
         window.onPause = onPause
         window.onStop = onStop
-        window.onForward = onForward
-        window.onRewind = onRewind
+        window.onRight = onForward
+        window.onLeft = onRewind
         window.onFastForward = onFastForward
         window.onFastRewind = onFastRewind
         return () => {
             delete window.onPlay
             delete window.onPause
             delete window.onStop
-            delete window.onForward
-            delete window.onRewind
+            delete window.onRight
+            delete window.onLeft
             delete window.onFastForward
             delete window.onFastRewind
         }

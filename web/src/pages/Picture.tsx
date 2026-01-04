@@ -42,6 +42,19 @@ export function Picture() {
         navigate(`${url}?${search}`, 0)
     }, [navigate, images, pos, path])
     
+    const onNext = useCallback(
+        (next: boolean) => setPos(p => next ? Math.min(p + 1, images.length - 1) : Math.max(p - 1, 0)),
+    [images.length])
+
+    useEffect(() => {
+        window.onRight = () => onNext(true)
+        window.onLeft = () => onNext(false)
+        return () => {
+            delete window.onRight
+            delete window.onLeft
+        }
+    }, [onNext])
+
     useEffect(() => {
         window.onBackPressed = navigateBack
         return () => { delete window.onBackPressed }
