@@ -4,7 +4,6 @@ import WebViewController
 import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
-import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -16,15 +15,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import de.uriegel.fireplayer.WebServer
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
+import de.uriegel.fireplayer.extensions.ComponentExActivity
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentExActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,10 +97,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun PicturesScreen(onBack: ()->Unit) {
+fun PicturesScreen(baseUrl: String, items: Array<String>, onBack: ()->Unit) {
     Box(modifier = Modifier
         .fillMaxSize()
-        .background(Color.White), contentAlignment = Alignment.Center) {
-        Text(text = "Welcome to Compose Settings Page!", color = Color.Red)
+        .background(Color.Black), contentAlignment = Alignment.Center) {
+        //Text(text = "Welcome to Compose Settings Page!", color = Color.Red)
+        PhotoScreen(items, baseUrl)
     }
 }

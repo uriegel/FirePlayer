@@ -10,20 +10,29 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import kotlin.String
 
 @Composable
 fun RootScreen(webController: WebViewController, webViewFocus: Boolean,
                onWelcome: (Boolean)->Unit, modifier: Modifier = Modifier) {
     var showPictures by remember { mutableStateOf(false) }
+    var baseUrl by remember { mutableStateOf("") }
+    var items: Array<String> by remember { mutableStateOf(arrayOf<String>()) }
 
     Box(modifier.fillMaxSize()) {
 
         // 🔹 WebView is ALWAYS present
-        ReactView(webController, webViewFocus, onWelcome,{ showPictures = true })
+        ReactView(webController, webViewFocus, onWelcome, { url, imageItems ->
+            run {
+                showPictures = true
+                baseUrl = url
+                items = imageItems
+            }
+        })
 
         // 🔹 Native overlay
         if (showPictures) {
-           PicturesScreen(
+           PicturesScreen(baseUrl, items,
                onBack = { showPictures = false }
            )
        }

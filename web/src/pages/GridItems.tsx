@@ -29,8 +29,8 @@ export default function GridItems({ baseUrl, items, path, from }: GridItemsProps
 
     const onItemClick = (item: Item) => {
         if (!item.isDirectory && item.file)
-            if (baseUrl == "picture!!!")
-                window.AndroidBridge.showPictures(`/${baseUrl}`.appendPath(path || ""), items.map(n => n.file).filterNone())
+            if (baseUrl == "picture")
+                window.AndroidBridge.showPictures(`${localStorage.getItem("url") || ""}/pics`.appendPath(path || ""), items.map(n => n.file).filterNone())
             else
                 onItem(item.file)
             
