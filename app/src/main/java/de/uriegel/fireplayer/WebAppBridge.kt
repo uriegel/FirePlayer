@@ -59,7 +59,8 @@ class WebAppBridge(private val activity: Activity, private val rootView: View,
     @Keep
     @Suppress("unused")
     @JavascriptInterface
-    fun navigate(route: String) {
+    fun showPictures(baseUrl: String, items: Array<String>) {
+
         activity.runOnUiThread {
             onOpenPictures()
         }

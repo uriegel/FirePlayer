@@ -7,7 +7,7 @@ declare global {
             setWelcome: (message: boolean) => void
             enterFullscreen: () => void
             exitFullscreen: () => void
-            navigate: (route: string) => void
+            showPictures: (baseUrl: string, items: string[]) => void
         }
         onPlay?: () => void
         onPause?: () => void
