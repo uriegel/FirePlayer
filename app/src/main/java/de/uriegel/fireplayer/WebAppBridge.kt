@@ -9,7 +9,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 
 class WebAppBridge(private val activity: Activity, private val rootView: View,
-                   private val onWelcome: (Boolean) -> Unit, private val onAction: (String) -> Unit) {
+                   private val onWelcome: (Boolean) -> Unit,
+                   private val onOpenPictures: () -> Unit,
+                   private val onAction: (String) -> Unit) {
     @Keep
     @Suppress("unused")
     @JavascriptInterface
@@ -51,6 +53,15 @@ class WebAppBridge(private val activity: Activity, private val rootView: View,
 
             WindowInsetsControllerCompat(window, rootView)
                 .show(WindowInsetsCompat.Type.systemBars())
+        }
+    }
+
+    @Keep
+    @Suppress("unused")
+    @JavascriptInterface
+    fun navigate(route: String) {
+        activity.runOnUiThread {
+            onOpenPictures()
         }
     }
 }

@@ -29,7 +29,11 @@ export default function GridItems({ baseUrl, items, path, from }: GridItemsProps
 
     const onItemClick = (item: Item) => {
         if (!item.isDirectory && item.file)
-            onItem(item.file)
+            if (baseUrl == "picture!!!!!")
+                window.AndroidBridge.navigate("pictures")
+            else
+                onItem(item.file)
+            
         else
             onItemList(item.name)
     }

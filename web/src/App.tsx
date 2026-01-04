@@ -54,7 +54,6 @@ export default function App() {
 	)
 }
 
-// TODO Picture list thumbnails
 // TODO Picture list page control
 
 // TODO Music player
