@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Outlet, useParams } from "react-router-dom"
 import { useNavigateTo } from "../hooks/NavigateTo"
 import { usePictures } from "../context/getPicturesContext"
@@ -17,11 +17,8 @@ export function Picture() {
     const { '*': subPath } = useParams() 
     const navigate = useNavigateTo()
 
-    console.log("subPath", subPath)
-
-    const pos = useRef(0)
-
-    const { images } = usePictures()
+    const { images, path } = usePictures()
+    const [pos, setPos] = useState(images.indexOf(subPath?.getFileName() || ""))
 
     useEffect(() => {
         if (window.AndroidBridge) {
@@ -36,29 +33,29 @@ export function Picture() {
     }, [])
 
     const navigateBack = useCallback(() => {
-            const parent = subPath?.getParentPath()
-            const path = subPath?.endsWith("/") ? subPath.substring(0, subPath.length-1) : subPath
-            const url = parent
-                ? `/picturelist/${parent}`
-                : path
-                ? "/picturelist"
-                : "/"
-            const search = new URLSearchParams({
-                from: path?.getFileName() || "",
-            }).toString()
-            navigate(`${url}?${search}`, 0)
-    }, [navigate, subPath])
+        const url = path
+            ? `/picturelist/${path}`
+            : "/"
+        const search = new URLSearchParams({
+            from: images[pos],
+        }).toString()
+        navigate(`${url}?${search}`, 0)
+    }, [navigate, images, pos, path])
     
     useEffect(() => {
         window.onBackPressed = navigateBack
         return () => { delete window.onBackPressed }
-    }, [navigateBack, subPath])
+    }, [navigateBack])
 
-    const getPictureUrl = useCallback(() => `${localStorage.getItem("url") || ""}/pics/${subPath}`, [subPath])
+    const getPictureUrl = useCallback(
+        () => `${localStorage.getItem("url") || ""}/pics/${path}`.appendPath(images[pos]),
+    [images, path, pos])
 
-    const onClick = () => {
-        pos.current = pos.current + 1
-        console.log("neues Bild", images[pos.current])
+    const onClick = (e: React.MouseEvent) => {
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = e.clientX - rect.left
+        const left = e.currentTarget.clientWidth / 2 - x > 0 
+        setPos(p => left ? Math.max(p - 1, 0) : Math.min(p + 1, images.length - 1))
     }
 
     return (

@@ -15,7 +15,7 @@ export default function ItemList({ baseUrl }: ItemListProps) {
     const { '*': subPath } = useParams() // catch-all parameter
     const navigate = useNavigateTo()
     const { items, from } = useLoaderData() as ItemsResult
-    const viewer = useOptionalPictures()
+    const pictures = useOptionalPictures()
 
     useEffect(() => {
         if (window.AndroidBridge)
@@ -49,8 +49,7 @@ export default function ItemList({ baseUrl }: ItemListProps) {
             <Await resolve={items}>
                 {
                     items => {
-                        if (baseUrl == "picture")
-                            viewer?.setImages(items)
+                        pictures?.initialize(subPath, items)
                         return (
                             <div className={styles.container}>
                                 <GridItems baseUrl={baseUrl} items={items} path={subPath} from={from} />

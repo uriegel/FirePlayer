@@ -54,8 +54,10 @@ export default function App() {
 	)
 }
 
-// TODO Picture viewer
-// TODO Picture viewer with transitions
+// TODO Picture viewer no focus rect
+// TODO Picture viewer Firestick control
+// TODO Picture list thumbnails
+// TODO Picture list page control
 
 // TODO Music player
 // TODO Music player switch TV off
@@ -81,3 +83,4 @@ export default function App() {
 // 	  ------
 //    Sony Bravia (later)
 
+// TODO Picture viewer with transitions
