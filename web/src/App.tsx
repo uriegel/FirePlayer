@@ -54,7 +54,8 @@ export default function App() {
 	)
 }
 
-// TODO Back from Kotlin Picture: select this image
+// TODO Picture Viewer: show selected item
+// TODO Picture Viewer in Android: use html version
 // TODO Picture list page control
 
 // TODO Music player
