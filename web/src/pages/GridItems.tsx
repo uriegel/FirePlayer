@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import "functional-extensions"
 import { useRipple } from "../hooks/ripple"
 import { useNavigateTo } from "../hooks/NavigateTo"
 import type { Item } from "../itemsLoader"
 import styles from "./ItemList.module.css"
+import { delayAsync } from "functional-extensions"
 
 
 type GridItemsProps = {
@@ -23,6 +24,22 @@ export default function GridItems({ baseUrl, items, path, from }: GridItemsProps
             firstItemRef.current.focus()
         }
     }, [items]) // focus when files change
+
+    const onSetFocusedImage = useCallback(
+        (i: number) => {
+            const delayRun = async () => {
+                await delayAsync(200)
+                window.AndroidBridge.postMessage(`Das soll fokussiert werden: ${i}`)
+                firstItemRef.current?.focus()
+            }
+            delayRun()
+        },
+        [])
+
+    useEffect(() => {
+        window.onSetFocusedImage = i => onSetFocusedImage(i)
+        return () => { delete window.onSetFocusedImage }
+    }, [onSetFocusedImage])
 
     const onItem = (item: string) => navigate(path ? `/${baseUrl}`.appendPath(path).appendPath(item) : `/${baseUrl}`.appendPath(item))
     const onItemList = (itemPath: string) => navigate(path ? `/${baseUrl}list`.appendPath(path).appendPath(itemPath) : `/${baseUrl}list`.appendPath(itemPath))

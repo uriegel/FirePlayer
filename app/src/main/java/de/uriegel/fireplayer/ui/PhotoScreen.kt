@@ -1,6 +1,5 @@
 package de.uriegel.fireplayer.ui
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
@@ -20,7 +19,7 @@ import kotlinx.coroutines.withContext
 
 
 @Composable
-fun PhotoScreen(path: String, items: Array<String>, onBack: ()->Unit) {
+fun PhotoScreen(path: String, items: Array<String>, onBack: (index: Int)->Unit) {
     val focusRequester = remember { FocusRequester() }
     val imageItems = items.map{ "$path/$it" }
 
@@ -30,17 +29,11 @@ fun PhotoScreen(path: String, items: Array<String>, onBack: ()->Unit) {
         .focusRequester(focusRequester)
         .focusable(), contentAlignment = Alignment.Center) {
             ImagePager(
-                count = imageItems.size,
-                loadAsync = { loadBitmap(imageItems[it]) }
-            )
+                count = imageItems.size, loadAsync = { loadBitmap(imageItems[it]) }, onBack)
        }
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
-    }
-
-    BackHandler {
-        onBack()
     }
 }
 

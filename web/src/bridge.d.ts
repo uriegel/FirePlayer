@@ -17,6 +17,7 @@ declare global {
         onLeft?: () => void
         onFastForward?: () => void
         onFastRewind?: () => void
+        onSetFocusedImage?: (index: number) => void
     }
 }
 

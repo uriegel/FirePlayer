@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class WebViewController : ViewModel() {
-
     private val _events = MutableSharedFlow<WebCommand>()
     val events = _events.asSharedFlow()
 
@@ -25,4 +24,6 @@ sealed class WebCommand {
     object Left : WebCommand()
     object FastForward : WebCommand()
     object FastRewind : WebCommand()
+
+    data class SetFocusedImage(val index: Int) : WebCommand()
 }

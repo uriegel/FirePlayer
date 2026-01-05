@@ -32,8 +32,11 @@ fun RootScreen(webController: WebViewController, webViewFocus: Boolean,
 
         // 🔹 Native overlay
         if (showPictures) {
-           PhotoScreen(baseUrl, items, onBack = { showPictures = false }
-           )
-       }
+            PhotoScreen(baseUrl, items, onBack = {
+                    webController.send(WebCommand.SetFocusedImage(it))
+                    showPictures = false
+                }
+            )
+        }
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.util.Log
 import android.view.KeyEvent
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -33,12 +34,13 @@ import de.uriegel.fireplayer.model.ImageData
 import de.uriegel.fireplayer.model.ImagePagerController
 import kotlinx.coroutines.flow.MutableSharedFlow
 
-const val tween = 500
+const val tween = 1000
 
 @Composable
 fun ImagePager(
     count: Int,
-    loadAsync: suspend (Int)-> MediaContent
+    loadAsync: suspend (Int)-> MediaContent,
+    onBack: (index: Int)->Unit
 ) {
     val context = LocalContext.current
     val nextFlow = remember { MutableSharedFlow<Boolean>(extraBufferCapacity = 1) }
@@ -90,7 +92,7 @@ fun ImagePager(
 //            }
 //        }
 //    }
-    ImagePagerController(nextFlow, imageDataFlow, loadAsync)
+    ImagePagerController(nextFlow, imageDataFlow, loadAsync, count)
     Box(modifier = Modifier
         .fillMaxSize()
         .draggable(
@@ -162,6 +164,10 @@ fun ImagePager(
             MediaContent(imageData2, context)
         }
     }
+
+    BackHandler {
+        onBack(45)
+    }
 }
 
 @Composable
@@ -172,7 +178,8 @@ private fun MediaContent(imageData: ImageData, context: Context) {
 //        else if (imageData.videoUrl != null)
 //            VideoClip(imageData.videoUrl)
         else
-            Text(text = "Bild kann nicht angezeigt werden")
+            // TODO wait a little time (2s) then show error text
+            Text(text = "")
     }
 }
 

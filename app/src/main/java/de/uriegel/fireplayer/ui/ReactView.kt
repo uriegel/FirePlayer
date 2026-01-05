@@ -66,6 +66,9 @@ fun ReactView(webController: WebViewController, webViewFocus: Boolean, onWelcome
                 WebCommand.Pause -> webView.evaluateJavascript("window.onPause()", null)
                 WebCommand.Left -> webView.evaluateJavascript("window.onLeft()", null)
                 WebCommand.Right -> webView.evaluateJavascript("window.onRight()", null)
+                is WebCommand.SetFocusedImage -> {
+                    webView.evaluateJavascript("window.onSetFocusedImage(${command.index})", null)
+                }
             }
         }
     }

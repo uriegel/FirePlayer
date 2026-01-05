@@ -19,7 +19,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun ImagePagerController(nextFlow: SharedFlow<Boolean>, imageDataFlow: MutableSharedFlow<ImageData>,
-                         loadAsync: suspend (Int)-> MediaContent) {
+                         loadAsync: suspend (Int)-> MediaContent, count: Int) {
     val scope = rememberCoroutineScope()
     var position by remember { mutableIntStateOf(0) }
     //var imageDataNext: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
@@ -33,7 +33,7 @@ fun ImagePagerController(nextFlow: SharedFlow<Boolean>, imageDataFlow: MutableSh
 
         nextFlow.collect {
             scope.launch {
-                val newPosition = if (it) position + 1 else position - 1
+                val newPosition = if (it) Math.min(position + 1, count-1) else Math.max(position - 1, 0)
                 val imageData = loadImageData(loadAsync(newPosition))
                 position = newPosition
                 imageDataFlow.emit(imageData)

@@ -45,7 +45,7 @@ export function Picture() {
     const onNext = useCallback(
         (next: boolean) => setPos(p => next ? Math.min(p + 1, images.length - 1) : Math.max(p - 1, 0)),
     [images.length])
-
+    
     useEffect(() => {
         window.onRight = () => onNext(true)
         window.onLeft = () => onNext(false)
