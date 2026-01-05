@@ -15,22 +15,25 @@ type GridItemsProps = {
 }
 
 export default function GridItems({ baseUrl, items, path, from }: GridItemsProps) {
-    const firstItemRef = useRef<HTMLDivElement>(null)
+    const itemRefs = useRef<Array<HTMLDivElement | null>>([])
     const ripple = useRipple()
     const navigate = useNavigateTo()
     
+    const initiallyFocused = from.includes(".")
+                    ? Math.max(items.findIndex(n => n.file?.endsWith(from)), 0)
+                    : Math.max(items.findIndex(n => n.name == from), 0)
+
     useEffect(() => {
-        if (firstItemRef.current) {
-            firstItemRef.current.focus()
-        }
-    }, [items]) // focus when files change
+        const el = itemRefs.current[initiallyFocused]
+        el?.focus()
+    }, [items, initiallyFocused])
 
     const onSetFocusedImage = useCallback(
         (i: number) => {
             const delayRun = async () => {
-                await delayAsync(200)
-                window.AndroidBridge.postMessage(`Das soll fokussiert werden: ${i}`)
-                firstItemRef.current?.focus()
+                await delayAsync(100)
+                const el = itemRefs.current[i]
+                el?.focus()
             }
             delayRun()
         },
@@ -55,15 +58,11 @@ export default function GridItems({ baseUrl, items, path, from }: GridItemsProps
             onItemList(item.name)
     }
 
-    const focused = from.includes(".")
-                    ? Math.max(items.findIndex(n => n.file?.endsWith(from)), 0)
-                    : Math.max(items.findIndex(n => n.name == from), 0)
-
     return (
         <>
             {items.map((n, index) => (
-                    <div className={`ripple-container${n.isDirectory ? " " + styles.folder : ""}`} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown}
-                        onClick={() => onItemClick(n)} key={n.name} tabIndex={0} ref={index === focused ? firstItemRef : null}>
+                    <div key={n.name} className={`ripple-container${n.isDirectory ? " " + styles.folder : ""}`} onPointerDown={ripple.onPointerDown} onKeyDown={ripple.onKeyDown}
+                    onClick={() => onItemClick(n)} tabIndex={0} ref={el => { itemRefs.current[index] = el }} >
                         {n.name}
                     </div>
                 )
