@@ -26,7 +26,7 @@ fun ImagePagerController(nextFlow: SharedFlow<Boolean>, imageDataFlow: MutableSh
 
     LaunchedEffect(Unit) {
         scope.launch {
-            val imageData = loadImageData(loadAsync(position))
+            val imageData = loadImageData(loadAsync(position), position)
             imageDataFlow.emit(imageData)
             //      imageDataNext = loadImageData(loadAsync(1))
         }
@@ -34,7 +34,7 @@ fun ImagePagerController(nextFlow: SharedFlow<Boolean>, imageDataFlow: MutableSh
         nextFlow.collect {
             scope.launch {
                 val newPosition = if (it) Math.min(position + 1, count-1) else Math.max(position - 1, 0)
-                val imageData = loadImageData(loadAsync(newPosition))
+                val imageData = loadImageData(loadAsync(newPosition), newPosition)
                 position = newPosition
                 imageDataFlow.emit(imageData)
             }
@@ -42,7 +42,7 @@ fun ImagePagerController(nextFlow: SharedFlow<Boolean>, imageDataFlow: MutableSh
     }
 }
 
-private suspend fun loadImageData(content: MediaContent): ImageData =
+private suspend fun loadImageData(content: MediaContent, index: Int): ImageData =
     if (content.pictureBytes != null)
         withContext(Dispatchers.IO) {
             val angle = content.pictureBytes.inputStream().use {
@@ -59,12 +59,13 @@ private suspend fun loadImageData(content: MediaContent): ImageData =
                 }
             }
             return@withContext ImageData(BitmapFactory.decodeByteArray(content.pictureBytes,
-                0, content.pictureBytes.size), angle, null)
+                0, content.pictureBytes.size), angle, null, index)
         } else
-        ImageData(null, 0f, content.videoUrl)
+        ImageData(null, 0f, content.videoUrl, index)
 
 data class ImageData(
     val bitmap: Bitmap?,
     val angle: Float,
-    val videoUrl: String?
+    val videoUrl: String?,
+    val index: Int
 )

@@ -92,6 +92,9 @@ fun ImagePager(
 //            }
 //        }
 //    }
+
+    var currentIndex by remember { mutableStateOf(0) }
+
     ImagePagerController(nextFlow, imageDataFlow, loadAsync, count)
     Box(modifier = Modifier
         .fillMaxSize()
@@ -120,8 +123,8 @@ fun ImagePager(
             }
         }
     ) {
-        var imageData1: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
-        var imageData2: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
+        var imageData1: ImageData by remember { mutableStateOf(ImageData(null, 0f, null, 0))}
+        var imageData2: ImageData by remember { mutableStateOf(ImageData(null, 0f, null, 0))}
         var secondVisible by remember { mutableStateOf(true)}
 
         LaunchedEffect(Unit) {
@@ -133,6 +136,8 @@ fun ImagePager(
                     imageData2 = it
                     secondVisible = true
                 }
+
+                currentIndex = it.index
             }
         }
 
@@ -166,7 +171,7 @@ fun ImagePager(
     }
 
     BackHandler {
-        onBack(45)
+        onBack(currentIndex)
     }
 }
 
