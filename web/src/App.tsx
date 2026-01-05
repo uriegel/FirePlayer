@@ -54,7 +54,6 @@ export default function App() {
 	)
 }
 
-// TODO Kotlin Picture control: respect Boundaries 0..max
 // TODO Back from Kotlin Picture: select this image
 // TODO Picture list page control
 
