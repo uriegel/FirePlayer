@@ -54,12 +54,17 @@ export default function App() {
 	)
 }
 
+// TODO Kotlin Picture control: respect Boundaries 0..max
+// TODO Back from Kotlin Picture: select this image
 // TODO Picture list page control
 
 // TODO Music player
 // TODO Music player switch TV off
 
 // TODO Carousel open exception in VideoError
+
+// TODO Show mp4 movies in Picture.tsx
+// TODO Show mp4 movies from Kotlin Picture
 
 // TODO React Settings: show input dialog and then "zurück" doesn't close the dialog
 // TODO React more beautiful focus settings in Android phone

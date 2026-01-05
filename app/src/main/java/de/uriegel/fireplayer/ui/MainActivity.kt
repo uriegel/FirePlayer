@@ -10,15 +10,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import de.uriegel.fireplayer.WebServer
 import de.uriegel.fireplayer.ui.theme.FirePlayerTheme
 import de.uriegel.fireplayer.extensions.ComponentExActivity
@@ -96,12 +91,3 @@ class MainActivity : ComponentExActivity() {
     private val webController: WebViewController by viewModels()
 }
 
-@Composable
-fun PicturesScreen(baseUrl: String, items: Array<String>, onBack: ()->Unit) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.Black), contentAlignment = Alignment.Center) {
-        //Text(text = "Welcome to Compose Settings Page!", color = Color.Red)
-        PhotoScreen(items, baseUrl)
-    }
-}

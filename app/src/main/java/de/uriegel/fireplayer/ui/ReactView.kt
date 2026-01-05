@@ -19,7 +19,7 @@ import de.uriegel.fireplayer.WebAppBridge
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun ReactView(webController: WebViewController, webViewFocus: Boolean, onWelcome: (Boolean)->Unit,
-              onOpenPictures: (baseUrl: String, items: Array<String>) -> Unit) {
+              webViewHasFocus: Boolean, onOpenPictures: (baseUrl: String, items: Array<String>) -> Unit) {
     val context = LocalContext.current
     val activity = LocalActivity.current
     val view = LocalView.current
@@ -67,6 +67,17 @@ fun ReactView(webController: WebViewController, webViewFocus: Boolean, onWelcome
                 WebCommand.Left -> webView.evaluateJavascript("window.onLeft()", null)
                 WebCommand.Right -> webView.evaluateJavascript("window.onRight()", null)
             }
+        }
+    }
+
+    LaunchedEffect(webViewHasFocus) {
+        webView.isFocusable = webViewHasFocus
+        webView.isFocusableInTouchMode = webViewHasFocus
+
+        if (webViewHasFocus) {
+            webView.requestFocus()
+        } else {
+            webView.clearFocus()
         }
     }
 

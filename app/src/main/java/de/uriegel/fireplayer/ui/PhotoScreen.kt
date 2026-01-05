@@ -1,18 +1,47 @@
 package de.uriegel.fireplayer.ui
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import de.uriegel.fireplayer.extensions.readAll
 import de.uriegel.fireplayer.request.getResponseStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+
 @Composable
-fun PhotoScreen(items: Array<String>, path: String) {
+fun PhotoScreen(path: String, items: Array<String>, onBack: ()->Unit) {
+    val focusRequester = remember { FocusRequester() }
     val imageItems = items.map{ "$path/$it" }
-    ImagePager(
-        count = imageItems.size,
-        loadAsync = { loadBitmap(imageItems[it]) }
-    )
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.Black)
+        .focusRequester(focusRequester)
+        .focusable(), contentAlignment = Alignment.Center) {
+            ImagePager(
+                count = imageItems.size,
+                loadAsync = { loadBitmap(imageItems[it]) }
+            )
+       }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    BackHandler {
+        onBack()
+    }
 }
 
 suspend fun loadBitmap(url: String): MediaContent =

@@ -1,7 +1,6 @@
 package de.uriegel.fireplayer.ui
 
 import WebViewController
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -22,24 +21,19 @@ fun RootScreen(webController: WebViewController, webViewFocus: Boolean,
     Box(modifier.fillMaxSize()) {
 
         // 🔹 WebView is ALWAYS present
-        ReactView(webController, webViewFocus, onWelcome, { url, imageItems ->
-            run {
-                showPictures = true
-                baseUrl = url
-                items = imageItems
-            }
+        ReactView(webController, webViewFocus, onWelcome, webViewHasFocus = !showPictures, {
+            url, imageItems ->
+                run {
+                    showPictures = true
+                    baseUrl = url
+                    items = imageItems
+                }
         })
 
         // 🔹 Native overlay
         if (showPictures) {
-           PicturesScreen(baseUrl, items,
-               onBack = { showPictures = false }
+           PhotoScreen(baseUrl, items, onBack = { showPictures = false }
            )
        }
-    }
-
-    // 🔙 Back handling
-    BackHandler(enabled = showPictures) {
-        showPictures = false
     }
 }
