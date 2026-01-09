@@ -63,6 +63,8 @@ export default function App() {
 
 // TODO Carousel open exception in VideoError
 
+// TODO Movie viweer: touch handling: brightness, volume scan movie
+
 // TODO Show mp4 movies in Picture.tsx
 // TODO Show mp4 movies from Kotlin Picture
 
