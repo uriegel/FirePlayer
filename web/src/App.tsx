@@ -5,7 +5,7 @@ import Settings from './pages/Settings'
 import ItemList from './pages/ItemList'
 import { VideoError } from './pages/VideoError'
 import { musicLoader, picturesLoader, videosLoader } from './itemsLoader'
-import { Video } from './pages/Video'
+import { Video } from './pages/video/Video'
 import { Picture, PictureLayout } from './pages/Picture'
 
 export default function App() {

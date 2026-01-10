@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom"
 import { useCallback, useEffect, useRef, useState } from "react"
-import { useNavigateTo } from "../hooks/NavigateTo"
-import { getPosition, savePosition } from "../videoPositions"
+import { useNavigateTo } from "../../hooks/NavigateTo"
+import { getPosition, savePosition } from "../../videoPositions"
+import { Volume } from "./Volume"
 import styles from "./Video.module.css"
-
 
 const SAVE_INTERVAL_MS = 5000
 
@@ -11,6 +11,7 @@ export function Video() {
     const { '*': subPath } = useParams() 
     const navigate = useNavigateTo()
     const videoRef = useRef<HTMLVideoElement>(null)
+    const containerRef = useRef<HTMLDivElement>(null)
     const [forwardMode, setForwardMode] = useState(0)
     const [seekDirection, setSeekDirection] = useState(0)
 
@@ -170,10 +171,29 @@ export function Video() {
         return forwardMode != 0 && (<div className={styles.overlay}><div>{getText()}</div></div>)
     }
 
+    const pageX = useRef(0)
+    const pageY = useRef(0)
+    const height = useRef(0)
+
+    const onTouchStart = (e: React.TouchEvent) => {
+        pageX.current = e.changedTouches[0].pageX
+        pageY.current = e.changedTouches[0].pageY
+        height.current = (containerRef.current?.clientHeight || 0) / 2
+        console.log("Tatsch start", containerRef.current?.clientHeight, e.changedTouches[0].pageX, e.changedTouches[0].pageY, e)
+    }
+
+    const onTouch = (e: React.TouchEvent) => {
+        //const x = e.changedTouches[0].pageX - pageX.current
+        const y = (e.changedTouches[0].pageY - pageY.current) / height.current
+        //console.log("Tatsch", x, y, e)
+        console.log("Tatsch", -y)
+    }
+
     return (
-        <div className={styles.viewer}>
+        <div className={styles.viewer} onTouchStart={onTouchStart} onTouchMove={onTouch} ref={containerRef}>
             <video ref={videoRef} className={styles.mediaPlayer} controls autoPlay src={getVideoUrl()} />         
             {getOverlay()}
+            <Volume />
         </div>
     )
 }
