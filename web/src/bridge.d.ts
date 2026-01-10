@@ -2,12 +2,13 @@ export {};
 
 declare global {
     interface Window {
-        AndroidBridge: {
+        AndroidBridge?: {
             postMessage: (text: string) => void,
             setWelcome: (message: boolean) => void
             enterFullscreen: () => void
             exitFullscreen: () => void
             showPictures: (baseUrl: string, items: string[], index: number) => void
+            isTv: () => boolean
         }
         onPlay?: () => void
         onPause?: () => void

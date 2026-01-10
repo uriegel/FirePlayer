@@ -64,4 +64,9 @@ class WebAppBridge(private val activity: Activity, private val rootView: View,
             onOpenPictures(baseUrl, items, index)
         }
     }
+
+    @Keep
+    @Suppress("unused")
+    @JavascriptInterface
+    fun isTv() = de.uriegel.fireplayer.android.isTv()
 }

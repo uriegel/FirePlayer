@@ -54,10 +54,9 @@ export default function App() {
 	)
 }
 
-// TODO Movie viwewer: touch handling: brightness, volume scan movie
+// TODO Movie viewer: touch handling: brightness, volume scan movie
 
-// TODO Picture Viewer in Android: use html version
-// TODO Picture list page control
+// TODO Picture list page control (in TV)
 
 // TODO Music player
 // TODO Music player switch TV off
