@@ -19,7 +19,7 @@ import kotlinx.coroutines.withContext
 
 
 @Composable
-fun PhotoScreen(path: String, items: Array<String>, onBack: (index: Int)->Unit) {
+fun PhotoScreen(path: String, items: Array<String>, index: Int, onBack: (index: Int)->Unit) {
     val focusRequester = remember { FocusRequester() }
     val imageItems = items.map{ "$path/$it" }
 
@@ -29,7 +29,8 @@ fun PhotoScreen(path: String, items: Array<String>, onBack: (index: Int)->Unit) 
         .focusRequester(focusRequester)
         .focusable(), contentAlignment = Alignment.Center) {
             ImagePager(
-                count = imageItems.size, loadAsync = { loadBitmap(imageItems[it]) }, onBack)
+                count = imageItems.size, index,
+                loadAsync = { loadBitmap(imageItems[it]) }, onBack)
        }
 
     LaunchedEffect(Unit) {

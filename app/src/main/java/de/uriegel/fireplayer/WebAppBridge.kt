@@ -10,7 +10,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 
 class WebAppBridge(private val activity: Activity, private val rootView: View,
                    private val onWelcome: (Boolean) -> Unit,
-                   private val onOpenPictures: (baseUrl: String, items: Array<String>) -> Unit,
+                   private val onOpenPictures: (baseUrl: String, items: Array<String>, index: Int) -> Unit,
                    private val onAction: (String) -> Unit) {
     @Keep
     @Suppress("unused")
@@ -59,10 +59,9 @@ class WebAppBridge(private val activity: Activity, private val rootView: View,
     @Keep
     @Suppress("unused")
     @JavascriptInterface
-    fun showPictures(baseUrl: String, items: Array<String>) {
-
+    fun showPictures(baseUrl: String, items: Array<String>, index: Int) {
         activity.runOnUiThread {
-            onOpenPictures(baseUrl, items)
+            onOpenPictures(baseUrl, items, index)
         }
     }
 }

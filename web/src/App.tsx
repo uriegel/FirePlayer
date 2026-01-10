@@ -54,7 +54,8 @@ export default function App() {
 	)
 }
 
-// TODO Picture Viewer: show selected item
+// TODO Movie viwewer: touch handling: brightness, volume scan movie
+
 // TODO Picture Viewer in Android: use html version
 // TODO Picture list page control
 
@@ -62,8 +63,6 @@ export default function App() {
 // TODO Music player switch TV off
 
 // TODO Carousel open exception in VideoError
-
-// TODO Movie viweer: touch handling: brightness, volume scan movie
 
 // TODO Show mp4 movies in Picture.tsx
 // TODO Show mp4 movies from Kotlin Picture

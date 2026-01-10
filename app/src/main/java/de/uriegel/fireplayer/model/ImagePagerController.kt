@@ -19,9 +19,9 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun ImagePagerController(nextFlow: SharedFlow<Boolean>, imageDataFlow: MutableSharedFlow<ImageData>,
-                         loadAsync: suspend (Int)-> MediaContent, count: Int) {
+                         loadAsync: suspend (Int)-> MediaContent, count: Int, initialIndex: Int) {
     val scope = rememberCoroutineScope()
-    var position by remember { mutableIntStateOf(0) }
+    var position by remember { mutableIntStateOf(initialIndex) }
     //var imageDataNext: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
 
     LaunchedEffect(Unit) {

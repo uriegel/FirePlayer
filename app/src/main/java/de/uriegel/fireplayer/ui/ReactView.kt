@@ -19,7 +19,8 @@ import de.uriegel.fireplayer.WebAppBridge
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun ReactView(webController: WebViewController, webViewFocus: Boolean, onWelcome: (Boolean)->Unit,
-              webViewHasFocus: Boolean, onOpenPictures: (baseUrl: String, items: Array<String>) -> Unit) {
+              webViewHasFocus: Boolean,
+              onOpenPictures: (baseUrl: String, items: Array<String>, index: Int) -> Unit) {
     val context = LocalContext.current
     val activity = LocalActivity.current
     val view = LocalView.current

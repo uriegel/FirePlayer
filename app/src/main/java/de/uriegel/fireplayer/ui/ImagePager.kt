@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,13 +40,13 @@ const val tween = 1000
 @Composable
 fun ImagePager(
     count: Int,
+    initialIndex: Int,
     loadAsync: suspend (Int)-> MediaContent,
     onBack: (index: Int)->Unit
 ) {
     val context = LocalContext.current
     val nextFlow = remember { MutableSharedFlow<Boolean>(extraBufferCapacity = 1) }
     val imageDataFlow = remember { MutableSharedFlow<ImageData>(extraBufferCapacity = 1) }
-    var loading by remember { mutableStateOf(false)}
 //    var imageDataPrev: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
 
 //    fun next() {
@@ -93,9 +94,9 @@ fun ImagePager(
 //        }
 //    }
 
-    var currentIndex by remember { mutableStateOf(0) }
+    var currentIndex by remember { mutableIntStateOf(0) }
 
-    ImagePagerController(nextFlow, imageDataFlow, loadAsync, count)
+    ImagePagerController(nextFlow, imageDataFlow, loadAsync, count, initialIndex)
     Box(modifier = Modifier
         .fillMaxSize()
         .draggable(

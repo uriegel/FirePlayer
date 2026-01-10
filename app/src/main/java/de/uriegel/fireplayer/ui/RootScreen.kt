@@ -17,22 +17,24 @@ fun RootScreen(webController: WebViewController, webViewFocus: Boolean,
     var showPictures by remember { mutableStateOf(false) }
     var baseUrl by remember { mutableStateOf("") }
     var items: Array<String> by remember { mutableStateOf(arrayOf<String>()) }
+    var initialItemIndex by remember { mutableStateOf(0)}
 
     Box(modifier.fillMaxSize()) {
 
         // 🔹 WebView is ALWAYS present
         ReactView(webController, webViewFocus, onWelcome, webViewHasFocus = !showPictures, {
-            url, imageItems ->
+            url, imageItems, index ->
                 run {
                     showPictures = true
                     baseUrl = url
                     items = imageItems
+                    initialItemIndex = index
                 }
         })
 
         // 🔹 Native overlay
         if (showPictures) {
-            PhotoScreen(baseUrl, items, onBack = {
+            PhotoScreen(baseUrl, items, initialItemIndex, onBack = {
                     webController.send(WebCommand.SetFocusedImage(it))
                     showPictures = false
                 }
