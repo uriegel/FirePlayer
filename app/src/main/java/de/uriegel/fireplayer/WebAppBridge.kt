@@ -1,6 +1,8 @@
 package de.uriegel.fireplayer
 
 import android.app.Activity
+import android.content.Context
+import android.media.AudioManager
 import android.view.View
 import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
@@ -69,4 +71,27 @@ class WebAppBridge(private val activity: Activity, private val rootView: View,
     @Suppress("unused")
     @JavascriptInterface
     fun isTv() = de.uriegel.fireplayer.android.isTv()
+
+    @Keep
+    @Suppress("unused")
+    @JavascriptInterface
+    fun getVolume(): Float {
+        val current = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+        val max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        return current.toFloat() / max
+    }
+
+    @Keep
+    @Suppress("unused")
+    @JavascriptInterface
+    fun setVolume(value: Float) {
+        val max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        val volume = (max * value).toInt()
+        audioManager.setStreamVolume(
+            AudioManager.STREAM_MUSIC,
+            volume,
+            AudioManager.FLAG_SHOW_UI
+        )
+    }
+    private val audioManager = activity.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 }

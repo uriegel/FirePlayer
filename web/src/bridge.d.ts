@@ -9,6 +9,8 @@ declare global {
             exitFullscreen: () => void
             showPictures: (baseUrl: string, items: string[], index: number) => void
             isTv: () => boolean
+            getVolume: () => number
+            setVolume: (val: number) => void
         }
         onPlay?: () => void
         onPause?: () => void

@@ -174,19 +174,22 @@ export function Video() {
     const pageX = useRef(0)
     const pageY = useRef(0)
     const height = useRef(0)
+    const offsetY = useRef(0)
 
     const onTouchStart = (e: React.TouchEvent) => {
         pageX.current = e.changedTouches[0].pageX
         pageY.current = e.changedTouches[0].pageY
         height.current = (containerRef.current?.clientHeight || 0) / 2
-        console.log("Tatsch start", containerRef.current?.clientHeight, e.changedTouches[0].pageX, e.changedTouches[0].pageY, e)
+        offsetY.current = window.AndroidBridge?.getVolume() || 0
+//       console.log("Tatsch start", offsetY.current, containerRef.current?.clientHeight, e.changedTouches[0].pageX, e.changedTouches[0].pageY, e)
     }
 
     const onTouch = (e: React.TouchEvent) => {
         //const x = e.changedTouches[0].pageX - pageX.current
-        const y = (e.changedTouches[0].pageY - pageY.current) / height.current
+        const volume = Math.max(Math.min(offsetY.current + ((pageY.current - e.changedTouches[0].pageY) / height.current), 1), 0)
         //console.log("Tatsch", x, y, e)
-        console.log("Tatsch", -y)
+        console.log("Tatsch", volume)
+        window.AndroidBridge?.setVolume(volume)
     }
 
     return (
