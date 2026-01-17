@@ -14,6 +14,7 @@ export function Video() {
     const [forwardMode, setForwardMode] = useState(0)
     const [seekDirection, setSeekDirection] = useState(0)
     const volumeStart = useRef(0)
+    const positionStart = useRef(0)
 
     useEffect(() => {
         if (window.AndroidBridge) {
@@ -34,15 +35,16 @@ export function Video() {
         window.AndroidBridge?.setVolume(volume)
     }
 
-    const onPositionStart = () => { console.log("onPositionStart")}
+    const onPositionStart = () => positionStart.current = videoRef.current?.currentTime || 0
 
     const onPosition = (diff: number) => {
-        const pos = Math.max(Math.min(0 + diff, 1), 0)
-        console.log("position", diff, pos)
+        if (!videoRef.current)
+            return
+        const pos = Math.max(Math.min(positionStart.current/videoRef.current.duration + diff * .01, 1), 0)
+        videoRef.current.currentTime = pos * videoRef.current.duration
     }
 
     const touch = useTouch({ onVStart: onVolumeStart, onVMove: onVolume, onHStart: onPositionStart, onHMove: onPosition })
-
 
     const lastSaved = useRef(0)
     const getVideoUrl = useCallback(() => `${localStorage.getItem("url") || ""}/video/${subPath}`, [subPath])
