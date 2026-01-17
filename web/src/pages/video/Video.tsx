@@ -2,8 +2,8 @@ import { useParams } from "react-router-dom"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useNavigateTo } from "../../hooks/NavigateTo"
 import { getPosition, savePosition } from "../../videoPositions"
-import { Volume } from "./Volume"
 import styles from "./Video.module.css"
+import { useTouch } from "../../hooks/Touch"
 
 const SAVE_INTERVAL_MS = 5000
 
@@ -11,21 +11,38 @@ export function Video() {
     const { '*': subPath } = useParams() 
     const navigate = useNavigateTo()
     const videoRef = useRef<HTMLVideoElement>(null)
-    const containerRef = useRef<HTMLDivElement>(null)
     const [forwardMode, setForwardMode] = useState(0)
     const [seekDirection, setSeekDirection] = useState(0)
+    const volumeStart = useRef(0)
 
     useEffect(() => {
         if (window.AndroidBridge) {
             window.AndroidBridge.setWelcome(false)
             window.AndroidBridge.enterFullscreen()
         }
-        return () => {
+        return () => {  
             if (window.AndroidBridge) {
                 window.AndroidBridge.exitFullscreen()
             }
         }
     }, [])
+
+    const onVolumeStart = () => volumeStart.current = window.AndroidBridge?.getVolume() || 0
+
+    const onVolume = (diff: number) => {
+        const volume = Math.max(Math.min(volumeStart.current - diff, 1), 0)
+        window.AndroidBridge?.setVolume(volume)
+    }
+
+    const onPositionStart = () => { console.log("onPositionStart")}
+
+    const onPosition = (diff: number) => {
+        const pos = Math.max(Math.min(0 + diff, 1), 0)
+        console.log("position", diff, pos)
+    }
+
+    const touch = useTouch({ onVStart: onVolumeStart, onVMove: onVolume, onHStart: onPositionStart, onHMove: onPosition })
+
 
     const lastSaved = useRef(0)
     const getVideoUrl = useCallback(() => `${localStorage.getItem("url") || ""}/video/${subPath}`, [subPath])
@@ -171,32 +188,11 @@ export function Video() {
         return forwardMode != 0 && (<div className={styles.overlay}><div>{getText()}</div></div>)
     }
 
-    const pageX = useRef(0)
-    const pageY = useRef(0)
-    const height = useRef(0)
-    const offsetY = useRef(0)
-
-    const onTouchStart = (e: React.TouchEvent) => {
-        pageX.current = e.changedTouches[0].pageX
-        pageY.current = e.changedTouches[0].pageY
-        height.current = (containerRef.current?.clientHeight || 0) / 2
-        offsetY.current = window.AndroidBridge?.getVolume() || 0
-//       console.log("Tatsch start", offsetY.current, containerRef.current?.clientHeight, e.changedTouches[0].pageX, e.changedTouches[0].pageY, e)
-    }
-
-    const onTouch = (e: React.TouchEvent) => {
-        //const x = e.changedTouches[0].pageX - pageX.current
-        const volume = Math.max(Math.min(offsetY.current + ((pageY.current - e.changedTouches[0].pageY) / height.current), 1), 0)
-        //console.log("Tatsch", x, y, e)
-        console.log("Tatsch", volume)
-        window.AndroidBridge?.setVolume(volume)
-    }
-
     return (
-        <div className={styles.viewer} onTouchStart={onTouchStart} onTouchMove={onTouch} ref={containerRef}>
+        <div className={styles.viewer} onTouchStart={touch.onStart} onTouchMove={touch.onMove} onTouchEnd={touch.onEnd}>
             <video ref={videoRef} className={styles.mediaPlayer} controls autoPlay src={getVideoUrl()} />         
             {getOverlay()}
-            <Volume />
+            <input className={styles.range} type="range" />
         </div>
     )
 }

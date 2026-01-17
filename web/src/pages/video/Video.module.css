@@ -27,3 +27,11 @@
     padding: 10px;
     background-image: linear-gradient(#0000 , #000f, #0000);
 }
+
+.range {
+    opacity: 0;
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+}
