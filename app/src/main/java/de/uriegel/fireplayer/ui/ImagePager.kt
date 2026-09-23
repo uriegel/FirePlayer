@@ -27,7 +27,7 @@ import de.uriegel.fireplayer.controller.ImagePagerController
 import de.uriegel.fireplayer.extensions.onKeyDown
 import kotlinx.coroutines.flow.MutableSharedFlow
 
-const val tween = 2000
+const val tween = 700
 
 //TODO ImagePager Control
 //TODO ImagePager Control on Next sets the next image (already loaded)
@@ -99,7 +99,7 @@ fun ImagePager(
 //            }
 //        }
 //    }
-    ImagePagerController(nextFlow, imageDataFlow, loadAsync, count, index)
+    ImagePagerController(count, index, nextFlow, imageDataFlow, loadAsync)
     Box(modifier = Modifier
         .fillMaxSize()
         .pointerInput(Unit) {
