@@ -1,7 +1,9 @@
 package de.uriegel.fireplayer.ui
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.util.Log
 import android.view.KeyEvent
 import androidx.compose.animation.AnimatedVisibility
@@ -20,6 +22,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import de.uriegel.fireplayer.R
 import de.uriegel.fireplayer.controller.ImageData
@@ -186,23 +189,41 @@ private fun MediaContent(imageData: ImageData, context: Context) {
 }
 
 @Composable
-private fun RotatableImage(imageData: ImageData?, context: Context, modifier: Modifier = Modifier) =
-    Image(
-        modifier = modifier
-            .then(
-                if (imageData?.angle != 0f) {
-                    Modifier
-                        .rotate(imageData?.angle ?: 0f)
-                        .scale(
-                            (imageData?.bitmap?.height?.toFloat()
-                                ?: 1f) / (imageData?.bitmap?.width?.toFloat() ?: 1f)
-                        )
-                } else
-                    Modifier
-            ),
-        bitmap = imageData?.bitmap?.asImageBitmap()
-            ?: BitmapFactory.decodeResource(context.resources,
-                R.drawable.emptypics).asImageBitmap(),
-        contentDescription = "Image",
-    )
+private fun RotatableImage(
+    imageData: ImageData?,
+    context: Context,
+    modifier: Modifier = Modifier
+) {
+    val bitmap = imageData?.bitmap
+        ?: BitmapFactory.decodeResource(
+            context.resources,
+            R.drawable.emptypics
+        )
 
+    val orientedBitmap = remember(bitmap, imageData?.angle) {
+        if (imageData?.angle == 0f) {
+            bitmap
+        } else {
+            val matrix = Matrix().apply {
+                postRotate(imageData?.angle ?: 0f)
+            }
+
+            Bitmap.createBitmap(
+                bitmap,
+                0,
+                0,
+                bitmap.width,
+                bitmap.height,
+                matrix,
+                true
+            )
+        }
+    }
+
+    Image(
+        bitmap = orientedBitmap.asImageBitmap(),
+        contentDescription = "Image",
+        contentScale = ContentScale.Fit,
+        modifier = modifier.fillMaxSize()
+    )
+}
