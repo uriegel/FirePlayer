@@ -4,6 +4,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.exifinterface.media.ExifInterface
 import de.uriegel.fireplayer.ui.MediaContent
 import kotlinx.coroutines.CancellationException
@@ -22,8 +26,9 @@ fun ImagePagerController(
     imageDataFlow: MutableSharedFlow<ImageData>,
     loadAsync: suspend (Int) -> MediaContent
 ) {
+    var position by rememberSaveable { mutableIntStateOf(index) }
+
     LaunchedEffect(Unit) {
-        var position = index
         var loadJob: Job? = null
 
         fun load(index: Int) {
