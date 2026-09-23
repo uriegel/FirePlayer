@@ -4,11 +4,8 @@ import androidx.compose.runtime.*
 import de.uriegel.fireplayer.extensions.fromBase64
 import de.uriegel.fireplayer.extensions.getFilePath
 import de.uriegel.fireplayer.extensions.isPicture
-import de.uriegel.fireplayer.extensions.readAll
-import de.uriegel.fireplayer.requests.getResponseStream
+import de.uriegel.fireplayer.requests.getResponseBytes
 import de.uriegel.fireplayer.viewmodel.DirectoryItemsViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 @Composable
 fun PhotoScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
@@ -24,17 +21,14 @@ fun PhotoScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
 }
 
 suspend fun loadBitmap(url: String): MediaContent =
-    if (url.endsWith(".mp4", true))
+    if (url.endsWith(".mp4", true)) {
         MediaContent(null, url)
-    else
-        withContext(Dispatchers.IO) {
-            return@withContext MediaContent(getResponseStream(url)
-                .map {
-                    it.readAll()
-                }
-                .getOrNull(), null)
-        }
-
+    } else {
+        getResponseBytes(url)
+            .getOrNull()
+            ?.let { MediaContent(it, null) }
+            ?: MediaContent(null, null)
+    }
 data class MediaContent(
     val pictureBytes: ByteArray?,
     val videoUrl: String?

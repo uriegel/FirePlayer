@@ -1,9 +1,34 @@
 package de.uriegel.fireplayer.extensions
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
-import java.util.*
+import java.util.Arrays
 
 val DEFAULT_BUFFER_SIZE= 8192
+
+suspend fun InputStream.readAllAsync(): ByteArray =
+    withContext(Dispatchers.IO) {
+        val output = ByteArrayOutputStream()
+        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+
+        while (true) {
+            currentCoroutineContext().ensureActive()
+
+            val n = read(buffer)
+
+            if (n < 0)
+                break
+
+            if (n > 0)
+                output.write(buffer, 0, n)
+        }
+
+        output.toByteArray()
+    }
 
 fun InputStream.readAll(): ByteArray {
     var bufs: MutableList<ByteArray>? = null
@@ -11,6 +36,7 @@ fun InputStream.readAll(): ByteArray {
     var total = 0
     var remaining = Int.MAX_VALUE
     var n: Int
+
     do {
         val buf = ByteArray(Math.min(remaining, DEFAULT_BUFFER_SIZE))
         var nread = 0
@@ -36,14 +62,15 @@ fun InputStream.readAll(): ByteArray {
                 bufs.add(buf)
             }
         }
-        // if the last call to read returned -1 or the number of bytes
-        // requested have been read then break
     } while (n >= 0 && remaining > 0)
     if (bufs == null) {
-        if (result == null) {
+        if (result == null)
             return ByteArray(0)
-        }
-        return if (result.size == total) result else Arrays.copyOf(result, total)
+
+        return if (result.size == total)
+            result
+        else
+            Arrays.copyOf(result, total)
     }
     result = ByteArray(total)
     var offset = 0

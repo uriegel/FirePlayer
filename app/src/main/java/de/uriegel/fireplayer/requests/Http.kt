@@ -5,9 +5,11 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import de.uriegel.fireplayer.exceptions.HttpProtocolException
 import de.uriegel.fireplayer.exceptions.NotInitializedException
+import de.uriegel.fireplayer.extensions.readAll
 import de.uriegel.fireplayer.extensions.sideEffect
 import de.uriegel.fireplayer.extensions.toResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import java.io.*
 import java.net.Authenticator
@@ -38,10 +40,6 @@ suspend fun getString(urlString: String) =
 
 suspend fun post(urlString: String, data: String, psk: String?) =
     runCatching { tryPost(urlString, data, psk) }
-
-suspend fun getResponseStream(urlString: String) =
-    runCatching { tryGetResponseStream(urlString) }
-
 private suspend fun tryPost(urlString: String, data: String, psk: String?): String {
     return withContext(Dispatchers.IO) {
         val url = URL(urlString)
@@ -66,12 +64,6 @@ private suspend fun tryPost(urlString: String, data: String, psk: String?): Stri
     }
 }
 
-private suspend fun tryGetResponseStream(urlString: String): InputStream {
-    return withContext(Dispatchers.IO) {
-        return@withContext getResponseStreamSync(urlString)
-    }
-}
-
 private fun getResponseStreamSync(urlString: String): InputStream {
     val url = URL(url + urlString)
     val connection = url.openConnection() as HttpURLConnection
@@ -85,6 +77,43 @@ private fun getResponseStreamSync(urlString: String): InputStream {
     else
         connection.inputStream
 }
+
+suspend fun getResponseBytes(urlString: String): Result<ByteArray> =
+    withContext(Dispatchers.IO) {
+        runCatching {
+            val connection =
+                (URL(url + urlString).openConnection() as HttpURLConnection)
+
+            try {
+                coroutineContext[Job]?.invokeOnCompletion {
+                    connection.disconnect()
+                }
+
+                connection.setRequestProperty("Accept-Encoding", "gzip")
+                connection.connect()
+
+                val responseCode = connection.responseCode
+
+                if (responseCode != 200)
+                    throw HttpProtocolException(
+                        responseCode,
+                        connection.responseMessage
+                    )
+
+                val stream =
+                    if (connection.contentEncoding == "gzip")
+                        GZIPInputStream(connection.inputStream)
+                    else
+                        connection.inputStream
+
+                stream.use {
+                    it.readAll()
+                }
+            } finally {
+                connection.disconnect()
+            }
+        }
+    }
 
 private suspend fun tryGetString(urlString: String): String {
     return withContext(Dispatchers.IO) {
