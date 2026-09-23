@@ -14,8 +14,10 @@ fun PhotoScreen(viewModel: DirectoryItemsViewModel, path64: String?) {
     val items = viewModel.items
         .filter { it.name.isPicture() }
         .map { (filePath + it.name).replace("+", "%20") }
+    val index = items.indexOf(path)
     ImagePager(
-        count = items.size,
+        items.size,
+        index,
         loadAsync = { loadBitmap(items[it]) }
     )
 }

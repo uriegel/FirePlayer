@@ -9,9 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -21,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import de.uriegel.fireplayer.R
 import de.uriegel.fireplayer.controller.ImageData
@@ -48,12 +47,12 @@ const val tween = 2000
 @Composable
 fun ImagePager(
     count: Int,
+    index: Int,
     loadAsync: suspend (Int)-> MediaContent
 ) {
     val context = LocalContext.current
     val nextFlow = remember { MutableSharedFlow<Boolean>(extraBufferCapacity = 1) }
     val imageDataFlow = remember { MutableSharedFlow<ImageData>(extraBufferCapacity = 1) }
-    var loading by remember { mutableStateOf(false)}
 //    var imageDataPrev: ImageData by remember { mutableStateOf(ImageData(null, 0f, null))}
 
 //    fun next() {
@@ -100,18 +99,18 @@ fun ImagePager(
 //            }
 //        }
 //    }
-    ImagePagerController(nextFlow, imageDataFlow, loadAsync)
+    ImagePagerController(nextFlow, imageDataFlow, loadAsync, count, index)
     Box(modifier = Modifier
         .fillMaxSize()
-        .draggable(
-            orientation = Orientation.Horizontal,
-            state = rememberDraggableState {
-                if (it > -20 && it < 0)
-                    nextFlow.tryEmit(true)
-                else if (it < 20 && it > 0)
-                    nextFlow.tryEmit(false)
-            }
-        )
+        .pointerInput(Unit) {
+
+            detectTapGestures( onTap = { offset ->
+            if (offset.x < size.width / 2) {
+                nextFlow.tryEmit(false)   // left side
+            } else {
+                nextFlow.tryEmit(true)    // right side
+            }})
+        }
         .onKeyDown(context) { _, evt ->
             when (evt?.keyCode) {
                 KeyEvent.KEYCODE_DPAD_RIGHT -> {
