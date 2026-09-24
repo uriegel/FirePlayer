@@ -10,14 +10,20 @@ plugins {
 
 android {
     namespace = "de.uriegel.fireplayer"
-    compileSdk = 36
+    compileSdk = 37
 
-    signingConfigs {
-        create("signing") {
-            storeFile = file("/home/uwe/Dokumente/Entwicklung/AndroidKeyStore/keystore.jks")
-            storePassword = extra["ANDROID_STORE_PASSWORD"].toString()
-            keyAlias = "androidKey"
-            keyPassword = extra["ANDROID_KEY_PASSWORD"].toString()
+    val storePasswordProp = findProperty("ANDROID_STORE_PASSWORD") as? String
+    val keyPasswordProp = findProperty("ANDROID_KEY_PASSWORD") as? String
+    val keystoreFile = file("/home/uwe/Dokumente/Entwicklung/AndroidKeyStore/keystore.jks")
+
+    if (keystoreFile.exists() && storePasswordProp != null && keyPasswordProp != null) {
+        signingConfigs {
+            create("signing") {
+                storeFile = keystoreFile
+                storePassword = storePasswordProp
+                keyAlias = "androidKey"
+                keyPassword = keyPasswordProp
+            }
         }
     }
 
