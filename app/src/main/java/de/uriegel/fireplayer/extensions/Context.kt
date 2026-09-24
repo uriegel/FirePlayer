@@ -9,7 +9,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
-import androidx.preference.PreferenceManager
 import de.uriegel.fireplayer.android.ComponentExActivity
 
 fun Context.setPasswordBehavior(preference: EditTextPreference, key: String) {
@@ -20,7 +19,7 @@ fun Context.setPasswordBehavior(preference: EditTextPreference, key: String) {
             sb.append("*") }
         return sb.toString() }
 
-    val password = PreferenceManager.getDefaultSharedPreferences(this).getString(key, "")!!
+    val password = preference.sharedPreferences?.getString(key, "") ?: ""
 
     preference.summaryProvider = Preference.SummaryProvider<Preference?> {
         setBullets(if (password.isNotEmpty()) 10 else 0)

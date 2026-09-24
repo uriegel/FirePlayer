@@ -2,7 +2,6 @@ package de.uriegel.fireplayer.requests
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.preference.PreferenceManager
 import de.uriegel.fireplayer.exceptions.HttpProtocolException
 import de.uriegel.fireplayer.exceptions.NotInitializedException
 import de.uriegel.fireplayer.extensions.readAll
@@ -28,8 +27,8 @@ fun basicAuthentication(name: String, pw: String) {
 }
 
 fun initializeHttp(context: Context) =
-    PreferenceManager
-        .getDefaultSharedPreferences(context)
+    context
+        .getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
         .getSettings()
         .initializeHttp { url = it }
 

@@ -41,10 +41,14 @@ extensions.configure<ApplicationExtension> {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("signing")
+            signingConfigs.findByName("signing")?.let {
+                signingConfig = it
+            }
         }
         debug {
-            signingConfig = signingConfigs.getByName("signing")
+            signingConfigs.findByName("signing")?.let {
+                signingConfig = it
+            }
         }
     }
 
@@ -59,7 +63,7 @@ extensions.configure<ApplicationExtension> {
     }
     packaging {
         resources {
-            excludes += "/META-INF/*"
+            excludes.add("/META-INF/*")
         }
     }
 }
@@ -88,7 +92,6 @@ dependencies {
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.preference.ktx)
-    implementation(libs.accompanist.pager)
     implementation(libs.kotlinx.serialization.json)
     debugImplementation(libs.androidx.ui.tooling)
     implementation(libs.room.runtime)

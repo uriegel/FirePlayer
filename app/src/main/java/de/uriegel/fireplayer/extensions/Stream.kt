@@ -7,8 +7,9 @@ import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.util.Arrays
+import kotlin.math.min
 
-val DEFAULT_BUFFER_SIZE= 8192
+const val DEFAULT_BUFFER_SIZE = 8192
 
 suspend fun InputStream.readAllAsync(): ByteArray =
     withContext(Dispatchers.IO) {
@@ -38,13 +39,13 @@ fun InputStream.readAll(): ByteArray {
     var n: Int
 
     do {
-        val buf = ByteArray(Math.min(remaining, DEFAULT_BUFFER_SIZE))
+        val buf = ByteArray(min(remaining, DEFAULT_BUFFER_SIZE))
         var nread = 0
 
         // read to EOF which may read more or less than buffer size
         while (read(
                 buf, nread,
-                Math.min(buf.size - nread, remaining)
+                min(buf.size - nread, remaining)
             ).also { n = it } > 0
         ) {
             nread += n
@@ -76,7 +77,7 @@ fun InputStream.readAll(): ByteArray {
     var offset = 0
     remaining = total
     for (b in bufs) {
-        val count = Math.min(b.size, remaining)
+        val count = min(b.size, remaining)
         System.arraycopy(b, 0, result, offset, count)
         offset += count
         remaining -= count

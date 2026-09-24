@@ -1,5 +1,6 @@
 package de.uriegel.fireplayer.ui
 
+import android.content.Context
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -21,14 +22,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
-import androidx.preference.PreferenceManager
 import de.uriegel.fireplayer.extensions.*
 import de.uriegel.fireplayer.requests.getBaseUrl
 import de.uriegel.fireplayer.requests.post
 import de.uriegel.fireplayer.viewmodel.DirectoryItemsViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Preview(showSystemUi = true)
@@ -40,7 +39,7 @@ fun MusicScreen(
     val filePath = path.getFilePath()
 
     val context = LocalContext.current
-    val preferences = PreferenceManager.getDefaultSharedPreferences(LocalContext.current)
+    val preferences = remember(context) { context.getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE) }
     val sonyUrl = preferences.getString("sony_url", null)
     val sonyPsk = preferences.getString("sony_psk", null)
     val scope = rememberCoroutineScope()
