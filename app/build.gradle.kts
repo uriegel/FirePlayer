@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.ApplicationExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -8,7 +9,7 @@ plugins {
     alias(libs.plugins.kotlin.ksp)
 }
 
-android {
+extensions.configure<ApplicationExtension> {
     namespace = "de.uriegel.fireplayer"
     compileSdk = 37
 
@@ -52,12 +53,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-        }
-    }
-
     buildFeatures {
         compose = true
         buildConfig = true
@@ -66,6 +61,12 @@ android {
         resources {
             excludes += "/META-INF/*"
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
     }
 }
 
@@ -90,7 +91,6 @@ dependencies {
     implementation(libs.accompanist.pager)
     implementation(libs.kotlinx.serialization.json)
     debugImplementation(libs.androidx.ui.tooling)
-    implementation(libs.ui.tooling.preview)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.ksp)
